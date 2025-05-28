@@ -162,3 +162,6 @@ export const InsuranceTable = pgTable("insurance", {
             references: [CarTable.car_id],
         }),
     }));
+
+  
+
