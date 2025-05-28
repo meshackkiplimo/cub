@@ -11,6 +11,7 @@ last_name:varchar("last_name", { length: 50 }).notNull(),
 email:varchar("email", { length: 100 }).notNull().unique(),
 phone_number:varchar("phone", { length: 15 }).notNull(),
 address:varchar("address", { length: 255 }).notNull(),
+password: varchar("password", { length: 255 }).notNull(),
 
 
 

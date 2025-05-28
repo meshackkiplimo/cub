@@ -25,6 +25,7 @@ CREATE TABLE "customer" (
 	"email" varchar(100) NOT NULL,
 	"phone" varchar(15) NOT NULL,
 	"address" varchar(255) NOT NULL,
+	"password" varchar(255) NOT NULL,
 	CONSTRAINT "customer_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint

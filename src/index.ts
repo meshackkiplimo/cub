@@ -1,6 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import db from "./drizzle/db";
+import { user } from "./routes/authRoute";
+
 
 
 dotenv.config();
@@ -16,8 +18,14 @@ app.get('/', (req, res) => {
   res.send('Hello ')
 })
 app.get('/health', (req, res) => {
-  res.status(200).send('OK')
+  res.status(200).send('the page is very healthy')
 })
+
+
+user(app)
+
+
+
 
 async function checkDatabase() {
     try {

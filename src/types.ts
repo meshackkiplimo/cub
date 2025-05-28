@@ -1,7 +1,8 @@
 import { BookingTable, CarTable, CustomerTable, InsuranceTable, LocationTable, MaintenanceTable, PaymentTable, ReservationTable } from "./drizzle/schema";
 
 
-
+export type TIUser= typeof CustomerTable.$inferInsert
+export type TSUser = typeof CustomerTable.$inferSelect
 export type TICustomer = typeof CustomerTable.$inferInsert
 export type TSCustomer = typeof CustomerTable.$inferSelect
 export type TILocation= typeof LocationTable.$inferInsert

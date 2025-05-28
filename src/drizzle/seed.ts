@@ -69,21 +69,25 @@ async function seed() {
             last_name: "Doe",
             email: "john.doe@email.com",
             phone_number: "111-222-3333",
-            address: "101 Oak Street, Cityville, ST 12345"
+            address: "101 Oak Street, Cityville, ST 12345",
+            password: "hashed_password_1" 
         },
         {
             first_name: "Jane",
             last_name: "Smith",
             email: "jane.smith@email.com",
             phone_number: "444-555-6666",
-            address: "202 Pine Avenue, Cityville, ST 12345"
+            address: "202 Pine Avenue, Cityville, ST 12345",
+            password: "hashed_password_2" 
+
         },
         {
             first_name: "Michael",
             last_name: "Johnson",
             email: "michael.j@email.com",
             phone_number: "777-888-9999",
-            address: "303 Maple Road, Cityville, ST 12345"
+            address: "303 Maple Road, Cityville, ST 12345",
+            password: "hashed_password_3"
         }
     ]);
 
