@@ -1,59 +1,54 @@
-import express from "express";
-import { BookingController } from "../controller/bookingController";
+import { Express } from "express"
+import { createBookingController, deleteBookingController, getAllBookingsController, getBookingController, updateBookingController } from "../controller/bookingController"
 
-
-
-
-export const booking = (app: express.Express) => {
-    const bookingController = new BookingController();
-
+export const booking = (app: Express) => {
     app.route("/bookings").post(
         async (req, res, next) => {
             try {
-                await bookingController.createBooking(req, res);
+                await createBookingController(req, res)
             } catch (error) {
-                next(error);
+                next(error)
             }
         }
-    );
+    )
 
     app.route("/bookings").get(
         async (req, res, next) => {
             try {
-                await bookingController.getAllBookings(req, res);
+                await getAllBookingsController(req, res)
             } catch (error) {
-                next(error);
+                next(error)
             }
         }
-    );
+    )
 
     app.route("/bookings/:id").get(
         async (req, res, next) => {
             try {
-                await bookingController.getBookingById(req, res);
+                await getBookingController(req, res)
             } catch (error) {
-                next(error);
+                next(error)
             }
         }
-    );
+    )
 
     app.route("/bookings/:id").put(
         async (req, res, next) => {
             try {
-                await bookingController.updateBooking(req, res);
+                await updateBookingController(req, res)
             } catch (error) {
-                next(error);
+                next(error)
             }
         }
-    );
+    )
 
     app.route("/bookings/:id").delete(
         async (req, res, next) => {
             try {
-                await bookingController.deleteBooking(req, res);
+                await deleteBookingController(req, res)
             } catch (error) {
-                next(error);
+                next(error)
             }
         }
-    );
-};
+    )
+}

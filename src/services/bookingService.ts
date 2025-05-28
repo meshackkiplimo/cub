@@ -1,60 +1,50 @@
+import { sql } from "drizzle-orm";
 import db from "../drizzle/db";
 import { BookingTable } from "../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { TIBooking } from "../types";
 
-export class BookingService {
-  async createBooking(bookingData: any) {
-    try {
-      const booking = await db.insert(BookingTable).values(bookingData).returning();
-      return booking[0];
-    } catch (error: any) {
-      throw new Error(`Failed to create booking: ${error.message}`);
-    }
-  }
+export const createBookingService = async (booking: TIBooking) => {
+    const newBooking = await db.insert(BookingTable).values(booking).returning();
+    return newBooking[0];
+}
 
-  async getAllBookings() {
-    try {
-      const bookings = await db.select().from(BookingTable);
-      return bookings;
-    } catch (error: any) {
-      throw new Error(`Failed to fetch bookings: ${error.message}`);
-    }
-  }
+export const getBookingService = async (bookingId: number) => {
+    return await db.query.BookingTable.findFirst({
+        columns: {
+            booking_id: true,
+            customer_id: true,
+            car_id: true,
+            rental_start_date: true,
+            rental_end_date: true,
+            total_amount: true
+        },
+        where: sql`${BookingTable.booking_id}=${bookingId}`
+    });
+}
 
-  async getBookingById(bookingId: number) {
-    try {
-      const booking = await db
-        .select()
-        .from(BookingTable)
-        .where(eq(BookingTable.booking_id, bookingId));
-      return booking[0];
-    } catch (error: any) {
-      throw new Error(`Failed to fetch booking: ${error.message}`);
-    }
-  }
+export const getAllBookingsService = async () => {
+    return await db.query.BookingTable.findMany({
+        columns: {
+            booking_id: true,
+            customer_id: true,
+            car_id: true,
+            rental_start_date: true,
+            rental_end_date: true,
+            total_amount: true
+        }
+    });
+}
 
-  async updateBooking(bookingId: number, bookingData: any) {
-    try {
-      const updatedBooking = await db
-        .update(BookingTable)
-        .set(bookingData)
-        .where(eq(BookingTable.booking_id, bookingId))
+export const updateBookingService = async (bookingId: number, booking: Partial<TIBooking>) => {
+    const updatedBooking = await db.update(BookingTable)
+        .set(booking)
+        .where(sql`${BookingTable.booking_id}=${bookingId}`)
         .returning();
-      return updatedBooking[0];
-    } catch (error: any) {
-      throw new Error(`Failed to update booking: ${error.message}`);
-    }
-  }
+    return updatedBooking[0];
+}
 
-  async deleteBooking(bookingId: number) {
-    try {
-      const deletedBooking = await db
-        .delete(BookingTable)
-        .where(eq(BookingTable.booking_id, bookingId))
+export const deleteBookingService = async (bookingId: number) => {
+    return await db.delete(BookingTable)
+        .where(sql`${BookingTable.booking_id}=${bookingId}`)
         .returning();
-      return deletedBooking[0];
-    } catch (error: any) {
-      throw new Error(`Failed to delete booking: ${error.message}`);
-    }
-  }
 }

@@ -1,127 +1,73 @@
-import { Request, Response } from "express";
-import { BookingService } from "../services/bookingService";
+import { Request, Response } from 'express';
+import { createBookingService, deleteBookingService, getAllBookingsService, getBookingService, updateBookingService } from '../services/bookingService';
 
-const bookingService = new BookingService();
-
-export class BookingController {
-  async createBooking(req: Request, res: Response) {
+export const createBookingController = async (req: Request, res: Response) => {
     try {
-      const bookingData = {
-        customer_id: req.body.customer_id,
-        car_id: req.body.car_id,
-        rental_start_date: req.body.rental_start_date,
-        rental_end_date: req.body.rental_end_date,
-        total_amount: req.body.total_amount,
-      };
-
-      const booking = await bookingService.createBooking(bookingData);
-      res.status(201).json({
-        status: "success",
-        data: booking,
-      });
-    } catch (error: any) {
-      res.status(400).json({
-        status: "error",
-        message: error.message,
-      });
+        const booking = req.body;
+        const newBooking = await createBookingService(booking);
+        if (!newBooking) {
+            res.status(400).json({ message: "Booking creation failed" });
+            return;
+        }
+        res.status(201).json({ message: "Booking created successfully", booking: newBooking });
+    } catch (error) {
+        console.error("Error in createBookingController:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
-  }
+}
 
-  async getAllBookings(req: Request, res: Response) {
+export const getBookingController = async (req: Request, res: Response) => {
     try {
-      const bookings = await bookingService.getAllBookings();
-      res.status(200).json({
-        status: "success",
-        data: bookings,
-      });
-    } catch (error: any) {
-      res.status(400).json({
-        status: "error",
-        message: error.message,
-      });
+        const bookingId = parseInt(req.params.id);
+        const booking = await getBookingService(bookingId);
+        if (!booking) {
+            res.status(404).json({ message: "Booking not found" });
+            return;
+        }
+        res.status(200).json({ booking });
+    } catch (error) {
+        console.error("Error in getBookingController:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
-  }
+}
 
-  async getBookingById(req: Request, res: Response) {
+export const getAllBookingsController = async (req: Request, res: Response) => {
     try {
-      const bookingId = parseInt(req.params.id);
-      const booking = await bookingService.getBookingById(bookingId);
-      
-      if (!booking) {
-        res.status(404).json({
-          status: "error",
-          message: "Booking not found",
-        });
-        return 
-      }
-
-      res.status(200).json({
-        status: "success",
-        data: booking,
-      });
-    } catch (error: any) {
-      res.status(400).json({
-        status: "error",
-        message: error.message,
-      });
+        const bookings = await getAllBookingsService();
+        res.status(200).json({ bookings });
+    } catch (error) {
+        console.error("Error in getAllBookingsController:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
-  }
+}
 
-  async updateBooking(req: Request, res: Response) {
+export const updateBookingController = async (req: Request, res: Response) => {
     try {
-      const bookingId = parseInt(req.params.id);
-      const bookingData = {
-        customer_id: req.body.customer_id,
-        car_id: req.body.car_id,
-        rental_start_date: req.body.rental_start_date,
-        rental_end_date: req.body.rental_end_date,
-        total_amount: req.body.total_amount,
-      };
-
-      const updatedBooking = await bookingService.updateBooking(bookingId, bookingData);
-      
-      if (!updatedBooking) {
-        res.status(404).json({
-          status: "error",
-          message: "Booking not found",
-        });
-        return 
-      }
-
-      res.status(200).json({
-        status: "success",
-        data: updatedBooking,
-      });
-    } catch (error: any) {
-      res.status(400).json({
-        status: "error",
-        message: error.message,
-      });
+        const bookingId = parseInt(req.params.id);
+        const bookingData = req.body;
+        const updatedBooking = await updateBookingService(bookingId, bookingData);
+        if (!updatedBooking) {
+            res.status(404).json({ message: "Booking not found" });
+            return;
+        }
+        res.status(200).json({ message: "Booking updated successfully", booking: updatedBooking });
+    } catch (error) {
+        console.error("Error in updateBookingController:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
-  }
+}
 
-  async deleteBooking(req: Request, res: Response) {
+export const deleteBookingController = async (req: Request, res: Response) => {
     try {
-      const bookingId = parseInt(req.params.id);
-      const deletedBooking = await bookingService.deleteBooking(bookingId);
-      
-      if (!deletedBooking) {
-        res.status(404).json({
-          status: "error",
-          message: "Booking not found",
-        });
-        return 
-      }
-
-      res.status(200).json({
-        status: "success",
-        data: deletedBooking,
-      });
-    } catch (error: any) {
-      res.status(400).json({
-        status: "error",
-        message: error.message,
-      });
+        const bookingId = parseInt(req.params.id);
+        const deletedBooking = await deleteBookingService(bookingId);
+        if (!deletedBooking || deletedBooking.length === 0) {
+            res.status(404).json({ message: "Booking not found" });
+            return;
+        }
+        res.status(200).json({ message: "Booking deleted successfully" });
+    } catch (error) {
+        console.error("Error in deleteBookingController:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
-  }
 }
