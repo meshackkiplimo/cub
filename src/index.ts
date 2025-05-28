@@ -5,6 +5,7 @@ import { user } from "./routes/authRoute";
 import { car } from "./routes/carRoute";
 import { booking } from "./routes/bookingRoute";
 import { location } from "./routes/locationRoute";
+import { reservation } from "./routes/reservationRoute";
 
 
 
@@ -29,6 +30,7 @@ user(app)
 car(app)
 booking(app)
 location(app)
+reservation(app)
 
 
 
