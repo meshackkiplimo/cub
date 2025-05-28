@@ -2,6 +2,9 @@ import express from "express";
 import dotenv from "dotenv";
 import db from "./drizzle/db";
 import { user } from "./routes/authRoute";
+import { car } from "./routes/carRoute";
+import { booking } from "./routes/bookingRoute";
+import { location } from "./routes/locationRoute";
 
 
 
@@ -23,6 +26,9 @@ app.get('/health', (req, res) => {
 
 
 user(app)
+car(app)
+booking(app)
+location(app)
 
 
 
