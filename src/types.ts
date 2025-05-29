@@ -1,8 +1,15 @@
-import { BookingTable, CarTable, CustomerTable, InsuranceTable, LocationTable, MaintenanceTable, PaymentTable, ReservationTable } from "./drizzle/schema";
+import { BookingTable, CarTable, CustomerTable, InsuranceTable, LocationTable, MaintenanceTable, PaymentTable, ReservationTable, UserTable } from "./drizzle/schema";
+
+export type TIUser = typeof UserTable.$inferInsert
+export type TSUser = typeof UserTable.$inferSelect
+
+// Extended user type for registration that includes customer fields
+export interface TIUserWithCustomer extends TIUser {
+    phone_number?: string;
+    address?: string;
+}
 
 
-export type TIUser= typeof CustomerTable.$inferInsert
-export type TSUser = typeof CustomerTable.$inferSelect
 export type TICustomer = typeof CustomerTable.$inferInsert
 export type TSCustomer = typeof CustomerTable.$inferSelect
 export type TILocation= typeof LocationTable.$inferInsert

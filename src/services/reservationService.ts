@@ -45,10 +45,18 @@ export const getReservationService = async (reservationId: number) => {
         with: {
             customer: {
                 columns: {
-                    first_name: true,
-                    last_name: true,
-                    email: true,
+                    customer_id: true,
+                    user_id: true,
                     phone_number: true
+                },
+                with: {
+                    user: {
+                        columns: {
+                            first_name: true,
+                            last_name: true,
+                            email: true
+                        }
+                    }
                 }
             },
             car: {
@@ -78,9 +86,18 @@ export const getAllReservationsService = async () => {
         with: {
             customer: {
                 columns: {
-                    first_name: true,
-                    last_name: true,
-                    email: true
+                    customer_id: true,
+                    user_id: true,
+                    phone_number: true
+                },
+                with: {
+                    user: {
+                        columns: {
+                            first_name: true,
+                            last_name: true,
+                            email: true
+                        }
+                    }
                 }
             },
             car: {
@@ -103,6 +120,21 @@ export const getCustomerReservationsService = async (customerId: number) => {
             return_date: true
         },
         with: {
+            customer: {
+                columns: {
+                    customer_id: true,
+                    phone_number: true
+                },
+                with: {
+                    user: {
+                        columns: {
+                            first_name: true,
+                            last_name: true,
+                            email: true
+                        }
+                    }
+                }
+            },
             car: {
                 columns: {
                     manufacturer: true,

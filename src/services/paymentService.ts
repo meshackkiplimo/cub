@@ -17,6 +17,40 @@ export const getPaymentService = async (paymentId: number) => {
             amount: true,
             payment_method: true
         },
+        with: {
+            booking: {
+                columns: {
+                    booking_id: true,
+                    rental_start_date: true,
+                    rental_end_date: true,
+                    total_amount: true
+                },
+                with: {
+                    customer: {
+                        columns: {
+                            customer_id: true,
+                            phone_number: true
+                        },
+                        with: {
+                            user: {
+                                columns: {
+                                    first_name: true,
+                                    last_name: true,
+                                    email: true
+                                }
+                            }
+                        }
+                    },
+                    car: {
+                        columns: {
+                            manufacturer: true,
+                            car_model: true,
+                            year: true
+                        }
+                    }
+                }
+            }
+        },
         where: sql`${PaymentTable.payment_id}=${paymentId}`
     });
 }
@@ -29,6 +63,40 @@ export const getAllPaymentsService = async () => {
             payment_date: true,
             amount: true,
             payment_method: true
+        },
+        with: {
+            booking: {
+                columns: {
+                    booking_id: true,
+                    rental_start_date: true,
+                    rental_end_date: true,
+                    total_amount: true
+                },
+                with: {
+                    customer: {
+                        columns: {
+                            customer_id: true,
+                            phone_number: true
+                        },
+                        with: {
+                            user: {
+                                columns: {
+                                    first_name: true,
+                                    last_name: true,
+                                    email: true
+                                }
+                            }
+                        }
+                    },
+                    car: {
+                        columns: {
+                            manufacturer: true,
+                            car_model: true,
+                            year: true
+                        }
+                    }
+                }
+            }
         }
     });
 }

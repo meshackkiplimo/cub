@@ -17,6 +17,25 @@ export const getMaintenanceService = async (maintenanceId: number) => {
             description: true,
             cost: true
         },
+        with: {
+            car: {
+                columns: {
+                    manufacturer: true,
+                    car_model: true,
+                    year: true,
+                    color: true
+                },
+                with: {
+                    location: {
+                        columns: {
+                            location_name: true,
+                            address: true,
+                            contact_number: true
+                        }
+                    }
+                }
+            }
+        },
         where: sql`${MaintenanceTable.maintenance_id}=${maintenanceId}`
     });
 }
@@ -29,6 +48,24 @@ export const getAllMaintenanceService = async () => {
             maintenance_date: true,
             description: true,
             cost: true
+        },
+        with: {
+            car: {
+                columns: {
+                    manufacturer: true,
+                    car_model: true,
+                    year: true,
+                    color: true
+                },
+                with: {
+                    location: {
+                        columns: {
+                            location_name: true,
+                            address: true
+                        }
+                    }
+                }
+            }
         }
     });
 }
@@ -56,6 +93,27 @@ export const getCarMaintenanceHistory = async (carId: number) => {
             description: true,
             cost: true
         },
-        where: sql`${MaintenanceTable.car_id}=${carId}`
+        with: {
+            car: {
+                columns: {
+                    manufacturer: true,
+                    car_model: true,
+                    year: true,
+                    color: true,
+                    rental_rate: true
+                },
+                with: {
+                    location: {
+                        columns: {
+                            location_name: true,
+                            address: true,
+                            contact_number: true
+                        }
+                    }
+                }
+            }
+        },
+        where: sql`${MaintenanceTable.car_id}=${carId}`,
+        orderBy: sql`${MaintenanceTable.maintenance_date} DESC`
     });
 }

@@ -3,19 +3,28 @@ import { relations } from "drizzle-orm";
 import { boolean, pgTable, serial, varchar,decimal } from "drizzle-orm/pg-core";
 
 
-export const CustomerTable  = pgTable("customer", {
+export const UserTable = pgTable("user", {
+    user_id: serial("user_id").primaryKey(),
+    first_name: varchar("first_name", { length: 50 }).notNull(),
+    last_name: varchar("last_name", { length: 50 }).notNull(),
+    email: varchar("email", { length: 100 }).notNull().unique(),
+    password: varchar("password", { length: 255 }).notNull(),
+    role: varchar("role", { length: 20 }).notNull().default("customer"), // e.g., 'admin', 'customer'
+})
 
-customer_id:serial("customer_id").primaryKey(),
-first_name:varchar("first_name", { length: 50 }).notNull(),
-last_name:varchar("last_name", { length: 50 }).notNull(),
-email:varchar("email", { length: 100 }).notNull().unique(),
-phone_number:varchar("phone", { length: 15 }).notNull(),
-address:varchar("address", { length: 255 }).notNull(),
-password: varchar("password", { length: 255 }).notNull(),
+export const UserRelations = relations(UserTable, ({ one }) => ({
+    customer: one(CustomerTable, {
+        fields: [UserTable.user_id],
+        references: [CustomerTable.user_id],
+    }),
+}))
 
 
-
-
+export const CustomerTable = pgTable("customer", {
+    customer_id: serial("customer_id").primaryKey(),
+    user_id: serial("user_id").notNull().references(() => UserTable.user_id, { onDelete: 'cascade' }),
+    phone_number: varchar("phone", { length: 15 }).notNull(),
+    address: varchar("address", { length: 255 }).notNull(),
 })
 
 export const LocationTable = pgTable("location", {
@@ -94,10 +103,14 @@ export const InsuranceTable = pgTable("insurance", {
 
 // relationships
 
- export const CustomerRelations =  relations(CustomerTable,({many})=>({
+export const CustomerRelations = relations(CustomerTable, ({ many, one }) => ({
+    user: one(UserTable, {
+        fields: [CustomerTable.user_id],
+        references: [UserTable.user_id],
+    }),
     reservations: many(ReservationTable),
     bookings: many(BookingTable),
- }))
+}))
 
  export const LocationRelations = relations(LocationTable,({many})=>({
     cars: many(CarTable)

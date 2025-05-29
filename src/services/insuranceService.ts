@@ -26,6 +26,26 @@ export const getInsuranceService = async (insuranceId: number) => {
             start_date: true,
             end_date: true
         },
+        with: {
+            car: {
+                columns: {
+                    manufacturer: true,
+                    car_model: true,
+                    year: true,
+                    color: true,
+                    rental_rate: true
+                },
+                with: {
+                    location: {
+                        columns: {
+                            location_name: true,
+                            address: true,
+                            contact_number: true
+                        }
+                    }
+                }
+            }
+        },
         where: sql`${InsuranceTable.insurance_id}=${insuranceId}`
     });
 }
@@ -40,10 +60,28 @@ export const getAllInsurancesService = async () => {
             policy_number: true,
             start_date: true,
             end_date: true
+        },
+        with: {
+            car: {
+                columns: {
+                    manufacturer: true,
+                    car_model: true,
+                    year: true,
+                    color: true,
+                    rental_rate: true
+                },
+                with: {
+                    location: {
+                        columns: {
+                            location_name: true,
+                            address: true,
+                            contact_number: true
+                        }
+                    }
+                }
+            }
         }
     });
-
-
 }
 
 export const updateInsuranceService = async (insuranceId: number, insurance: Partial<TIInsurance>) => {

@@ -18,6 +18,33 @@ export const getBookingService = async (bookingId: number) => {
             rental_end_date: true,
             total_amount: true
         },
+        with: {
+            customer: {
+                columns: {
+                    customer_id: true,
+                    phone_number: true,
+                    address: true
+                },
+                with: {
+                    user: {
+                        columns: {
+                            first_name: true,
+                            last_name: true,
+                            email: true
+                        }
+                    }
+                }
+            },
+            car: {
+                columns: {
+                    manufacturer: true,
+                    car_model: true,
+                    year: true,
+                    color: true,
+                    rental_rate: true
+                }
+            }
+        },
         where: sql`${BookingTable.booking_id}=${bookingId}`
     });
 }
@@ -31,6 +58,33 @@ export const getAllBookingsService = async () => {
             rental_start_date: true,
             rental_end_date: true,
             total_amount: true
+        },
+        with: {
+            customer: {
+                columns: {
+                    customer_id: true,
+                    phone_number: true,
+                    address: true
+                },
+                with: {
+                    user: {
+                        columns: {
+                            first_name: true,
+                            last_name: true,
+                            email: true
+                        }
+                    }
+                }
+            },
+            car: {
+                columns: {
+                    manufacturer: true,
+                    car_model: true,
+                    year: true,
+                    color: true,
+                    rental_rate: true
+                }
+            }
         }
     });
 }

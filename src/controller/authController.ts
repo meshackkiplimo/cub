@@ -1,15 +1,15 @@
-import {Request, Response} from 'express';
+import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { createAuthService, loginAuthService } from '../services/authService';
+import { TIUserWithCustomer } from '../types';
 
-
-export const creatUserController = async (req:Request,res:Response) => {
+export const creatUserController = async (req: Request, res: Response) => {
     try {
-        const user = req.body;
-        const password= user.password;
-        const hashedPassword = await bcrypt.hashSync(password, 10);
-         user.password = hashedPassword;
-         const createUser = await createAuthService(user);
+        const userData: TIUserWithCustomer = req.body;
+        const password = userData.password;
+        userData.password = await bcrypt.hashSync(password, 10);
+        userData.role = userData.role || 'customer'; // Default role is customer
+        const createUser = await createAuthService(userData);
          if (!createUser) {
             res.status(400).json({ message: "User creation failed" });
             return 
@@ -26,7 +26,7 @@ export const creatUserController = async (req:Request,res:Response) => {
     
 }
 
-export const loginUserController = async (req:Request,res:Response) => {
+export const loginUserController = async (req: Request, res: Response) => {
     try {
         const user = req.body;
         const existingUser = await loginAuthService(user);

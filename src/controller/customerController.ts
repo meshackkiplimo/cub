@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { createCustomerService, deleteCustomerService, getAllCustomersService, getCustomerService, updateCustomerService } from '../services/customerService';
+import { TIUserWithCustomer } from '../types';
 
 export const createCustomerController = async (req: Request, res: Response) => {
     try {
@@ -44,7 +45,10 @@ export const getAllCustomersController = async (req: Request, res: Response) => 
 export const updateCustomerController = async (req: Request, res: Response) => {
     try {
         const customerId = parseInt(req.params.id);
-        const customerData = req.body;
+        const customerData = {
+            phone_number: req.body.phone_number,
+            address: req.body.address
+        };
         const updatedCustomer = await updateCustomerService(customerId, customerData);
         if (!updatedCustomer) {
             res.status(404).json({ message: "Customer not found" });
