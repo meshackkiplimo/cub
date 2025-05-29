@@ -1,8 +1,10 @@
 import { Express } from "express"
 import { createCustomerController, deleteCustomerController, getAllCustomersController, getCustomerController, updateCustomerController } from "../controller/customerController"
+import { adminOnly, checkRole } from "../middleware/roleMiddleware"
 
 export const customer = (app: Express) => {
     app.route("/customers").post(
+        checkRole(['admin']), // Only admin can create customers
         async (req, res, next) => {
             try {
                 await createCustomerController(req, res)
@@ -13,6 +15,7 @@ export const customer = (app: Express) => {
     )
 
     app.route("/customers").get(
+        adminOnly, // Only admin can get all customers
         async (req, res, next) => {
             try {
                 await getAllCustomersController(req, res)
@@ -23,6 +26,7 @@ export const customer = (app: Express) => {
     )
 
     app.route("/customers/:id").get(
+        checkRole(['admin', 'customer']), // Both admin and customer can view individual customer details
         async (req, res, next) => {
             try {
                 await getCustomerController(req, res)
@@ -33,6 +37,7 @@ export const customer = (app: Express) => {
     )
 
     app.route("/customers/:id").put(
+        checkRole(['admin']), // Only admin can update customer details
         async (req, res, next) => {
             try {
                 await updateCustomerController(req, res)
@@ -43,6 +48,7 @@ export const customer = (app: Express) => {
     )
 
     app.route("/customers/:id").delete(
+        adminOnly, // Only admin can delete customers
         async (req, res, next) => {
             try {
                 await deleteCustomerController(req, res)
