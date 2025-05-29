@@ -6,7 +6,7 @@ import { car } from "./routes/carRoute";
 import { booking } from "./routes/bookingRoute";
 import { location } from "./routes/locationRoute";
 import { reservation } from "./routes/reservationRoute";
-
+import { insurance } from "./routes/insuranceRoute";
 
 
 dotenv.config();
@@ -31,8 +31,7 @@ car(app)
 booking(app)
 location(app)
 reservation(app)
-
-
+insurance(app)
 
 
 async function checkDatabase() {
