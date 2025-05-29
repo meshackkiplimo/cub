@@ -4,7 +4,7 @@ import { adminOnly, checkRole } from "../middleware/roleMiddleware"
 
 export const customer = (app: Express) => {
     app.route("/customers").post(
-        checkRole(['admin']), // Only admin can create customers
+        
         async (req, res, next) => {
             try {
                 await createCustomerController(req, res)
@@ -37,7 +37,7 @@ export const customer = (app: Express) => {
     )
 
     app.route("/customers/:id").put(
-        checkRole(['admin']), // Only admin can update customer details
+       
         async (req, res, next) => {
             try {
                 await updateCustomerController(req, res)
