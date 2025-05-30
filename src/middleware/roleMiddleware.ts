@@ -21,7 +21,7 @@ export const adminOnly = (req: Request, res: Response, next: NextFunction): void
         const token = req.headers.authorization?.split(' ')[1];
         
         if (!token) {
-            res.status(401).json({ message: 'No token provided' });
+            res.status(401).json({ message: 'anauthorized' });
             return;
         }
 
@@ -43,7 +43,7 @@ export const adminOnly = (req: Request, res: Response, next: NextFunction): void
         next();
     } catch (error) {
         if (error instanceof jwt.JsonWebTokenError) {
-            res.status(401).json({ message: 'Invalid token' });
+            res.status(401).json({ message: 'anauthorized' });
             return;
         }
         res.status(500).json({ message: 'Internal server error' });

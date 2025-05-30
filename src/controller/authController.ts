@@ -56,7 +56,7 @@ export const loginUserController = async (req: Request, res: Response) => {
             throw new Error("JWT secret is not defined");
         }
         const token = jwt.sign(payload, secret);
-        console.log("Token generated:", token);
+        console.log({token});
         return res.status(200).json(
             { 
                 message: "Login successful", 
