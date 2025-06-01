@@ -28,7 +28,8 @@ export const createAuthService = async (userData: TIUserWithCustomer) => {
                     last_name: true,
                     email: true,
                     password: true,
-                    role: true
+                    role: true,
+                    is_verified: true
                 },
                 with: {
                     customer: {
@@ -59,7 +60,8 @@ export const loginAuthService = async (user: TIUser) => {
             last_name: true,
             email: true,
             password: true,
-            role: true
+            role: true,
+            is_verified: true
         },
         with: {
             customer: {
@@ -74,4 +76,12 @@ export const loginAuthService = async (user: TIUser) => {
     });
 
     return result;
+}
+
+export const updateVerificationStatus = async (email: string, isVerified: boolean) => {
+    const [updatedUser] = await db.update(UserTable)
+        .set({ is_verified: isVerified })
+        .where(sql`${UserTable.email}=${email}`)
+        .returning();
+    return updatedUser;
 }

@@ -1,24 +1,17 @@
 import { Express } from "express"
-import { creatUserController, loginUserController } from "../controller/authController"
+import { creatUserController, loginUserController, verifyEmailController } from "../controller/authController"
 
-
-
-
-export const user =(app:Express)  =>{
+export const user = (app: Express) => {
     app.route("/auth/register").post(
-        async(res,req,next)=>{
+        async (req, res, next) => {
             try {
-                await creatUserController(res, req)
-                
+                await creatUserController(req, res)
             } catch (error) {
                 next(error)
-                
             }
-
         }
-
-
     )
+
     app.route("/auth/login").post(
         async (req, res, next) => {
             try {
@@ -29,4 +22,13 @@ export const user =(app:Express)  =>{
         }
     )
 
+    app.route("/auth/verify-email").post(
+        async (req, res, next) => {
+            try {
+                await verifyEmailController(req, res)
+            } catch (error) {
+                next(error)
+            }
+        }
+    )
 }

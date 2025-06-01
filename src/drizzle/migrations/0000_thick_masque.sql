@@ -73,6 +73,7 @@ CREATE TABLE "user" (
 	"email" varchar(100) NOT NULL,
 	"password" varchar(255) NOT NULL,
 	"role" varchar(20) DEFAULT 'customer' NOT NULL,
+	"is_verified" boolean DEFAULT false NOT NULL,
 	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint

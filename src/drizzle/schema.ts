@@ -1,6 +1,6 @@
 
 import { relations } from "drizzle-orm";
-import { boolean, pgTable, serial, varchar,decimal } from "drizzle-orm/pg-core";
+import { boolean, pgTable, serial, varchar, decimal } from "drizzle-orm/pg-core";
 
 
 export const UserTable = pgTable("user", {
@@ -10,6 +10,7 @@ export const UserTable = pgTable("user", {
     email: varchar("email", { length: 100 }).notNull().unique(),
     password: varchar("password", { length: 255 }).notNull(),
     role: varchar("role", { length: 20 }).notNull().default("customer"), // e.g., 'admin', 'customer'
+    is_verified: boolean("is_verified").notNull().default(false),
 })
 
 export const UserRelations = relations(UserTable, ({ one }) => ({
