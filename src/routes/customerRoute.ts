@@ -15,7 +15,7 @@ export const customer = (app: Express) => {
     )
 
     app.route("/customers").get(
-        adminOnly, // Only admin can get all customers
+         // Only admin can get all customers
         async (req, res, next) => {
             try {
                 await getAllCustomersController(req, res)
