@@ -1,6 +1,7 @@
 import { Express } from "express"
 import { createCustomerController, deleteCustomerController, getAllCustomersController, getCustomerController, updateCustomerController } from "../controller/customerController"
 import { adminOnly, checkRole } from "../middleware/roleMiddleware"
+import { verify } from "jsonwebtoken"
 
 export const customer = (app: Express) => {
     app.route("/customers").post(
@@ -16,6 +17,7 @@ export const customer = (app: Express) => {
 
     app.route("/customers").get(
          // Only admin can get all customers
+         
         async (req, res, next) => {
             try {
                 await getAllCustomersController(req, res)

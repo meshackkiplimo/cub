@@ -13,7 +13,9 @@ export const booking = (app: Express) => {
     )
 
     app.route("/bookings").get(
+        
         async (req, res, next) => {
+            
             try {
                 await getAllBookingsController(req, res)
             } catch (error) {
