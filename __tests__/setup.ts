@@ -1,6 +1,6 @@
 // Jest setup file
-import db from '../drizzle/db';
-import { client } from '../drizzle/db';
+import db from '../src/drizzle/db';
+import { client } from '../src/drizzle/db';
 
 // Clear any mocks after each test
 afterEach(() => {

@@ -18,5 +18,10 @@ module.exports = {
   ],
   coverageDirectory: "coverage",
   coverageReporters: ["text", "lcov"],
-  setupFilesAfterEnv: ["<rootDir>/src/__tests__/setup.ts"]
+  setupFilesAfterEnv: ["<rootDir>/__tests__/setup.ts"],
+  verbose: true,
+  displayName: {
+    name: "Car Rental System",
+    color: "blue"
+  }
 };

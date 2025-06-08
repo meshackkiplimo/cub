@@ -1,4 +1,4 @@
-import { UserTable } from '../../drizzle/schema';
+import { UserTable } from '../../src/drizzle/schema';
 
 describe('Authentication', () => {
   const mockUser = {
