@@ -1,6 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import db from "./drizzle/db";
+
+export const app = express();
 import { user } from "./routes/authRoute";
 import { customer } from "./routes/customerRoute";
 import { car } from "./routes/carRoute";
@@ -15,7 +17,6 @@ import { payment } from "./routes/paymentRoute";
 dotenv.config();
 
 
-const app = express()
 const port = process.env.PORT
 
 
