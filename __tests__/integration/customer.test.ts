@@ -1,17 +1,14 @@
 import request from 'supertest';
 import { app } from '../../src/index';
 import { createTestUtils } from './utils';
+import db from '@/drizzle/db';
+import { UserTable } from '@/drizzle/schema';
 
 describe('Customer Integration Tests', () => {
   let customerId: number;
-
-  const userTestUtils = createTestUtils({
-    first_name: 'Test',
-    last_name: 'Customer',
-    email: `testcustomer${Date.now()}@test.com`,
-    password: 'Test123!',
-    role: 'customer'
-  });
+  let adminToken: string;
+  let userToken: string;
+  let userId: number;
 
   const adminTestUtils = createTestUtils({
     first_name: 'Admin',
@@ -21,53 +18,72 @@ describe('Customer Integration Tests', () => {
     role: 'admin'
   });
 
+  const userTestUtils = createTestUtils({
+    first_name: 'Regular',
+    last_name: 'User',
+    email: `user${Date.now()}@test.com`,
+    password: 'User123!',
+    role: 'customer'
+  });
+
   beforeAll(async () => {
-    // Create and verify test users
-    await userTestUtils.createTestUser({ role: 'customer', isVerified: true });
-    await adminTestUtils.createTestUser({ role: 'admin', isVerified: true });
+    try {
+      // Create and verify test users
+      await adminTestUtils.createTestUser({ role: 'admin', isVerified: true });
+      
+      // Create regular user and store ID
+      const regularUser = await userTestUtils.createTestUser({ role: 'customer', isVerified: true });
+      userId = regularUser.user_id;
+
+      // Get auth tokens
+      adminToken = await adminTestUtils.getAuthToken(app);
+      userToken = await userTestUtils.getAuthToken(app);
+    } catch (error) {
+      console.error('Test setup failed:', error);
+      throw error;
+    }
+  });
+
+  afterAll(async () => {
+    try {
+      await adminTestUtils.cleanup();
+      await userTestUtils.cleanup();
+    } catch (error) {
+      console.error('Test cleanup failed:', error);
+    }
   });
 
   describe('POST /customers', () => {
     it('should create a new customer profile', async () => {
       const customerData = {
-        phone_number: '+254712345678',
-        address: '123 Test Street'
+        user_id: userId,
+        phone_number: '1234567890',
+        address: '123 Test St'
       };
-
-      const token = await userTestUtils.getAuthToken(app);
-      const testUser = await userTestUtils.getTestUser();
 
       const response = await request(app)
         .post('/customers')
-        .set('Authorization', `Bearer ${token}`)
-        .send({
-          ...customerData,
-          user_id: testUser!.user_id
-        });
+        .set('Authorization', `Bearer ${userToken}`)
+        .send(customerData);
 
       expect(response.status).toBe(201);
       expect(response.body.message).toBe('Customer created successfully');
       expect(response.body).toHaveProperty('customer');
-      expect(response.body.customer).toHaveProperty('customer_id');
+      expect(response.body.customer.phone_number).toBe(customerData.phone_number);
+      expect(response.body.customer.address).toBe(customerData.address);
       customerId = response.body.customer.customer_id;
     });
 
     it('should not create customer profile with invalid data', async () => {
       const invalidData = {
-        // Missing required phone_number
-        address: '123 Test Street'
+        user_id: userId
+        // Missing required fields
       };
-
-      const token = await userTestUtils.getAuthToken(app);
-      const testUser = await userTestUtils.getTestUser();
 
       const response = await request(app)
         .post('/customers')
-        .set('Authorization', `Bearer ${token}`)
-        .send({
-          ...invalidData,
-          user_id: testUser!.user_id
-        });
+        .set('Authorization', `Bearer ${userToken}`)
+        .send(invalidData);
 
       expect(response.status).toBe(400);
       expect(response.body.message).toBe('Customer creation failed');
@@ -75,20 +91,15 @@ describe('Customer Integration Tests', () => {
 
     it('should not create duplicate customer profile', async () => {
       const customerData = {
-        phone_number: '+254712345678',
-        address: '123 Test Street'
+        user_id: userId,
+        phone_number: '1234567890',
+        address: '123 Test St'
       };
-
-      const token = await userTestUtils.getAuthToken(app);
-      const testUser = await userTestUtils.getTestUser();
 
       const response = await request(app)
         .post('/customers')
-        .set('Authorization', `Bearer ${token}`)
-        .send({
-          ...customerData,
-          user_id: testUser!.user_id
-        });
+        .set('Authorization', `Bearer ${userToken}`)
+        .send(customerData);
 
       expect(response.status).toBe(400);
       expect(response.body.message).toBe('Customer creation failed');
@@ -97,24 +108,20 @@ describe('Customer Integration Tests', () => {
 
   describe('GET /customers/:id', () => {
     it('should get customer profile by ID', async () => {
-      const token = await userTestUtils.getAuthToken(app);
-
       const response = await request(app)
         .get(`/customers/${customerId}`)
-        .set('Authorization', `Bearer ${token}`);
+        .set('Authorization', `Bearer ${userToken}`);
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('customer');
-      expect(response.body.customer).toHaveProperty('phone_number');
-      expect(response.body.customer).toHaveProperty('address');
+      expect(response.body.customer.customer_id).toBe(customerId);
+      expect(response.body.customer.user_id).toBe(userId);
     });
 
     it('should return 404 for non-existent customer', async () => {
-      const token = await userTestUtils.getAuthToken(app);
-
       const response = await request(app)
-        .get('/customers/99999')
-        .set('Authorization', `Bearer ${token}`);
+        .get('/customers/9999')
+        .set('Authorization', `Bearer ${userToken}`);
 
       expect(response.status).toBe(404);
       expect(response.body.message).toBe('Customer not found');
@@ -123,34 +130,27 @@ describe('Customer Integration Tests', () => {
 
   describe('PUT /customers/:id', () => {
     it('should update customer profile', async () => {
-      const updateData = {
-        phone_number: '+254787654321',
-        address: '456 Updated Street'
+      const updatedData = {
+        phone_number: '9876543210',
+        address: '456 Update St'
       };
-
-      const token = await userTestUtils.getAuthToken(app);
 
       const response = await request(app)
         .put(`/customers/${customerId}`)
-        .set('Authorization', `Bearer ${token}`)
-        .send(updateData);
+        .set('Authorization', `Bearer ${userToken}`)
+        .send(updatedData);
 
       expect(response.status).toBe(200);
       expect(response.body.message).toBe('Customer updated successfully');
-      expect(response.body.customer.phone_number).toBe(updateData.phone_number);
-      expect(response.body.customer.address).toBe(updateData.address);
+      expect(response.body.customer.phone_number).toBe(updatedData.phone_number);
+      expect(response.body.customer.address).toBe(updatedData.address);
     });
 
     it('should return 404 for updating non-existent customer', async () => {
-      const token = await userTestUtils.getAuthToken(app);
-
       const response = await request(app)
-        .put('/customers/99999')
-        .set('Authorization', `Bearer ${token}`)
-        .send({
-          phone_number: '+254787654321',
-          address: '456 Updated Street'
-        });
+        .put('/customers/9999')
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({ phone_number: '1111111111' });
 
       expect(response.status).toBe(404);
       expect(response.body.message).toBe('Customer not found');
@@ -159,26 +159,22 @@ describe('Customer Integration Tests', () => {
 
   describe('GET /customers', () => {
     it('should allow admin to get all customers', async () => {
-      const token = await adminTestUtils.getAuthToken(app);
-
       const response = await request(app)
         .get('/customers')
-        .set('Authorization', `Bearer ${token}`);
+        .set('Authorization', `Bearer ${adminToken}`);
 
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('customers');
       expect(Array.isArray(response.body.customers)).toBe(true);
+      expect(response.body.customers.length).toBeGreaterThan(0);
     });
 
     it('should not allow regular users to get all customers', async () => {
-      const token = await userTestUtils.getAuthToken(app);
-
       const response = await request(app)
         .get('/customers')
-        .set('Authorization', `Bearer ${token}`);
+        .set('Authorization', `Bearer ${userToken}`);
 
       expect(response.status).toBe(403);
-      expect(response.body.message).toContain('Unauthorized');
+      expect(response.body.message).toContain('Access denied');
     });
   });
 });

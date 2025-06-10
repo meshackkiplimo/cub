@@ -61,16 +61,16 @@ export const createTestUtils = (customUser?: Partial<TestUser>) => {
     /**
      * Create a test user with optional custom options
      */
-    createTestUser: async (options: TestUserOptions = {}): Promise<void> => {
+    createTestUser: async (options: TestUserOptions = {}) => {
       const client = await pool.connect();
       try {
         const hashedPassword = await bcrypt.hash(testUser.password, 10);
-        await db.insert(UserTable).values({
+        const [user] = await db.insert(UserTable).values({
           ...testUser,
           role: options.role || testUser.role,
           password: hashedPassword,
           is_verified: options.isVerified ?? false
-        });
+        }).returning();
 
         // If isVerified is true, update the user's verification status
         if (options.isVerified) {
@@ -79,6 +79,8 @@ export const createTestUtils = (customUser?: Partial<TestUser>) => {
             .set({ is_verified: true })
             .where(eq(UserTable.email, testUser.email));
         }
+
+        return user;
       } catch (error) {
         console.error('Failed to create test user:', error);
         throw new Error('Test user creation failed');
