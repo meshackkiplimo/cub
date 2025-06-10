@@ -1,21 +1,30 @@
 import request from 'supertest';
 import { app } from '../../src/index';
-import { testUtils } from './utils';
-import { client } from '../../src/drizzle/db';
+import { createTestUtils } from './utils';
 
 describe('Car Integration Tests', () => {
- 
   let carId: number;
-  let adminAuth: any;
 
-  beforeAll(async () => {
-    await testUtils.cleanup();
-    adminAuth = await testUtils.createTestUser('admin');
+  const adminTestUtils = createTestUtils({
+    first_name: 'Admin',
+    last_name: 'User',
+    email: `admin${Date.now()}@test.com`,
+    password: 'Admin123!',
+    role: 'admin'
   });
 
-  afterAll(async () => {
-    await testUtils.cleanup();
-    await client.end();
+  const userTestUtils = createTestUtils({
+    first_name: 'Regular',
+    last_name: 'User',
+    email: `user${Date.now()}@test.com`,
+    password: 'User123!',
+    role: 'customer'
+  });
+
+  beforeAll(async () => {
+    // Create admin and regular user
+    await adminTestUtils.createTestUser({ role: 'admin', isVerified: true });
+    await userTestUtils.createTestUser({ role: 'customer', isVerified: true });
   });
 
   describe('POST /cars', () => {
@@ -30,23 +39,60 @@ describe('Car Integration Tests', () => {
         availability: true
       };
 
+      const token = await adminTestUtils.getAuthToken(app);
+
       const response = await request(app)
         .post('/cars')
-        .set('Authorization', `Bearer ${adminAuth.token}`)
+        .set('Authorization', `Bearer ${token}`)
         .send(carData);
 
       expect(response.status).toBe(201);
       expect(response.body.message).toBe('Car created successfully');
       expect(response.body).toHaveProperty('car');
-      expect(response.body.car.make).toBe(carData.make);
-      expect(response.body.car.model).toBe(carData.model);
+      expect(response.body.car).toMatchObject(carData);
       carId = response.body.car.car_id;
     });
 
+    it('should not create car with invalid data', async () => {
+      const invalidData = {
+        make: 'Toyota',
+        // Missing required fields
+      };
 
+      const token = await adminTestUtils.getAuthToken(app);
 
+      const response = await request(app)
+        .post('/cars')
+        .set('Authorization', `Bearer ${token}`)
+        .send(invalidData);
 
-})
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe('Invalid car data');
+    });
+
+    it('should not allow non-admin to create car', async () => {
+      const carData = {
+        make: 'Toyota',
+        model: 'Camry',
+        year: '2023',
+        color: 'Silver',
+        rental_rate: 100.00,
+        location_id: 1,
+        availability: true
+      };
+
+      const token = await userTestUtils.getAuthToken(app);
+
+      const response = await request(app)
+        .post('/cars')
+        .set('Authorization', `Bearer ${token}`)
+        .send(carData);
+
+      expect(response.status).toBe(403);
+      expect(response.body.message).toContain('Unauthorized');
+    });
+  });
+
   describe('GET /cars/:id', () => {
     it('should retrieve a car by ID', async () => {
       const response = await request(app)
@@ -85,9 +131,11 @@ describe('Car Integration Tests', () => {
         availability: false
       };
 
+      const token = await adminTestUtils.getAuthToken(app);
+
       const response = await request(app)
         .put(`/cars/${carId}`)
-        .set('Authorization', `Bearer ${adminAuth.token}`)
+        .set('Authorization', `Bearer ${token}`)
         .send(updatedData);
 
       expect(response.status).toBe(200);
@@ -97,37 +145,65 @@ describe('Car Integration Tests', () => {
     });
 
     it('should return 404 for non-existent car ID during update', async () => {
+      const token = await adminTestUtils.getAuthToken(app);
+
       const response = await request(app)
         .put('/cars/9999')
-        .set('Authorization', `Bearer ${adminAuth.token}`)
+        .set('Authorization', `Bearer ${token}`)
         .send({ color: 'Red' });
 
       expect(response.status).toBe(404);
       expect(response.body.message).toBe('Car not found');
     });
+
+    it('should not allow non-admin to update car', async () => {
+      const token = await userTestUtils.getAuthToken(app);
+
+      const response = await request(app)
+        .put(`/cars/${carId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ color: 'Red' });
+
+      expect(response.status).toBe(403);
+      expect(response.body.message).toContain('Unauthorized');
+    });
   });
 
   describe('DELETE /cars/:id', () => {
-    it('should delete a car by ID', async () => {
+    it('should not allow non-admin to delete car', async () => {
+      const token = await userTestUtils.getAuthToken(app);
+
       const response = await request(app)
         .delete(`/cars/${carId}`)
-        .set('Authorization', `Bearer ${adminAuth.token}`)
+        .set('Authorization', `Bearer ${token}`)
         .send();
+
+      expect(response.status).toBe(403);
+      expect(response.body.message).toContain('Unauthorized');
+    });
+
+    it('should delete a car by ID', async () => {
+      const token = await adminTestUtils.getAuthToken(app);
+
+      const response = await request(app)
+        .delete(`/cars/${carId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send();
+
       expect(response.status).toBe(200);
       expect(response.body.message).toBe('Car deleted successfully');
-    }
-    );
+    });
+
     it('should return 404 for non-existent car ID during deletion', async () => {
+      const token = await adminTestUtils.getAuthToken(app);
+
       const response = await request(app)
         .delete('/cars/9999')
-        .set('Authorization', `Bearer ${adminAuth.token}`)
+        .set('Authorization', `Bearer ${token}`)
         .send();
 
       expect(response.status).toBe(404);
       expect(response.body.message).toBe('Car not found');
     });
-  }
-  );
-
-
-})
+  });
+});

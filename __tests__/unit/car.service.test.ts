@@ -25,8 +25,8 @@ jest.mock('../../src/drizzle/db', () => ({
 describe('Car Management', () => {
     const mockCar = {
         car_id: 1,
-        manufacturer: 'Toyota',
-        car_model: 'Camry',
+        make: 'Toyota',
+        model: 'Camry',
         year: '2024',
         color: 'Blue',
         availability: true,

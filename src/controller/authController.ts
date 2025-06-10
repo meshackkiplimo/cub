@@ -38,7 +38,7 @@ export const creatUserController = async (req: Request, res: Response) => {
             
             // Registration successful with email sent
             res.status(201).json({ 
-                message: "Registration successful! We've sent a verification code to your email. Please verify your email to enable login.", 
+                message: "Registration successful! We have sent a verification code to your email. Please verify your email to enable login.", 
                 user: {
                     id: createUser.user_id,
                     first_name: createUser.first_name,

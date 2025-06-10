@@ -1,80 +1,115 @@
 import request from 'supertest';
-import { app } from '../../src/index';
-import { client } from '../../src/drizzle/db';
+import bcrypt from 'bcryptjs';
+import { eq } from 'drizzle-orm';
+import db from '@/drizzle/db';
+import { UserTable } from '@/drizzle/schema';
 
-export const testUtils = {
-  // Helper to create a test user and get auth token
-  async getAuthToken(role: 'customer' | 'admin' = 'customer') {
-    const userData = {
-      first_name: 'Test',
-      last_name: 'User',
-      email: 'wamahiucharles123@gmail.com',
-      password: 'Test123!',
-      role: role
-    };
+// Types for test data
+interface TestUser {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  role?: string;
+}
 
-    const response = await request(app)
-      .post('/auth/register')
-      .send(userData);
+interface TestUserOptions {
+  role?: string;
+  isVerified?: boolean;
+}
 
-    return response.body.token;
-  },
-
-  // Helper to clean up test data
-  async cleanup() {
-    try {
-      // Clean up test data in correct order to avoid foreign key constraints
-      await client.query('DELETE FROM customer WHERE user_id IN (SELECT user_id FROM "user" WHERE email LIKE \'test%\')');
-      await client.query('DELETE FROM car WHERE car_id IN (SELECT car_id FROM car WHERE rental_rate = 100.00)');
-      await client.query('DELETE FROM "user" WHERE email LIKE \'test%\' OR email LIKE \'admin%\'');
-    } catch (error) {
-      console.error('Cleanup error:', error);
-    }
-  },
-
-  // Helper to create authenticated request object
-  createAuthenticatedRequest(token: string) {
-    return {
-      post: (url: string) => 
-        request(app)
-          .post(url)
-          .set('Authorization', `Bearer ${token}`),
-          
-      get: (url: string) => 
-        request(app)
-          .get(url)
-          .set('Authorization', `Bearer ${token}`),
-          
-      put: (url: string) => 
-        request(app)
-          .put(url)
-          .set('Authorization', `Bearer ${token}`),
-          
-      delete: (url: string) => 
-        request(app)
-          .delete(url)
-          .set('Authorization', `Bearer ${token}`)
-    };
-  },
-
-  // Helper to create a test user
-  async createTestUser(role: 'customer' | 'admin' = 'customer') {
-    const userData = {
-      first_name: 'Test',
-      last_name: 'User',
-      email: "wamahiucharlaasssaes1sss23@gmail.com",
-      password: 'Test123!',
-      role
-    };
-
-    const response = await request(app)
-      .post('/auth/register')
-      .send(userData);
-
-    return {
-      token: response.body.user.token,
-      userId: response.body.user.id,
-      user: response.body.user
-    };
-  }
+// Default test user data
+const defaultTestUser: TestUser = {
+  first_name: "Test",
+  last_name: "User",
+  email: "testuser@mail.com",
+  password: "testpass123",
+  role: "customer"
 };
+
+/**
+ * Create a test utils instance with custom user data
+ */
+export const createTestUtils = (customUser?: Partial<TestUser>) => {
+  const testUser: TestUser = { ...defaultTestUser, ...customUser };
+
+  return {
+    /**
+     * Get test user credentials
+     */
+    getCredentials: () => ({
+      email: testUser.email,
+      password: testUser.password
+    }),
+
+    /**
+     * Clean up test user data
+     */
+    cleanup: async (): Promise<void> => {
+      try {
+        await db.delete(UserTable)
+          .where(eq(UserTable.email, testUser.email));
+      } catch (error) {
+        console.error('Failed to cleanup test user:', error);
+        throw new Error('Test cleanup failed');
+      }
+    },
+
+    /**
+     * Create a test user with optional custom options
+     */
+    createTestUser: async (options: TestUserOptions = {}): Promise<void> => {
+      try {
+        const hashedPassword = await bcrypt.hash(testUser.password, 10);
+        await db.insert(UserTable).values({
+          ...testUser,
+          ...options,
+          password: hashedPassword
+        });
+      } catch (error) {
+        console.error('Failed to create test user:', error);
+        throw new Error('Test user creation failed');
+      }
+    },
+
+    /**
+     * Get test user from database
+     */
+    getTestUser: async () => {
+      try {
+        return await db.query.UserTable.findFirst({
+          where: eq(UserTable.email, testUser.email)
+        });
+      } catch (error) {
+        console.error('Failed to get test user:', error);
+        throw new Error('Failed to retrieve test user');
+      }
+    },
+
+    /**
+     * Get authentication token for test user
+     */
+    getAuthToken: async (app: any): Promise<string> => {
+      try {
+        const response = await request(app)
+          .post('/api/auth/login')
+          .send({
+            email: testUser.email,
+            password: testUser.password
+          });
+
+        if (!response.body.token) {
+          throw new Error('No token returned from login');
+        }
+
+        return response.body.token;
+      } catch (error) {
+        console.error('Failed to get auth token:', error);
+        throw new Error('Auth token retrieval failed');
+      }
+    }
+  };
+};
+
+// Export default instance with default test user
+export const testUtils = createTestUtils();

@@ -13,7 +13,8 @@
     "seed": "tsx src/drizzle/seed.ts",
     "stress:cars":"",
     "soak:cars": "k6 run loadtest/soak/car.get.soak.ts",
-      "breakpoint:cars": "k6 run loadtest/breakpoint/car.get.breakpoint.ts"
+    "breakpoint:cars": "k6 run loadtest/breakpoint/car.get.breakpoint.ts",
+    "smoke:login": "k6 run loadtest/smoke/login.test.ts"
   },
   "keywords": [],
   "author": "",
