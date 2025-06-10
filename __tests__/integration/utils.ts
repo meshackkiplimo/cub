@@ -1,7 +1,7 @@
 import request from 'supertest';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
-import db from '@/drizzle/db';
+import db, { pool } from '@/drizzle/db';
 import { UserTable } from '@/drizzle/schema';
 
 // Types for test data
@@ -46,12 +46,15 @@ export const createTestUtils = (customUser?: Partial<TestUser>) => {
      * Clean up test user data
      */
     cleanup: async (): Promise<void> => {
+      const client = await pool.connect();
       try {
         await db.delete(UserTable)
           .where(eq(UserTable.email, testUser.email));
       } catch (error) {
         console.error('Failed to cleanup test user:', error);
         throw new Error('Test cleanup failed');
+      } finally {
+        client.release();
       }
     },
 
@@ -59,16 +62,28 @@ export const createTestUtils = (customUser?: Partial<TestUser>) => {
      * Create a test user with optional custom options
      */
     createTestUser: async (options: TestUserOptions = {}): Promise<void> => {
+      const client = await pool.connect();
       try {
         const hashedPassword = await bcrypt.hash(testUser.password, 10);
         await db.insert(UserTable).values({
           ...testUser,
-          ...options,
-          password: hashedPassword
+          role: options.role || testUser.role,
+          password: hashedPassword,
+          is_verified: options.isVerified ?? false
         });
+
+        // If isVerified is true, update the user's verification status
+        if (options.isVerified) {
+          await db
+            .update(UserTable)
+            .set({ is_verified: true })
+            .where(eq(UserTable.email, testUser.email));
+        }
       } catch (error) {
         console.error('Failed to create test user:', error);
         throw new Error('Test user creation failed');
+      } finally {
+        client.release();
       }
     },
 
@@ -76,13 +91,17 @@ export const createTestUtils = (customUser?: Partial<TestUser>) => {
      * Get test user from database
      */
     getTestUser: async () => {
+      const client = await pool.connect();
       try {
-        return await db.query.UserTable.findFirst({
+        const user = await db.query.UserTable.findFirst({
           where: eq(UserTable.email, testUser.email)
         });
+        return user;
       } catch (error) {
         console.error('Failed to get test user:', error);
         throw new Error('Failed to retrieve test user');
+      } finally {
+        client.release();
       }
     },
 
@@ -91,14 +110,28 @@ export const createTestUtils = (customUser?: Partial<TestUser>) => {
      */
     getAuthToken: async (app: any): Promise<string> => {
       try {
+        // Verify user exists and is verified
+        const user = await db.query.UserTable.findFirst({
+          where: eq(UserTable.email, testUser.email)
+        });
+
+        if (!user) {
+          throw new Error(`Test user ${testUser.email} not found`);
+        }
+
+        if (!user.is_verified) {
+          throw new Error(`Test user ${testUser.email} is not verified`);
+        }
+
         const response = await request(app)
-          .post('/api/auth/login')
+          .post('/auth/login')
           .send({
             email: testUser.email,
             password: testUser.password
           });
 
         if (!response.body.token) {
+          console.error('Login response:', response.body);
           throw new Error('No token returned from login');
         }
 

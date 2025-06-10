@@ -1,27 +1,35 @@
 import "dotenv/config"
 import { drizzle } from 'drizzle-orm/node-postgres'; 
-import {Client} from 'pg';
+import { Pool } from 'pg';
 import * as schema from './schema';
 
-
-export const client = new Client({
+// Create a pool instead of a single client
+export const pool = new Pool({
     connectionString: process.env.DATABASE_URL as string,
-
-})
-
-const main = async () =>{
-    await client.connect();
-
-}
-main().then(() => {
-    console.log('Connected to the database');
-}).catch((error) => {
-    console.error('Error connecting to the database:', error);
 });
 
-const db = drizzle(client, {
+// Export drizzle instance with pool
+const db = drizzle(pool, {
     schema: schema,
     logger: true
-    
-})
+});
+
 export default db;
+
+// Helper to check connection
+export const checkConnection = async () => {
+    const client = await pool.connect();
+    try {
+        await client.query('SELECT 1');
+        return true;
+    } catch (error) {
+        throw error;
+    } finally {
+        client.release();
+    }
+};
+
+// Cleanup function for tests
+export const closeConnection = async () => {
+    await pool.end();
+};

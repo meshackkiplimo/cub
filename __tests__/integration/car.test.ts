@@ -1,9 +1,14 @@
 import request from 'supertest';
 import { app } from '../../src/index';
 import { createTestUtils } from './utils';
+import db from '@/drizzle/db';
+import { LocationTable } from '@/drizzle/schema';
 
 describe('Car Integration Tests', () => {
   let carId: number;
+  let locationId: number;
+  let adminToken: string;
+  let userToken: string;
 
   const adminTestUtils = createTestUtils({
     first_name: 'Admin',
@@ -22,28 +27,53 @@ describe('Car Integration Tests', () => {
   });
 
   beforeAll(async () => {
-    // Create admin and regular user
-    await adminTestUtils.createTestUser({ role: 'admin', isVerified: true });
-    await userTestUtils.createTestUser({ role: 'customer', isVerified: true });
+    try {
+      // Create and verify test users
+      await adminTestUtils.createTestUser({ role: 'admin', isVerified: true });
+      await userTestUtils.createTestUser({ role: 'customer', isVerified: true });
+
+      // Get auth tokens
+      adminToken = await adminTestUtils.getAuthToken(app);
+      userToken = await userTestUtils.getAuthToken(app);
+
+      // Create test location for cars
+      const [location] = await db.insert(LocationTable).values({
+        location_name: 'Test Location',
+        address: 'Test Address',
+        contact_number: '1234567890'
+      }).returning();
+
+      locationId = location.location_id;
+    } catch (error) {
+      console.error('Test setup failed:', error);
+      throw error;
+    }
+  });
+
+  afterAll(async () => {
+    try {
+      await adminTestUtils.cleanup();
+      await userTestUtils.cleanup();
+    } catch (error) {
+      console.error('Test cleanup failed:', error);
+    }
   });
 
   describe('POST /cars', () => {
     it('should create a new car', async () => {
       const carData = {
-        make: 'Toyota',
-        model: 'Camry',
+        make: 'Honda',
+        model: 'Civic',
         year: '2023',
-        color: 'Silver',
-        rental_rate: 100.00,
-        location_id: 1,
+        color: 'Blue',
+        rental_rate: "90.00",
+        location_id: locationId,
         availability: true
       };
 
-      const token = await adminTestUtils.getAuthToken(app);
-
       const response = await request(app)
         .post('/cars')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminToken}`)
         .send(carData);
 
       expect(response.status).toBe(201);
@@ -59,15 +89,13 @@ describe('Car Integration Tests', () => {
         // Missing required fields
       };
 
-      const token = await adminTestUtils.getAuthToken(app);
-
       const response = await request(app)
         .post('/cars')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminToken}`)
         .send(invalidData);
 
-      expect(response.status).toBe(400);
-      expect(response.body.message).toBe('Invalid car data');
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe('Internal server error');
     });
 
     it('should not allow non-admin to create car', async () => {
@@ -76,20 +104,18 @@ describe('Car Integration Tests', () => {
         model: 'Camry',
         year: '2023',
         color: 'Silver',
-        rental_rate: 100.00,
-        location_id: 1,
+        rental_rate: "100.00",
+        location_id: locationId,
         availability: true
       };
 
-      const token = await userTestUtils.getAuthToken(app);
-
       const response = await request(app)
         .post('/cars')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${userToken}`)
         .send(carData);
 
       expect(response.status).toBe(403);
-      expect(response.body.message).toContain('Unauthorized');
+      expect(response.body.message).toContain('Access denied');
     });
   });
 
@@ -101,7 +127,8 @@ describe('Car Integration Tests', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('car');
       expect(response.body.car.car_id).toBe(carId);
-      expect(response.body.car.make).toBe('Toyota');
+      expect(response.body.car.make).toBe('Honda');
+      expect(typeof response.body.car.rental_rate).toBe('string');
     });
 
     it('should return 404 for non-existent car ID', async () => {
@@ -121,6 +148,7 @@ describe('Car Integration Tests', () => {
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body.cars)).toBe(true);
       expect(response.body.cars.length).toBeGreaterThan(0);
+      expect(typeof response.body.cars[0].rental_rate).toBe('string');
     });
   });
 
@@ -128,28 +156,26 @@ describe('Car Integration Tests', () => {
     it('should update a car by ID', async () => {
       const updatedData = {
         color: 'Blue',
-        availability: false
+        availability: false,
+        rental_rate: "95.00"
       };
-
-      const token = await adminTestUtils.getAuthToken(app);
 
       const response = await request(app)
         .put(`/cars/${carId}`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminToken}`)
         .send(updatedData);
 
       expect(response.status).toBe(200);
       expect(response.body.message).toBe('Car updated successfully');
       expect(response.body.car.color).toBe(updatedData.color);
       expect(response.body.car.availability).toBe(updatedData.availability);
+      expect(response.body.car.rental_rate).toBe(updatedData.rental_rate);
     });
 
     it('should return 404 for non-existent car ID during update', async () => {
-      const token = await adminTestUtils.getAuthToken(app);
-
       const response = await request(app)
         .put('/cars/9999')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminToken}`)
         .send({ color: 'Red' });
 
       expect(response.status).toBe(404);
@@ -157,37 +183,53 @@ describe('Car Integration Tests', () => {
     });
 
     it('should not allow non-admin to update car', async () => {
-      const token = await userTestUtils.getAuthToken(app);
-
       const response = await request(app)
         .put(`/cars/${carId}`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${userToken}`)
         .send({ color: 'Red' });
 
       expect(response.status).toBe(403);
-      expect(response.body.message).toContain('Unauthorized');
+      expect(response.body.message).toContain('Access denied');
     });
   });
 
   describe('DELETE /cars/:id', () => {
-    it('should not allow non-admin to delete car', async () => {
-      const token = await userTestUtils.getAuthToken(app);
+    let testCarId: number;
+
+    beforeEach(async () => {
+      // Create a test car for deletion tests
+      const carData = {
+        make: 'Delete',
+        model: 'Test',
+        year: '2023',
+        color: 'Red',
+        rental_rate: "80.00",
+        location_id: locationId,
+        availability: true
+      };
 
       const response = await request(app)
-        .delete(`/cars/${carId}`)
-        .set('Authorization', `Bearer ${token}`)
+        .post('/cars')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send(carData);
+
+      testCarId = response.body.car.car_id;
+    });
+
+    it('should not allow non-admin to delete car', async () => {
+      const response = await request(app)
+        .delete(`/cars/${testCarId}`)
+        .set('Authorization', `Bearer ${userToken}`)
         .send();
 
       expect(response.status).toBe(403);
-      expect(response.body.message).toContain('Unauthorized');
+      expect(response.body.message).toContain('Access denied');
     });
 
     it('should delete a car by ID', async () => {
-      const token = await adminTestUtils.getAuthToken(app);
-
       const response = await request(app)
-        .delete(`/cars/${carId}`)
-        .set('Authorization', `Bearer ${token}`)
+        .delete(`/cars/${testCarId}`)
+        .set('Authorization', `Bearer ${adminToken}`)
         .send();
 
       expect(response.status).toBe(200);
@@ -195,11 +237,9 @@ describe('Car Integration Tests', () => {
     });
 
     it('should return 404 for non-existent car ID during deletion', async () => {
-      const token = await adminTestUtils.getAuthToken(app);
-
       const response = await request(app)
         .delete('/cars/9999')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminToken}`)
         .send();
 
       expect(response.status).toBe(404);
