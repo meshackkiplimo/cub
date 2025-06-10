@@ -20,8 +20,8 @@ export const getMaintenanceService = async (maintenanceId: number) => {
         with: {
             car: {
                 columns: {
-                    manufacturer: true,
-                    car_model: true,
+                    make: true,
+                    model: true,
                     year: true,
                     color: true
                 },
@@ -52,8 +52,8 @@ export const getAllMaintenanceService = async () => {
         with: {
             car: {
                 columns: {
-                    manufacturer: true,
-                    car_model: true,
+                    make: true,
+                    model: true,
                     year: true,
                     color: true
                 },
@@ -96,8 +96,8 @@ export const getCarMaintenanceHistory = async (carId: number) => {
         with: {
             car: {
                 columns: {
-                    manufacturer: true,
-                    car_model: true,
+                    make: true,
+                    model: true,
                     year: true,
                     color: true,
                     rental_rate: true

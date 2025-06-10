@@ -29,8 +29,8 @@ export const getInsuranceService = async (insuranceId: number) => {
         with: {
             car: {
                 columns: {
-                    manufacturer: true,
-                    car_model: true,
+                    make: true,
+                    model: true,
                     year: true,
                     color: true,
                     rental_rate: true
@@ -64,8 +64,8 @@ export const getAllInsurancesService = async () => {
         with: {
             car: {
                 columns: {
-                    manufacturer: true,
-                    car_model: true,
+                    make: true,
+                    model: true,
                     year: true,
                     color: true,
                     rental_rate: true

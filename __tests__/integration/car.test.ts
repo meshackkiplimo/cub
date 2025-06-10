@@ -6,14 +6,11 @@ import { client } from '../../src/drizzle/db';
 describe('Car Integration Tests', () => {
  
   let carId: number;
+  let adminAuth: any;
 
   beforeAll(async () => {
-    // Ensure the database is clean before tests
     await testUtils.cleanup();
-    // Optionally, create an admin user for testing
-    // const adminAuth = await testUtils.getAuthToken('admin');
-  
-    
+    adminAuth = await testUtils.createTestUser('admin');
   });
 
   afterAll(async () => {
@@ -35,7 +32,7 @@ describe('Car Integration Tests', () => {
 
       const response = await request(app)
         .post('/cars')
-        // .set('Authorization', `Bearer ${adminAuth.token}`)
+        .set('Authorization', `Bearer ${adminAuth.token}`)
         .send(carData);
 
       expect(response.status).toBe(201);
@@ -90,7 +87,7 @@ describe('Car Integration Tests', () => {
 
       const response = await request(app)
         .put(`/cars/${carId}`)
-        // .set('Authorization', `Bearer ${adminAuth.token}`)
+        .set('Authorization', `Bearer ${adminAuth.token}`)
         .send(updatedData);
 
       expect(response.status).toBe(200);
@@ -102,7 +99,7 @@ describe('Car Integration Tests', () => {
     it('should return 404 for non-existent car ID during update', async () => {
       const response = await request(app)
         .put('/cars/9999')
-        // .set('Authorization', `Bearer ${adminAuth.token}`)
+        .set('Authorization', `Bearer ${adminAuth.token}`)
         .send({ color: 'Red' });
 
       expect(response.status).toBe(404);
@@ -114,7 +111,7 @@ describe('Car Integration Tests', () => {
     it('should delete a car by ID', async () => {
       const response = await request(app)
         .delete(`/cars/${carId}`)
-        // .set('Authorization', `Bearer ${adminAuth.token}`)
+        .set('Authorization', `Bearer ${adminAuth.token}`)
         .send();
       expect(response.status).toBe(200);
       expect(response.body.message).toBe('Car deleted successfully');
@@ -123,7 +120,7 @@ describe('Car Integration Tests', () => {
     it('should return 404 for non-existent car ID during deletion', async () => {
       const response = await request(app)
         .delete('/cars/9999')
-        // .set('Authorization', `Bearer ${adminAuth.token}`)
+        .set('Authorization', `Bearer ${adminAuth.token}`)
         .send();
 
       expect(response.status).toBe(404);

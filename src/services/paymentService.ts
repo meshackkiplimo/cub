@@ -43,8 +43,8 @@ export const getPaymentService = async (paymentId: number) => {
                     },
                     car: {
                         columns: {
-                            manufacturer: true,
-                            car_model: true,
+                            make: true,
+                            model: true,
                             year: true
                         }
                     }
@@ -90,8 +90,8 @@ export const getAllPaymentsService = async () => {
                     },
                     car: {
                         columns: {
-                            manufacturer: true,
-                            car_model: true,
+                            make: true,
+                            model: true,
                             year: true
                         }
                     }

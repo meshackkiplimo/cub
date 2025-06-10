@@ -61,8 +61,8 @@ export const getReservationService = async (reservationId: number) => {
             },
             car: {
                 columns: {
-                    manufacturer: true,
-                    car_model: true,
+                    make: true,
+                    model: true,
                     year: true,
                     color: true,
                     rental_rate: true
@@ -102,8 +102,8 @@ export const getAllReservationsService = async () => {
             },
             car: {
                 columns: {
-                    manufacturer: true,
-                    car_model: true,
+                    make: true,
+                    model: true,
                     year: true
                 }
             }
@@ -137,8 +137,8 @@ export const getCustomerReservationsService = async (customerId: number) => {
             },
             car: {
                 columns: {
-                    manufacturer: true,
-                    car_model: true,
+                    make: true,
+                    model: true,
                     year: true,
                     color: true,
                     rental_rate: true

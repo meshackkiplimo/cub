@@ -1,8 +1,10 @@
 import { Express } from "express"
 import { createCarController, deleteCarController, getAllCarsController, getCarController, updateCarController } from "../controller/carController"
+import { adminOnly } from "../middleware/roleMiddleware"
 
 export const car = (app: Express) => {
     app.route("/cars").post(
+        adminOnly,
         async (req, res, next) => {
             try {
                 await createCarController(req, res)
@@ -33,6 +35,7 @@ export const car = (app: Express) => {
     )
 
     app.route("/cars/:id").put(
+        adminOnly,
         async (req, res, next) => {
             try {
                 await updateCarController(req, res)
@@ -43,6 +46,7 @@ export const car = (app: Express) => {
     )
 
     app.route("/cars/:id").delete(
+        adminOnly,
         async (req, res, next) => {
             try {
                 await deleteCarController(req, res)

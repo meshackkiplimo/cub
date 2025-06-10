@@ -62,7 +62,7 @@ export const testUtils = {
     const userData = {
       first_name: 'Test',
       last_name: 'User',
-      email: `test${Date.now()}@example.com`,
+      email: "wamahiucharlaasssaes1sss23@gmail.com",
       password: 'Test123!',
       role
     };
