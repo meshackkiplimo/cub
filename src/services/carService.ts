@@ -12,8 +12,8 @@ export const getCarService = async (carId: number) => {
     return await db.query.CarTable.findFirst({
         columns: {
             car_id: true,
-            manufacturer: true,
-            car_model: true,
+            make: true,
+            model: true,
             year: true,
             color: true,
             availability: true,
@@ -28,8 +28,8 @@ export const getAllCarsService = async () => {
     return await db.query.CarTable.findMany({
         columns: {
             car_id: true,
-            manufacturer: true,
-            car_model: true,
+            make: true,
+            model: true,
             year: true,
             color: true,
             availability: true,

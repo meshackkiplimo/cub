@@ -4,20 +4,16 @@ import { testUtils } from './utils';
 import { client } from '../../src/drizzle/db';
 
 describe('Customer Integration Tests', () => {
-  let authToken: string;
-  let userId: number;
+  let userAuth: any;
+  let customerId: number;
+  let adminAuth: any;
 
   beforeAll(async () => {
-    const response = await request(app)
-      .post('/api/user/register')
-      .send({
-        email: `test${Date.now()}@example.com`,
-        password: 'Test123!',
-        firstName: 'Test',
-        lastName: 'User'
-      });
+    // Create a regular user
+    userAuth = await testUtils.createTestUser('customer');
 
-    authToken = response.body.token;
+    // Create an admin user
+    adminAuth = await testUtils.createTestUser('admin');
   });
 
   afterAll(async () => {
@@ -25,80 +21,131 @@ describe('Customer Integration Tests', () => {
     await client.end();
   });
 
-  describe('POST /api/customers', () => {
+  describe('POST /customers', () => {
     it('should create a new customer profile', async () => {
       const customerData = {
-        phoneNumber: '+254712345678',
-        address: '123 Test Street'
+        phone_number: '+254712345678',
+        address: '123 Test Street',
+        user_id: userAuth.userId
       };
 
       const response = await request(app)
-        .post('/api/customer')
-        .set('Authorization', `Bearer ${authToken}`)
+        .post('/customers')
+        .set('Authorization', `Bearer ${userAuth.token}`)
         .send(customerData);
 
       expect(response.status).toBe(201);
-      expect(response.body).toHaveProperty('customer_id');
+      expect(response.body.message).toBe('Customer created successfully');
+      expect(response.body).toHaveProperty('customer');
+      expect(response.body.customer).toHaveProperty('customer_id');
+      customerId = response.body.customer.customer_id;
     });
 
     it('should not create customer profile with invalid data', async () => {
       const invalidData = {
-        phoneNumber: '', // Empty phone number
-        address: '123 Test Street'
+        // Missing required phone_number
+        address: '123 Test Street',
+        user_id: userAuth.userId
       };
 
       const response = await request(app)
-        .post('/api/customer')
-        .set('Authorization', `Bearer ${authToken}`)
+        .post('/customers')
+        .set('Authorization', `Bearer ${userAuth.token}`)
         .send(invalidData);
 
       expect(response.status).toBe(400);
+      expect(response.body.message).toBe('Customer creation failed');
+    });
+
+    it('should not create duplicate customer profile', async () => {
+      const customerData = {
+        phone_number: '+254712345678',
+        address: '123 Test Street',
+        user_id: userAuth.userId
+      };
+
+      const response = await request(app)
+        .post('/customers')
+        .set('Authorization', `Bearer ${userAuth.token}`)
+        .send(customerData);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe('Customer creation failed');
     });
   });
 
-  describe('GET /api/customers', () => {
-    it('should get customer profile', async () => {
+  describe('GET /customers/:id', () => {
+    it('should get customer profile by ID', async () => {
       const response = await request(app)
-        .get('/api/customer')
-        .set('Authorization', `Bearer ${authToken}`);
+        .get(`/customers/${customerId}`)
+        .set('Authorization', `Bearer ${userAuth.token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('phone_number');
-      expect(response.body).toHaveProperty('address');
+      expect(response.body).toHaveProperty('customer');
+      expect(response.body.customer).toHaveProperty('phone_number');
+      expect(response.body.customer).toHaveProperty('address');
+    });
+
+    it('should return 404 for non-existent customer', async () => {
+      const response = await request(app)
+        .get('/customers/99999')
+        .set('Authorization', `Bearer ${userAuth.token}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe('Customer not found');
     });
   });
 
-  describe('PUT /api/customers', () => {
+  describe('PUT /customers/:id', () => {
     it('should update customer profile', async () => {
       const updateData = {
-        phoneNumber: '+254787654321',
+        phone_number: '+254787654321',
         address: '456 Updated Street'
       };
 
       const response = await request(app)
-        .put('/api/customer')
-        .set('Authorization', `Bearer ${authToken}`)
+        .put(`/customers/${customerId}`)
+        .set('Authorization', `Bearer ${userAuth.token}`)
         .send(updateData);
 
       expect(response.status).toBe(200);
-      expect(response.body.phone_number).toBe(updateData.phoneNumber);
-      expect(response.body.address).toBe(updateData.address);
+      expect(response.body.message).toBe('Customer updated successfully');
+      expect(response.body.customer.phone_number).toBe(updateData.phone_number);
+      expect(response.body.customer.address).toBe(updateData.address);
+    });
+
+    it('should return 404 for updating non-existent customer', async () => {
+      const response = await request(app)
+        .put('/customers/99999')
+        .set('Authorization', `Bearer ${userAuth.token}`)
+        .send({
+          phone_number: '+254787654321',
+          address: '456 Updated Street'
+        });
+
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe('Customer not found');
     });
   });
 
-  describe('DELETE /api/customers', () => {
-    it('should delete customer profile', async () => {
+  describe('GET /customers', () => {
+    it('should allow admin to get all customers', async () => {
       const response = await request(app)
-        .delete('/api/customer')
-        .set('Authorization', `Bearer ${authToken}`);
+        .get('/customers')
+        .set('Authorization', `Bearer ${adminAuth.token}`);
 
       expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('customers');
+      expect(Array.isArray(response.body.customers)).toBe(true);
+    });
 
-      // Verify customer is deleted
-      const getResponse = await request(app)
-        .get('/api/customer')
-        .set('Authorization', `Bearer ${authToken}`);
-      expect(getResponse.status).toBe(404);
+    it('should not allow regular users to get all customers', async () => {
+      const response = await request(app)
+        .get('/customers')
+        .set('Authorization', `Bearer ${userAuth.token}`);
+
+      expect(response.status).toBe(403);
+      expect(response.body.message).toContain('Unauthorized');
     });
   });
 });

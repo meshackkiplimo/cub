@@ -12,6 +12,7 @@ import { reservation } from "./routes/reservationRoute";
 import { insurance } from "./routes/insuranceRoute";
 import { maintenance } from "./routes/maintenanceRoute";
 import { payment } from "./routes/paymentRoute";
+import { logger } from "./middleware/logger";
 
 
 dotenv.config();
@@ -21,6 +22,7 @@ const port = process.env.PORT
 
 
 app.use(express.json())
+app.use(logger)
 
 app.get('/', (req, res) => {
   res.send('Hello ')

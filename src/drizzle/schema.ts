@@ -41,8 +41,8 @@ export const LocationTable = pgTable("location", {
 export const CarTable = pgTable("car", {
 
     car_id: serial("car_id").primaryKey(),
-    manufacturer: varchar("make", { length: 50 }).notNull(),
-    car_model: varchar("model", { length: 50 }).notNull(),
+    make: varchar("make", { length: 50 }).notNull(),
+    model: varchar("model", { length: 50 }).notNull(),
     year: varchar("year", { length: 4 }).notNull(),
     color: varchar("color", { length: 20 }).notNull(),
     availability:boolean("availability").notNull().default(true),
