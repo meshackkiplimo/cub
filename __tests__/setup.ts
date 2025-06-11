@@ -3,16 +3,28 @@ import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { sql } from 'drizzle-orm';
 import db, { pool } from '../src/drizzle/db';
 import { testUtils } from './integration/utils';
+import { emailService } from '../src/services/emailService';
+
+// Mock email service
+jest.mock('../src/services/emailService', () => ({
+  emailService: {
+    sendVerificationCode: jest.fn().mockResolvedValue('Email sent successfully')
+  }
+}));
 
 // Mock environment variables
 process.env.PORT = '5000';
 process.env.JWT_SECRET = 'test-jwt-secret-key-for-integration-tests';
 process.env.DATABASE_URL = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/car_rental_test';
+process.env.EMAIL_USER = 'test@example.com';
+process.env.EMAIL_PASSWORD = 'test-password';
 
 // Clear any mocks and test data after each test
 afterEach(async () => {
   jest.clearAllMocks();
   await testUtils.cleanup();
+  // Reset email service mock
+  (emailService.sendVerificationCode as jest.Mock).mockClear();
 });
 
 // Close database connection after all tests

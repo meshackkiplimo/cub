@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { app } from '../../src/index';
+import app  from '../../src/index';
 import { createTestUtils } from './utils';
 import db from '@/drizzle/db';
 import { CarTable, LocationTable } from '@/drizzle/schema';

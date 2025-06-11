@@ -2,7 +2,7 @@ import request from 'supertest';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import db, { pool } from '@/drizzle/db';
-import { UserTable } from '@/drizzle/schema';
+import { CustomerTable, UserTable } from '@/drizzle/schema';
 
 // Types for test data
 interface TestUser {
@@ -11,6 +11,8 @@ interface TestUser {
   email: string;
   password: string;
   role?: string;
+  phone_number?: string;
+  address?: string;
 }
 
 interface TestUserOptions {
@@ -24,7 +26,9 @@ const defaultTestUser: TestUser = {
   last_name: "User",
   email: "testuser@mail.com",
   password: "testpass123",
-  role: "customer"
+  role: "customer",
+  phone_number: "1234567890",
+  address: "123 Test St"
 };
 
 /**
@@ -35,11 +39,24 @@ export const createTestUtils = (customUser?: Partial<TestUser>) => {
 
   return {
     /**
-     * Get test user credentials
+     * Get test user credentials (for login)
      */
     getCredentials: () => ({
       email: testUser.email,
       password: testUser.password
+    }),
+
+    /**
+     * Get full registration data including customer fields
+     */
+    getRegistrationData: () => ({
+      first_name: testUser.first_name,
+      last_name: testUser.last_name,
+      email: testUser.email,
+      password: testUser.password,
+      role: testUser.role,
+      phone_number: testUser.phone_number,
+      address: testUser.address
     }),
 
     /**
@@ -65,12 +82,25 @@ export const createTestUtils = (customUser?: Partial<TestUser>) => {
       const client = await pool.connect();
       try {
         const hashedPassword = await bcrypt.hash(testUser.password, 10);
+        
+        // Create user record
         const [user] = await db.insert(UserTable).values({
-          ...testUser,
-          role: options.role || testUser.role,
+          first_name: testUser.first_name,
+          last_name: testUser.last_name,
+          email: testUser.email,
           password: hashedPassword,
+          role: options.role || testUser.role,
           is_verified: options.isVerified ?? false
         }).returning();
+
+        // If role is customer, create customer record
+        if (user.role === 'customer') {
+          await db.insert(CustomerTable).values({
+            user_id: user.user_id,
+            phone_number: testUser.phone_number || '1234567890',
+            address: testUser.address || '123 Test St'
+          });
+        }
 
         // If isVerified is true, update the user's verification status
         if (options.isVerified) {
@@ -96,7 +126,10 @@ export const createTestUtils = (customUser?: Partial<TestUser>) => {
       const client = await pool.connect();
       try {
         const user = await db.query.UserTable.findFirst({
-          where: eq(UserTable.email, testUser.email)
+          where: eq(UserTable.email, testUser.email),
+          with: {
+            customer: true
+          }
         });
         return user;
       } catch (error) {

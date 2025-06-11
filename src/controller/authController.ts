@@ -19,11 +19,13 @@ export const creatUserController = async (req: Request, res: Response) => {
         const password = userData.password;
         userData.password = await bcrypt.hashSync(password, 10);
         userData.role = userData.role || 'customer'; // Default role is customer
-        const createUser = await createAuthService(userData);
-        if (!createUser) {
-            res.status(400).json({ message: "User creation failed" });
-            return;
-        }
+        
+        try {
+            const createUser = await createAuthService(userData);
+            if (!createUser) {
+                res.status(400).json({ message: "User creation failed" });
+                return;
+            }
 
         // Generate and store verification code
         const verificationCode = generateVerificationCode();
@@ -59,6 +61,27 @@ export const creatUserController = async (req: Request, res: Response) => {
                 },
                 emailError: true
             });
+        }
+        } catch (error) {
+            if (error instanceof Error) {
+                if (error.message === 'Missing required user fields') {
+                    res.status(400).json({ message: 'Missing required user fields: first name, last name, email, and password' });
+                    return;
+                }
+                if (error.message === 'Missing required customer fields') {
+                    res.status(400).json({ message: 'Missing required customer fields: phone number and address' });
+                    return;
+                }
+                if (error.message.includes('Password must contain')) {
+                    res.status(400).json({ message: error.message });
+                    return;
+                }
+                if (error.message === 'Database error') {
+                    res.status(500).json({ message: 'Internal server error' });
+                    return;
+                }
+            }
+            throw error;
         }
     } catch (error) {
         console.error("Error in createUserController:", error);
