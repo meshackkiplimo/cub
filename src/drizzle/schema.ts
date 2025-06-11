@@ -97,18 +97,16 @@ export const CustomerRelations = relations(CustomerTable, ({ many, one }) => ({
         references: [UserTable.user_id],
     }),
     bookings: many(BookingTable),
+    reservations: many(ReservationTable)
 }));
 
 export const LocationRelations = relations(LocationTable, ({ many }) => ({
     cars: many(CarTable)
 }));
 
-// Add reservations to customer relations
-export const CustomerReservationsRelation = relations(CustomerTable, ({ many }) => ({
-    reservations: many(ReservationTable)
-}));
 
 export const CarRelations = relations(CarTable, ({ many, one }) => ({
+    reservations: many(ReservationTable),
     location: one(LocationTable, {
         fields: [CarTable.location_id],
         references: [LocationTable.location_id]

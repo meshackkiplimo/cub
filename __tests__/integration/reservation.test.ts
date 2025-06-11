@@ -51,7 +51,13 @@ describe('Reservation Integration Tests', () => {
     };
 
     // Helper function to get valid dates
-    const getValidDates = () => {
+    const getValidDates = (() => {
+        const dates = {
+            reservation_date: '',
+            pickup_date: ''
+        };
+
+        // Set the dates once to ensure consistency
         const today = new Date();
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
@@ -59,139 +65,173 @@ describe('Reservation Integration Tests', () => {
         const nextWeek = new Date(today);
         nextWeek.setDate(today.getDate() + 7);
         
-        return {
-            reservation_date: tomorrow.toISOString().split('T')[0],
-            pickup_date: nextWeek.toISOString().split('T')[0]
-        };
-    };
+        dates.reservation_date = tomorrow.toISOString().split('T')[0];
+        dates.pickup_date = nextWeek.toISOString().split('T')[0];
+
+        return () => ({ ...dates });
+    })();
 
     // Set up test data before all tests
     beforeAll(async () => {
-        // Clean up existing data in reverse order of dependencies
-        await db.delete(ReservationTable);
-        await db.delete(CarTable);
-        await db.delete(CustomerTable);
-        await db.delete(UserTable);
-        await db.delete(LocationTable);
+        try {
+            // Clean up existing data in reverse order of dependencies
+            await db.delete(ReservationTable);
+            await db.delete(CarTable);
+            await db.delete(CustomerTable);
+            await db.delete(UserTable);
+            await db.delete(LocationTable);
 
-        // Verify clean state
-        const reservations = await db.select().from(ReservationTable);
-        const cars = await db.select().from(CarTable);
-        const customers = await db.select().from(CustomerTable);
-        const users = await db.select().from(UserTable);
-        const locations = await db.select().from(LocationTable);
+            // Verify clean state
+            const existingData = await Promise.all([
+                db.select().from(ReservationTable),
+                db.select().from(CarTable),
+                db.select().from(CustomerTable),
+                db.select().from(UserTable),
+                db.select().from(LocationTable)
+            ]);
 
-        if (reservations.length > 0 || cars.length > 0 || customers.length > 0 ||
-            users.length > 0 || locations.length > 0) {
-            throw new Error('Database cleanup failed');
+            if (existingData.some(data => data.length > 0)) {
+                throw new Error('Database cleanup failed');
+            }
+        } catch (error) {
+            console.error('Error during test setup cleanup:', error);
+            throw error;
         }
 
-        // Create location
-        const locationResponse = await request(app)
-            .post('/locations')
-            .send(testLocation);
-        
-        if (!locationResponse.body.location || !locationResponse.body.location.location_id) {
-            throw new Error('Failed to create location: ' + JSON.stringify(locationResponse.body));
-        }
-        let locationId = locationResponse.body.location.location_id;
+        let locationId: number;
+        let adminToken: string;
 
-        // Create admin user for test setup
-        const adminPassword = await bcrypt.hash(testAdmin.password, 10);
-        await db.insert(UserTable)
-            .values({
-                ...testAdmin,
-                password: adminPassword,
-                is_verified: true
-            });
-
-        // Get admin token
-        const adminLoginResponse = await request(app)
-            .post('/auth/login')
-            .send({
-                email: testAdmin.email,
-                password: testAdmin.password
-            });
-
-        const adminToken = adminLoginResponse.body.token;
-
-        // Create car using admin token
-        const carResponse = await request(app)
-            .post('/cars')
-            .set('Authorization', `Bearer ${adminToken}`)
-            .send({ ...testCar, location_id: locationId });
-
-        if (!carResponse.body.car || !carResponse.body.car.car_id) {
-            throw new Error('Failed to create car: ' + JSON.stringify(carResponse.body));
-        }
-        carId = carResponse.body.car.car_id;
-
-        // Now create customer user for tests
-        const customerPassword = await bcrypt.hash(testUser.password, 10);
-        const userResult = await db.insert(UserTable)
-            .values({
-                ...testUser,
-                password: customerPassword,
-                is_verified: true
-            })
-            .returning();
-
-        if (!userResult || userResult.length === 0) {
-            throw new Error('Failed to create user');
+        // Step 1: Create location
+        try {
+            const locationResponse = await request(app)
+                .post('/locations')
+                .send(testLocation);
+            
+            if (!locationResponse.body.location?.location_id) {
+                throw new Error('Failed to create location: ' + JSON.stringify(locationResponse.body));
+            }
+            locationId = locationResponse.body.location.location_id;
+        } catch (error) {
+            console.error('Location creation failed:', error);
+            throw error;
         }
 
-        const userId = userResult[0].user_id;
+        // Step 2: Create and authenticate admin user
+        try {
+            const adminPassword = await bcrypt.hash(testAdmin.password, 10);
+            await db.insert(UserTable)
+                .values({
+                    ...testAdmin,
+                    password: adminPassword,
+                    is_verified: true
+                });
 
-        // Then create customer
-        const customerResult = await db.insert(CustomerTable)
-            .values({
-                ...testCustomer,
-                user_id: userId
-            })
-            .returning();
+            const adminLoginResponse = await request(app)
+                .post('/auth/login')
+                .send({
+                    email: testAdmin.email,
+                    password: testAdmin.password
+                });
 
-        if (!customerResult || customerResult.length === 0) {
-            throw new Error('Failed to create customer');
+            if (!adminLoginResponse.body.token) {
+                throw new Error('Admin login failed: ' + JSON.stringify(adminLoginResponse.body));
+            }
+            adminToken = adminLoginResponse.body.token;
+        } catch (error) {
+            console.error('Admin setup failed:', error);
+            throw error;
         }
 
-        customerId = customerResult[0].customer_id;
+        // Step 3: Create test car
+        try {
+            const carResponse = await request(app)
+                .post('/cars')
+                .set('Authorization', `Bearer ${adminToken}`)
+                .send({ ...testCar, location_id: locationId });
 
-        // Get auth token
-        const loginResponse = await request(app)
-            .post('/auth/login')
-            .send({
-                email: testUser.email,
-                password: testUser.password
-            });
-
-        if (!loginResponse.body.token) {
-            throw new Error('Login failed: ' + JSON.stringify(loginResponse.body));
+            if (!carResponse.body.car?.car_id) {
+                throw new Error('Failed to create car: ' + JSON.stringify(carResponse.body));
+            }
+            carId = carResponse.body.car.car_id;
+        } catch (error) {
+            console.error('Car creation failed:', error);
+            throw error;
         }
 
-        authToken = loginResponse.body.token;
+        // Step 4: Create customer user and get auth token
+        try {
+            // Create user
+            const customerPassword = await bcrypt.hash(testUser.password, 10);
+            const userResult = await db.insert(UserTable)
+                .values({
+                    ...testUser,
+                    password: customerPassword,
+                    is_verified: true
+                })
+                .returning();
 
-        // No need for authHeader variable since we use authToken directly in tests
+            if (!userResult?.[0]?.user_id) {
+                throw new Error('Failed to create user');
+            }
+
+            // Create customer
+            const customerResult = await db.insert(CustomerTable)
+                .values({
+                    ...testCustomer,
+                    user_id: userResult[0].user_id
+                })
+                .returning();
+
+            if (!customerResult?.[0]?.customer_id) {
+                throw new Error('Failed to create customer');
+            }
+            customerId = customerResult[0].customer_id;
+
+            // Get customer auth token
+            const loginResponse = await request(app)
+                .post('/auth/login')
+                .send({
+                    email: testUser.email,
+                    password: testUser.password
+                });
+
+            if (!loginResponse.body.token) {
+                throw new Error('Login failed: ' + JSON.stringify(loginResponse.body));
+            }
+            authToken = loginResponse.body.token;
+        } catch (error) {
+            console.error('Customer setup failed:', error);
+            throw error;
+        }
     });
 
     // Clean up after all tests
     afterAll(async () => {
-        // Clean up test data in reverse order of dependencies
-        await db.delete(ReservationTable);
-        await db.delete(CarTable);
-        await db.delete(CustomerTable);
-        await db.delete(UserTable);
-        await db.delete(LocationTable);
+        try {
+            // Clean up test data in reverse order of dependencies
+            await Promise.all([
+                db.delete(ReservationTable),
+                db.delete(CarTable),
+                db.delete(CustomerTable),
+                db.delete(UserTable),
+                db.delete(LocationTable)
+            ]);
 
-        // Verify cleanup
-        const reservations = await db.select().from(ReservationTable);
-        const cars = await db.select().from(CarTable);
-        const customers = await db.select().from(CustomerTable);
-        const users = await db.select().from(UserTable);
-        const locations = await db.select().from(LocationTable);
+            // Verify cleanup
+            const remainingData = await Promise.all([
+                db.select().from(ReservationTable),
+                db.select().from(CarTable),
+                db.select().from(CustomerTable),
+                db.select().from(UserTable),
+                db.select().from(LocationTable)
+            ]);
 
-        if (reservations.length > 0 || cars.length > 0 || customers.length > 0 ||
-            users.length > 0 || locations.length > 0) {
-            throw new Error('Test cleanup failed');
+            if (remainingData.some(data => data.length > 0)) {
+                throw new Error('Test cleanup failed');
+            }
+        } catch (error) {
+            console.error('Error during test cleanup:', error);
+            throw error;
         }
     });
 
@@ -214,10 +254,13 @@ describe('Reservation Integration Tests', () => {
 
             expect(response.status).toBe(201);
             expect(response.body.message).toBe('Reservation created successfully');
+            
+            const dates = getValidDates();
             expect(response.body.reservation).toMatchObject({
                 customer_id: customerId,
                 car_id: carId,
-                ...getValidDates()
+                reservation_date: dates.reservation_date,
+                pickup_date: dates.pickup_date
             });
             reservationId = response.body.reservation.reservation_id;
         });
@@ -233,6 +276,97 @@ describe('Reservation Integration Tests', () => {
 
             expect(response.status).toBe(400);
             expect(response.body.message).toBe('Missing required fields: customer_id, car_id, reservation_date, pickup_date');
+        });
+
+        it('should return 400 for invalid dates', async () => {
+            const pastDate = new Date();
+            pastDate.setDate(pastDate.getDate() - 1);
+            
+            const reservationData = {
+                customer_id: customerId,
+                car_id: carId,
+                reservation_date: pastDate.toISOString().split('T')[0],
+                pickup_date: getValidDates().pickup_date
+            };
+
+            const response = await request(app)
+                .post('/reservations')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send(reservationData);
+
+            expect(response.status).toBe(400);
+            expect(response.body.message).toBe('Reservation date cannot be in the past');
+        });
+
+        it('should return 400 if pickup date is before reservation date', async () => {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            const reservationData = {
+                customer_id: customerId,
+                car_id: carId,
+                reservation_date: tomorrow.toISOString().split('T')[0],
+                pickup_date: today.toISOString().split('T')[0]
+            };
+
+            const response = await request(app)
+                .post('/reservations')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send(reservationData);
+
+            expect(response.status).toBe(400);
+            expect(response.body.message).toBe('Pickup date must be after reservation date');
+        });
+
+        it('should return 400 if car is not available', async () => {
+            // First create a reservation to make car unavailable
+            const firstReservation = await request(app)
+                .post('/reservations')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({
+                    customer_id: customerId,
+                    car_id: carId,
+                    ...getValidDates()
+                });
+
+            expect(firstReservation.status).toBe(201);
+
+            // Try to reserve the same car
+            const response = await request(app)
+                .post('/reservations')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({
+                    customer_id: customerId,
+                    car_id: carId,
+                    ...getValidDates()
+                });
+
+            expect(response.status).toBe(400);
+            expect(response.body.message).toBe('Car is not available for reservation');
+        });
+
+        it('should return 404 when updating non-existent reservation', async () => {
+            const response = await request(app)
+                .put('/reservations/999999')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({ pickup_date: getValidDates().pickup_date });
+
+            expect(response.status).toBe(404);
+            expect(response.body.message).toBe('Reservation not found');
+        });
+
+        it('should return 400 when updating with past date', async () => {
+            const pastDate = new Date();
+            pastDate.setDate(pastDate.getDate() - 1);
+
+            const response = await request(app)
+                .put(`/reservations/${reservationId}`)
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({ pickup_date: pastDate.toISOString().split('T')[0] });
+
+            expect(response.status).toBe(400);
+            expect(response.body.message).toBe('Pickup date cannot be in the past');
         });
     });
 
@@ -265,27 +399,47 @@ describe('Reservation Integration Tests', () => {
             expect(Array.isArray(response.body.reservations)).toBe(true);
             expect(response.body.reservations.length).toBeGreaterThan(0);
         });
+
+        it('should return empty array for customer with no reservations', async () => {
+            const response = await request(app)
+                .get(`/customers/999999/reservations`)
+                .set('Authorization', `Bearer ${authToken}`);
+
+            expect(response.status).toBe(200);
+            expect(Array.isArray(response.body.reservations)).toBe(true);
+            expect(response.body.reservations.length).toBe(0);
+        });
     });
 
     describe('PUT /reservations/:id', () => {
         it('should update a reservation', async () => {
-            const dates = getValidDates();
-            const updateData = {
-                pickup_date: dates.pickup_date
-            };
+            // Get future date for update
+            const futureDate = new Date();
+            futureDate.setDate(futureDate.getDate() + 14); // Two weeks from now
+            const newPickupDate = futureDate.toISOString().split('T')[0];
 
             const response = await request(app)
                 .put(`/reservations/${reservationId}`)
                 .set('Authorization', `Bearer ${authToken}`)
-                .send(updateData);
+                .send({ pickup_date: newPickupDate });
 
             expect(response.status).toBe(200);
             expect(response.body.message).toBe('Reservation updated successfully');
-            expect(response.body.reservation.pickup_date).toBe(dates.pickup_date);
+            expect(response.body.reservation.pickup_date).toBe(newPickupDate);
         });
     });
 
     describe('POST /reservations/:id/complete', () => {
+        it('should return 400 if return date is missing', async () => {
+            const response = await request(app)
+                .post(`/reservations/${reservationId}/complete`)
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({});
+
+            expect(response.status).toBe(400);
+            expect(response.body.message).toBe('Return date is required');
+        });
+
         it('should complete a reservation', async () => {
             const returnDate = new Date().toISOString().split('T')[0];
             

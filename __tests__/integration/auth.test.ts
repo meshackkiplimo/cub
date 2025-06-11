@@ -72,6 +72,20 @@ describe('Auth Integration Tests', () => {
 
     
 
+    it('should not register user with weak password', async () => {
+      const weakPasswordUser = {
+        ...testUtils.getRegistrationData(),
+        password: 'weak'
+      };
+
+      const response = await request(app)
+        .post('/auth/register')
+        .send(weakPasswordUser);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toContain('Password must contain');
+    });
+
     it('should register user with strong password', async () => {
       const strongPasswordUser = {
         ...testUtils.getRegistrationData(),
@@ -206,6 +220,7 @@ describe('Auth Integration Tests', () => {
 
     beforeEach(async () => {
       await verifyTestUtils.cleanup();
+      jest.clearAllMocks();
     });
 
     it('should verify email with valid code', async () => {
@@ -216,20 +231,53 @@ describe('Auth Integration Tests', () => {
 
       expect(registerResponse.status).toBe(201);
 
-      // Simulate having a valid verification code
-      // Note: In a real test we'd need to mock or intercept the email service
+      // Try to verify email with invalid code
       const response = await request(app)
         .post('/auth/verify-email')
         .send({
           email: verifyTestUtils.getRegistrationData().email,
-          code: '123456' // This will fail as we can't get the real code in test
+          code: '123456'
         });
 
-      // Since we can't get the real code, we expect a 400
       expect(response.status).toBe(400);
       expect(response.body.message).toContain('Invalid or expired verification code');
     });
 
+    it('should handle missing JWT secret during login', async () => {
+      // Save current JWT secret
+      const originalJWT = process.env.JWT;
+      // Remove JWT secret
+      delete process.env.JWT;
+
+      await verifyTestUtils.createTestUser({ role: 'customer', isVerified: true });
+      const credentials = verifyTestUtils.getCredentials();
+      
+      const response = await request(app)
+        .post('/auth/login')
+        .send(credentials);
+
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe('Internal server error');
+
+      // Restore JWT secret
+      process.env.JWT = originalJWT;
+    });
+
+    it('should handle email service failure during login verification', async () => {
+      // Mock email service to fail
+      jest.mocked(emailService.sendVerificationCode).mockRejectedValueOnce(new Error('Email error'));
+
+      await verifyTestUtils.createTestUser({ role: 'customer', isVerified: false });
+      const credentials = verifyTestUtils.getCredentials();
+      
+      const response = await request(app)
+        .post('/auth/login')
+        .send(credentials);
+
+      expect(response.status).toBe(403);
+      expect(response.body.message).toContain("couldn't send a new verification code");
+      expect(response.body.emailError).toBe(true);
+    });
 
     afterAll(async () => {
       await verifyTestUtils.cleanup();

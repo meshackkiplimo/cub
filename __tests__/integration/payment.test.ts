@@ -163,7 +163,7 @@ describe('Payment Integration Tests', () => {
             paymentId = response.body.payment.payment_id;
         });
 
-        it('should return 400 if required fields are missing', async () => {
+        it('should return 400 if any required field is missing', async () => {
             const response = await request(app)
                 .post('/payments')
                 .set('Authorization', `Bearer ${authToken}`)
@@ -175,6 +175,42 @@ describe('Payment Integration Tests', () => {
             expect(response.status).toBe(400);
             expect(response.body.message).toBe('Payment creation failed');
             expect(response.body.details).toBe('Required fields: booking_id, payment_date, amount, payment_method');
+        });
+
+        it('should return 400 for invalid payment amount format', async () => {
+            const invalidPaymentData = {
+                booking_id: bookingId,
+                payment_date: new Date().toISOString().split('T')[0],
+                amount: "invalid-amount",
+                payment_method: "card"
+            };
+
+            const response = await request(app)
+                .post('/payments')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send(invalidPaymentData);
+
+            expect(response.status).toBe(400);
+            expect(response.body.message).toBe('Payment creation failed');
+            expect(response.body.details).toContain('Invalid amount format');
+        });
+
+        it('should return 400 for invalid payment method', async () => {
+            const invalidPaymentData = {
+                booking_id: bookingId,
+                payment_date: new Date().toISOString().split('T')[0],
+                amount: "500.00",
+                payment_method: "invalid-method"
+            };
+
+            const response = await request(app)
+                .post('/payments')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send(invalidPaymentData);
+
+            expect(response.status).toBe(400);
+            expect(response.body.message).toBe('Payment creation failed');
+            expect(response.body.details).toContain('Invalid payment method');
         });
     });
 
@@ -234,6 +270,19 @@ describe('Payment Integration Tests', () => {
                 .put('/payments/999999')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ payment_method: "cash" });
+            
+            expect(response.status).toBe(404);
+            expect(response.body.message).toBe('Payment not found');
+        });
+
+        it('should return 400 for invalid update data', async () => {
+            const response = await request(app)
+                .put(`/payments/${paymentId}`)
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({ payment_method: "invalid-method" });
+
+            expect(response.status).toBe(400);
+            expect(response.body.message).toBe('Invalid payment data');
 
             expect(response.status).toBe(404);
             expect(response.body.message).toBe('Payment not found');

@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { createPaymentService, deletePaymentService, getAllPaymentsService, getPaymentService, updatePaymentService } from '../services/paymentService';
 
+const VALID_PAYMENT_METHODS = ['card', 'cash', 'bank_transfer'];
+
 export const createPaymentController = async (req: Request, res: Response) => {
     try {
         const payment = req.body;
@@ -11,6 +13,22 @@ export const createPaymentController = async (req: Request, res: Response) => {
             return res.status(400).json({
                 message: "Payment creation failed",
                 details: "Required fields: booking_id, payment_date, amount, payment_method"
+            });
+        }
+
+        // Validate amount format
+        if (isNaN(parseFloat(payment.amount))) {
+            return res.status(400).json({
+                message: "Payment creation failed",
+                details: "Invalid amount format"
+            });
+        }
+
+        // Validate payment method
+        if (!VALID_PAYMENT_METHODS.includes(payment.payment_method)) {
+            return res.status(400).json({
+                message: "Payment creation failed",
+                details: "Invalid payment method. Allowed methods: card, cash, bank_transfer"
             });
         }
 
@@ -54,10 +72,26 @@ export const updatePaymentController = async (req: Request, res: Response) => {
     try {
         const paymentId = parseInt(req.params.id);
         const paymentData = req.body;
+
+        // Validate payment method if provided
+        if (paymentData.payment_method && !VALID_PAYMENT_METHODS.includes(paymentData.payment_method)) {
+            return res.status(400).json({
+                message: "Invalid payment data",
+                details: "Invalid payment method. Allowed methods: card, cash, bank_transfer"
+            });
+        }
+
+        // Validate amount if provided
+        if (paymentData.amount && isNaN(parseFloat(paymentData.amount))) {
+            return res.status(400).json({
+                message: "Invalid payment data",
+                details: "Invalid amount format"
+            });
+        }
+
         const updatedPayment = await updatePaymentService(paymentId, paymentData);
         if (!updatedPayment) {
-            res.status(404).json({ message: "Payment not found" });
-            return;
+            return res.status(404).json({ message: "Payment not found" });
         }
         res.status(200).json({ message: "Payment updated successfully", payment: updatedPayment });
     } catch (error) {

@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import db from "../drizzle/db";
-import { ReservationTable, CarTable } from "../drizzle/schema";
+import { ReservationTable, CarTable, CustomerTable } from "../drizzle/schema";
 import { TIReservation } from "../types";
 
 export const createReservationService = async (reservation: TIReservation) => {
@@ -33,7 +33,8 @@ export const createReservationService = async (reservation: TIReservation) => {
 }
 
 export const getReservationService = async (reservationId: number) => {
-    return await db.query.ReservationTable.findFirst({
+    try {
+        const result = await db.query.ReservationTable.findFirst({
         columns: {
             reservation_id: true,
             customer_id: true,
@@ -69,12 +70,19 @@ export const getReservationService = async (reservationId: number) => {
                 }
             }
         },
-        where: sql`${ReservationTable.reservation_id}=${reservationId}`
-    });
+            where: sql`${ReservationTable.reservation_id}=${reservationId}`
+        });
+        
+        return result;
+    } catch (error) {
+        console.error('Error in getReservationService:', error);
+        throw error;
+    }
 }
 
 export const getAllReservationsService = async () => {
-    return await db.query.ReservationTable.findMany({
+    try {
+        return await db.query.ReservationTable.findMany({
         columns: {
             reservation_id: true,
             customer_id: true,
@@ -108,11 +116,16 @@ export const getAllReservationsService = async () => {
                 }
             }
         }
-    });
+        });
+    } catch (error) {
+        console.error('Error in getAllReservationsService:', error);
+        throw error;
+    }
 }
 
 export const getCustomerReservationsService = async (customerId: number) => {
-    return await db.query.ReservationTable.findMany({
+    try {
+        return await db.query.ReservationTable.findMany({
         columns: {
             reservation_id: true,
             reservation_date: true,
@@ -145,8 +158,12 @@ export const getCustomerReservationsService = async (customerId: number) => {
                 }
             }
         },
-        where: sql`${ReservationTable.customer_id}=${customerId}`
-    });
+            where: sql`${ReservationTable.customer_id}=${customerId}`
+        });
+    } catch (error) {
+        console.error('Error in getCustomerReservationsService:', error);
+        throw error;
+    }
 }
 
 export const updateReservationService = async (reservationId: number, reservation: Partial<TIReservation>) => {
