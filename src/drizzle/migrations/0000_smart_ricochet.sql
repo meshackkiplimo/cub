@@ -1,10 +1,12 @@
+CREATE TYPE "public"."booking_status" AS ENUM('pending', 'completed', 'cancelled');--> statement-breakpoint
 CREATE TABLE "booking" (
 	"booking_id" serial PRIMARY KEY NOT NULL,
-	"customer_id" serial NOT NULL,
-	"car_id" serial NOT NULL,
-	"booking_date" varchar(10) NOT NULL,
-	"end_date" varchar(10) NOT NULL,
-	"total_amount" numeric(10, 2) NOT NULL
+	"customer_id" integer NOT NULL,
+	"car_id" integer NOT NULL,
+	"rental_start_date" varchar(10) NOT NULL,
+	"rental_end_date" varchar(10) NOT NULL,
+	"total_amount" numeric(10, 2) NOT NULL,
+	"status" "booking_status" DEFAULT 'pending' NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "car" (
@@ -15,19 +17,19 @@ CREATE TABLE "car" (
 	"color" varchar(20) NOT NULL,
 	"availability" boolean DEFAULT true NOT NULL,
 	"rental_rate" numeric(10, 2) NOT NULL,
-	"location_id" serial NOT NULL
+	"location_id" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "customer" (
 	"customer_id" serial PRIMARY KEY NOT NULL,
-	"user_id" serial NOT NULL,
+	"user_id" integer NOT NULL,
 	"phone" varchar(15) NOT NULL,
 	"address" varchar(255) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "insurance" (
 	"insurance_id" serial PRIMARY KEY NOT NULL,
-	"car_id" serial NOT NULL,
+	"car_id" integer NOT NULL,
 	"provider" varchar(100) NOT NULL,
 	"policy_number" varchar(50) NOT NULL,
 	"start_date" varchar(10) NOT NULL,
@@ -43,7 +45,7 @@ CREATE TABLE "location" (
 --> statement-breakpoint
 CREATE TABLE "maintenance" (
 	"maintenance_id" serial PRIMARY KEY NOT NULL,
-	"car_id" serial NOT NULL,
+	"car_id" integer NOT NULL,
 	"maintenance_date" varchar(10) NOT NULL,
 	"description" varchar(255) NOT NULL,
 	"cost" numeric(10, 2) NOT NULL
@@ -51,7 +53,7 @@ CREATE TABLE "maintenance" (
 --> statement-breakpoint
 CREATE TABLE "payment" (
 	"payment_id" serial PRIMARY KEY NOT NULL,
-	"booking_id" serial NOT NULL,
+	"booking_id" integer NOT NULL,
 	"payment_date" varchar(10) NOT NULL,
 	"amount" numeric(10, 2) NOT NULL,
 	"payment_method" varchar(50) NOT NULL
@@ -59,8 +61,8 @@ CREATE TABLE "payment" (
 --> statement-breakpoint
 CREATE TABLE "reservation" (
 	"reservation_id" serial PRIMARY KEY NOT NULL,
-	"customer_id" serial NOT NULL,
-	"car_id" serial NOT NULL,
+	"customer_id" integer NOT NULL,
+	"car_id" integer NOT NULL,
 	"start_date" varchar(10) NOT NULL,
 	"end_date" varchar(10) NOT NULL,
 	"return_date" varchar(10)

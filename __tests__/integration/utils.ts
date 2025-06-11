@@ -18,6 +18,7 @@ interface TestUser {
 interface TestUserOptions {
   role?: string;
   isVerified?: boolean;
+  skipCustomerCreation?: boolean;
 }
 
 // Default test user data
@@ -93,8 +94,8 @@ export const createTestUtils = (customUser?: Partial<TestUser>) => {
           is_verified: options.isVerified ?? false
         }).returning();
 
-        // If role is customer, create customer record
-        if (user.role === 'customer') {
+        // If role is customer and skipCustomerCreation is not true, create customer record
+        if (user.role === 'customer' && !options.skipCustomerCreation) {
           await db.insert(CustomerTable).values({
             user_id: user.user_id,
             phone_number: testUser.phone_number || '1234567890',

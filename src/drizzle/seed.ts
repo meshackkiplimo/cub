@@ -94,8 +94,8 @@ async function seed() {
 
     await db.insert(CarTable).values([
         {
-            manufacturer: "Toyota",
-            car_model: "Camry",
+            make: "Toyota",
+            model: "Camry",
             year: "2022",
             color: "Silver",
             availability: true,
@@ -103,8 +103,8 @@ async function seed() {
             location_id: 1
         },
         {
-            manufacturer: "Honda",
-            car_model: "Civic",
+            make: "Honda",
+            model: "Civic",
             year: "2021",
             color: "Blue",
             availability: true,
@@ -112,8 +112,8 @@ async function seed() {
             location_id: 2
         },
         {
-            manufacturer: "BMW",
-            car_model: "3 Series",
+            make: "BMW",
+            model: "3 Series",
             year: "2023",
             color: "Black",
             availability: true,
@@ -121,8 +121,8 @@ async function seed() {
             location_id: 3
         },
         {
-            manufacturer: "Mercedes",
-            car_model: "C-Class",
+            make: "Mercedes",
+            model: "C-Class",
             year: "2022",
             color: "White",
             availability: true,
@@ -130,8 +130,8 @@ async function seed() {
             location_id: 4
         },
         {
-            manufacturer: "Tesla",
-            car_model: "Model 3",
+            make: "Tesla",
+            model: "Model 3",
             year: "2023",
             color: "Red",
             availability: true,
@@ -139,8 +139,8 @@ async function seed() {
             location_id: 5
         },
         {
-            manufacturer: "Audi",
-            car_model: "A4",
+            make: "Audi",
+            model: "A4",
             year: "2023",
             color: "Gray",
             availability: true,
@@ -148,8 +148,8 @@ async function seed() {
             location_id: 6
         },
         {
-            manufacturer: "Lexus",
-            car_model: "ES",
+            make: "Lexus",
+            model: "ES",
             year: "2022",
             color: "Black",
             availability: true,
@@ -157,8 +157,8 @@ async function seed() {
             location_id: 7
         },
         {
-            manufacturer: "Volkswagen",
-            car_model: "Golf",
+            make: "Volkswagen",
+            model: "Golf",
             year: "2023",
             color: "Blue",
             availability: true,
@@ -166,8 +166,8 @@ async function seed() {
             location_id: 8
         },
         {
-            manufacturer: "Hyundai",
-            car_model: "Sonata",
+            make: "Hyundai",
+            model: "Sonata",
             year: "2022",
             color: "Silver",
             availability: true,
@@ -175,8 +175,8 @@ async function seed() {
             location_id: 9
         },
         {
-            manufacturer: "Ford",
-            car_model: "Mustang",
+            make: "Ford",
+            model: "Mustang",
             year: "2023",
             color: "Yellow",
             availability: true,

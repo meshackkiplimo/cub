@@ -7,12 +7,13 @@ export const createCustomerController = async (req: Request, res: Response) => {
         const customer = req.body;
         const createCustomer = await createCustomerService(customer);
         if (!createCustomer) {
-            res.status(400).json({ message: "Customer creation failed" });
+            res.status(400).json({ message: "Customer creation failed - profile may already exist for this user" });
             return;
         }
         res.status(201).json({ message: "Customer created successfully", customer: createCustomer });
     } catch (error) {
         console.error("Error in createCustomerController:", error);
+        console.error("Request body:", req.body);
         res.status(500).json({ message: "Internal server error" });
     }
 };

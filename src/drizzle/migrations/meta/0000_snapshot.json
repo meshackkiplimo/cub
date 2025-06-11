@@ -1,5 +1,5 @@
 {
-  "id": "28b65110-d3cd-4fa5-91ab-e672549c9324",
+  "id": "2b146eab-4758-44e9-9a5c-ae635b868e48",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -16,24 +16,24 @@
         },
         "customer_id": {
           "name": "customer_id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
         "car_id": {
           "name": "car_id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "booking_date": {
-          "name": "booking_date",
+        "rental_start_date": {
+          "name": "rental_start_date",
           "type": "varchar(10)",
           "primaryKey": false,
           "notNull": true
         },
-        "end_date": {
-          "name": "end_date",
+        "rental_end_date": {
+          "name": "rental_end_date",
           "type": "varchar(10)",
           "primaryKey": false,
           "notNull": true
@@ -43,6 +43,14 @@
           "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "booking_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
         }
       },
       "indexes": {},
@@ -129,7 +137,7 @@
         },
         "location_id": {
           "name": "location_id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         }
@@ -168,7 +176,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -219,7 +227,7 @@
         },
         "car_id": {
           "name": "car_id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -319,7 +327,7 @@
         },
         "car_id": {
           "name": "car_id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -376,7 +384,7 @@
         },
         "booking_id": {
           "name": "booking_id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -433,13 +441,13 @@
         },
         "customer_id": {
           "name": "customer_id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
         "car_id": {
           "name": "car_id",
-          "type": "serial",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -563,7 +571,17 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.booking_status": {
+      "name": "booking_status",
+      "schema": "public",
+      "values": [
+        "pending",
+        "completed",
+        "cancelled"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},

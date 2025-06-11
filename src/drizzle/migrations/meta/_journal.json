@@ -1,26 +1,12 @@
 {
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1686414794454,
-      "tag": "0000_thick_masque",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1686414794455,
-      "tag": "0001_foreign_key_fixes",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1686414794456,
-      "tag": "0002_add_booking_status",
+      "version": "7",
+      "when": 1749660633402,
+      "tag": "0000_smart_ricochet",
       "breakpoints": true
     }
   ]

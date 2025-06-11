@@ -52,8 +52,8 @@ export const BookingTable = pgTable("booking", {
     booking_id: serial("booking_id").primaryKey(),
     customer_id: integer("customer_id").notNull().references(() => CustomerTable.customer_id, { onDelete: 'cascade' }),
     car_id: integer("car_id").notNull().references(() => CarTable.car_id, { onDelete: 'cascade' }),
-    rental_start_date: varchar("booking_date", { length: 10 }).notNull(),
-    rental_end_date: varchar("end_date", { length: 10 }).notNull(),
+    rental_start_date: varchar("rental_start_date", { length: 10 }).notNull(),
+    rental_end_date: varchar("rental_end_date", { length: 10 }).notNull(),
     total_amount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
     status: BookingStatusEnum("status").notNull().default('pending'),
 });
