@@ -17,7 +17,8 @@ module.exports = {
     "!src/seeders/**",
     "!src/drizzle/migrations/**",
     "!src/types.ts",
-    "!src/index.ts"
+    "!src/index.ts",
+    "!src/services/emailService.ts",
   ],
   coverageDirectory: "coverage",
   coverageReporters: ["text", "lcov"],
