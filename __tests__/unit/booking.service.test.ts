@@ -170,7 +170,7 @@ describe('Booking Management', () => {
 
                 const result = await deleteBookingService(1);
                 expect(db.delete).toHaveBeenCalledWith(BookingTable);
-                expect(result[0]).toEqual(mockBooking);
+                expect(result).toEqual(mockBooking);
             });
         });
 

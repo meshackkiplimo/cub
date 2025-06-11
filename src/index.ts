@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import db, { checkConnection } from "./drizzle/db";
 
-export const app = express();
+
 import { user } from "./routes/authRoute";
 import { customer } from "./routes/customerRoute";
 import { car } from "./routes/carRoute";
@@ -14,7 +14,14 @@ import { maintenance } from "./routes/maintenanceRoute";
 import { payment } from "./routes/paymentRoute";
 import { logger } from "./middleware/logger";
 
-dotenv.config();
+const initializeApp = ()=>{
+
+  const app = express();
+
+
+
+
+  dotenv.config();
 
 const port = process.env.PORT || 5000;
 
@@ -49,16 +56,17 @@ insurance(app)
 maintenance(app)
 payment(app)
 
+return app;
+
 // Only start server if this file is run directly (not imported as a module)
-if (require.main === module) {
-  app.listen(port, async () => {
-    try {
-      await checkConnection();
-      console.log("Database connection is healthy.");
-      console.log(`Server is running on http://localhost:${port}`);
-    } catch (error) {
-      console.error("Database connection error:", error);
-      process.exit(1);
-    }
-  });
+
+  
 }
+const app =initializeApp();
+export default app;
+
+
+
+
+
+
