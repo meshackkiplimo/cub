@@ -41,16 +41,7 @@ export const CarTable = pgTable("car", {
     availability: boolean("availability").notNull().default(true),
     rental_rate: decimal("rental_rate", { precision: 10, scale: 2 }).notNull(),
     location_id: integer("location_id").notNull().references(() => LocationTable.location_id, { onDelete: 'set null' }),
-})
-
-export const ReservationTable = pgTable("reservation", {
-    reservation_id: serial("reservation_id").primaryKey(),
-    customer_id: integer("customer_id").notNull().references(() => CustomerTable.customer_id, { onDelete: 'cascade' }),
-    car_id: integer("car_id").notNull().references(() => CarTable.car_id, { onDelete: 'cascade' }),
-    reservation_date: varchar("start_date", { length: 10 }).notNull(),
-    pickup_date: varchar("end_date", { length: 10 }).notNull(),
-    return_date: varchar("return_date", { length: 10 })
-})
+});
 
 export const BookingTable = pgTable("booking", {
     booking_id: serial("booking_id").primaryKey(),
