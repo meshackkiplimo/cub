@@ -4,10 +4,19 @@ import { createPaymentService, deletePaymentService, getAllPaymentsService, getP
 export const createPaymentController = async (req: Request, res: Response) => {
     try {
         const payment = req.body;
+
+        // Validate required fields
+        if (!payment.booking_id || !payment.payment_date ||
+            !payment.amount || !payment.payment_method) {
+            return res.status(400).json({
+                message: "Payment creation failed",
+                details: "Required fields: booking_id, payment_date, amount, payment_method"
+            });
+        }
+
         const newPayment = await createPaymentService(payment);
         if (!newPayment) {
-            res.status(400).json({ message: "Payment creation failed" });
-            return;
+            return res.status(400).json({ message: "Payment creation failed" });
         }
         res.status(201).json({ message: "Payment created successfully", payment: newPayment });
     } catch (error) {
