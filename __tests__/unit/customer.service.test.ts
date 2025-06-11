@@ -47,24 +47,36 @@ describe('Customer Management', () => {
     describe('Customer Creation', () => {
         describe('Valid Customer Data', () => {
             it('should successfully create a new customer', async () => {
+                (db.query.CustomerTable.findFirst as jest.Mock)
+                    .mockResolvedValue(null);
+
                 (db.insert as jest.Mock).mockReturnValue({
-                    values: jest.fn().mockReturnValue({
-                        returning: jest.fn().mockResolvedValue([mockCustomer])
-                    })
+                    values: jest.fn().mockReturnThis(),
+                    returning: jest.fn().mockResolvedValue([mockCustomer])
                 });
 
                 const result = await createCustomerService(mockCustomer);
                 expect(db.insert).toHaveBeenCalledWith(CustomerTable);
                 expect(result).toEqual(mockCustomer);
             });
+
+            it('should return null if customer already exists', async () => {
+                (db.query.CustomerTable.findFirst as jest.Mock)
+                    .mockResolvedValue(mockCustomer);
+
+                const result = await createCustomerService(mockCustomer);
+                expect(result).toBeNull();
+            });
         });
 
         describe('Invalid Customer Data', () => {
             it('should handle database errors during creation', async () => {
+                (db.query.CustomerTable.findFirst as jest.Mock)
+                    .mockResolvedValue(null);
+
                 (db.insert as jest.Mock).mockReturnValue({
-                    values: jest.fn().mockReturnValue({
-                        returning: jest.fn().mockRejectedValue(new Error('Database error'))
-                    })
+                    values: jest.fn().mockReturnThis(),
+                    returning: jest.fn().mockRejectedValue(new Error('Database error'))
                 });
 
                 await expect(createCustomerService(mockCustomer))
@@ -124,6 +136,11 @@ describe('Customer Management', () => {
         describe('Valid Updates', () => {
             it('should successfully update existing customer', async () => {
                 const updatedCustomer = { ...mockCustomer, ...updateData };
+                
+                // Mock the existence check
+                (db.query.CustomerTable.findFirst as jest.Mock)
+                    .mockResolvedValue(mockCustomer);
+
                 (db.update as jest.Mock).mockReturnValue({
                     set: jest.fn().mockReturnThis(),
                     where: jest.fn().mockReturnThis(),
@@ -134,10 +151,25 @@ describe('Customer Management', () => {
                 expect(db.update).toHaveBeenCalledWith(CustomerTable);
                 expect(result).toEqual(updatedCustomer);
             });
+
+            it('should return null when updating non-existent customer', async () => {
+                // Mock customer not found
+                (db.query.CustomerTable.findFirst as jest.Mock)
+                    .mockResolvedValue(null);
+
+                const result = await updateCustomerService(1, updateData);
+                expect(result).toBeNull();
+                // Update should not be called if customer doesn't exist
+                expect(db.update).not.toHaveBeenCalled();
+            });
         });
 
         describe('Invalid Updates', () => {
-            it('should handle non-existent customer update', async () => {
+            it('should handle database errors during update', async () => {
+                // Mock customer exists
+                (db.query.CustomerTable.findFirst as jest.Mock)
+                    .mockResolvedValue(mockCustomer);
+
                 (db.update as jest.Mock).mockReturnValue({
                     set: jest.fn().mockReturnThis(),
                     where: jest.fn().mockReturnThis(),
@@ -166,7 +198,7 @@ describe('Customer Management', () => {
         });
 
         describe('Invalid Deletion', () => {
-            it('should handle non-existent customer deletion', async () => {
+            it('should handle database errors during deletion', async () => {
                 (db.delete as jest.Mock).mockReturnValue({
                     where: jest.fn().mockReturnThis(),
                     returning: jest.fn().mockRejectedValue(new Error('Delete failed'))
