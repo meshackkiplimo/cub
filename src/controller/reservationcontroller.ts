@@ -63,8 +63,11 @@ export const getReservationController = async (req: Request, res: Response) => {
         }
 
         res.status(200).json({ reservation });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error in getReservationController:", error);
+        if (error.message.includes("Reservation not found")) {
+            return res.status(404).json({ message: "Reservation not found" });
+        }
         res.status(500).json({ message: "Internal server error" });
     }
 }
@@ -116,8 +119,11 @@ export const updateReservationController = async (req: Request, res: Response) =
             message: "Reservation updated successfully",
             reservation: updatedReservation
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error in updateReservationController:", error);
+        if (error.message.includes("Reservation not found")) {
+            return res.status(404).json({ message: "Reservation not found" });
+        }
         res.status(500).json({ message: "Internal server error" });
     }
 }
@@ -158,8 +164,11 @@ export const deleteReservationController = async (req: Request, res: Response) =
             message: "Reservation cancelled successfully",
             note: "Car has been marked as available"
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error in deleteReservationController:", error);
+        if (error.message.includes("Reservation not found")) {
+            return res.status(404).json({ message: "Reservation not found" });
+        }
         res.status(500).json({ message: "Internal server error" });
     }
 }
