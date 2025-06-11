@@ -1,11 +1,13 @@
 import { sql } from "drizzle-orm";
 import db from "../drizzle/db";
 import { BookingTable } from "../drizzle/schema";
-import { TIBooking } from "../types";
+import { CreateBookingDto, DbBooking, UpdateBookingDto } from "../types/booking";
 
-export const createBookingService = async (booking: TIBooking) => {
-    const newBooking = await db.insert(BookingTable).values(booking).returning();
-    return newBooking[0];
+export const createBookingService = async (booking: CreateBookingDto): Promise<DbBooking | null> => {
+    const newBooking = await db.insert(BookingTable)
+        .values({ ...booking, status: 'pending' })
+        .returning();
+    return newBooking[0] || null;
 }
 
 export const getBookingService = async (bookingId: number) => {
@@ -16,7 +18,8 @@ export const getBookingService = async (bookingId: number) => {
             car_id: true,
             rental_start_date: true,
             rental_end_date: true,
-            total_amount: true
+            total_amount: true,
+            status: true
         },
         with: {
             customer: {
@@ -28,22 +31,25 @@ export const getBookingService = async (bookingId: number) => {
                 with: {
                     user: {
                         columns: {
+                            user_id: true,
                             first_name: true,
                             last_name: true,
-                            email: true
+                            email: true,
+                            role: true
                         }
                     }
                 }
             },
             car: {
                 columns: {
+                    car_id: true,
                     make: true,
-                    
-                   
                     model: true,
                     year: true,
                     color: true,
-                    rental_rate: true
+                    rental_rate: true,
+                    availability: true,
+                    location_id: true
                 }
             }
         },
@@ -59,7 +65,8 @@ export const getAllBookingsService = async () => {
             car_id: true,
             rental_start_date: true,
             rental_end_date: true,
-            total_amount: true
+            total_amount: true,
+            status: true
         },
         with: {
             customer: {
@@ -71,36 +78,58 @@ export const getAllBookingsService = async () => {
                 with: {
                     user: {
                         columns: {
+                            user_id: true,
                             first_name: true,
                             last_name: true,
-                            email: true
+                            email: true,
+                            role: true
                         }
                     }
                 }
             },
             car: {
                 columns: {
+                    car_id: true,
                     make: true,
                     model: true,
                     year: true,
                     color: true,
-                    rental_rate: true
+                    rental_rate: true,
+                    availability: true,
+                    location_id: true
                 }
             }
         }
     });
 }
 
-export const updateBookingService = async (bookingId: number, booking: Partial<TIBooking>) => {
+export const updateBookingService = async (bookingId: number, booking: UpdateBookingDto): Promise<DbBooking | null> => {
     const updatedBooking = await db.update(BookingTable)
         .set(booking)
         .where(sql`${BookingTable.booking_id}=${bookingId}`)
         .returning();
-    return updatedBooking[0];
+    return updatedBooking[0] || null;
 }
 
-export const deleteBookingService = async (bookingId: number) => {
-    return await db.delete(BookingTable)
+export const deleteBookingService = async (bookingId: number): Promise<DbBooking | null> => {
+    const deletedBooking = await db.delete(BookingTable)
         .where(sql`${BookingTable.booking_id}=${bookingId}`)
         .returning();
+    return deletedBooking[0] || null;
+}
+
+export const completeBookingService = async (bookingId: number): Promise<DbBooking | null> => {
+    const updatedBooking = await db.update(BookingTable)
+        .set({ status: 'completed' })
+        .where(sql`${BookingTable.booking_id}=${bookingId}`)
+        .returning();
+    return updatedBooking[0] || null;
+}
+
+export const cancelBookingService = async (bookingId: number): Promise<DbBooking | null> => {
+    const updatedBooking = await db.update(BookingTable)
+        .set({ status: 'cancelled' })
+        .where(sql`${BookingTable.booking_id}=${bookingId}`)
+        .returning();
+    return updatedBooking[0] || null;
 }
