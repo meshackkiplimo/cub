@@ -11,7 +11,10 @@ module.exports = {
   },
   collectCoverage: true,
   collectCoverageFrom: [
-    "src",
+    "src/**/*.{ts,tsx}",
+    "!src/__tests__/**",
+    "!src/migrations/**",
+    "!src/seeders/**",
     "!src/drizzle/migrations/**",
     "!src/types.ts",
     "!src/index.ts"

@@ -1,0 +1,1 @@
+ALTER TABLE customer RENAME COLUMN phone TO phone_number;
