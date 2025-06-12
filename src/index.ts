@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import db, { checkConnection } from "./drizzle/db";
 
 
+
+
 import { user } from "./routes/authRoute";
 import { customer } from "./routes/customerRoute";
 import { car } from "./routes/carRoute";
@@ -55,6 +57,9 @@ reservation(app)
 insurance(app)
 maintenance(app)
 payment(app)
+
+
+
 
 return app;
 

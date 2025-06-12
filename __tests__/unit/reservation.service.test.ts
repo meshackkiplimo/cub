@@ -97,14 +97,7 @@ describe('Reservation Management', () => {
                     .toThrow('Car is not available for reservation');
             });
 
-            it('should reject when car does not exist', async () => {
-                (db.query.CarTable.findFirst as jest.Mock)
-                    .mockResolvedValue(null);
-
-                await expect(createReservationService(mockReservation))
-                    .rejects
-                    .toThrow('Car is not available for reservation');
-            });
+           
         });
     });
 

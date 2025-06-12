@@ -11,7 +11,7 @@ export const pool = new Pool({
 // Export drizzle instance with pool
 const db = drizzle(pool, {
     schema: schema,
-    logger: true
+    logger: false, // Disable logging for production
 });
 
 export default db;

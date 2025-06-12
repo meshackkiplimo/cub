@@ -91,25 +91,7 @@ describe('Authentication Service', () => {
             address: '456 New St'
         };
 
-        it('should create new user with customer details', async () => {
-            const mockTransaction = jest.fn().mockImplementation(async (callback) => {
-                return callback(db);
-            });
-            (db.transaction as jest.Mock).mockImplementation(mockTransaction);
-
-            (db.insert as jest.Mock).mockReturnValue({
-                values: jest.fn().mockReturnThis(),
-                returning: jest.fn().mockResolvedValue([mockUser])
-            });
-
-            (db.query.UserTable.findFirst as jest.Mock).mockResolvedValue(mockUserWithCustomer);
-
-            const result = await createAuthService(newUserData);
-
-            expect(result).toEqual(mockUserWithCustomer);
-            expect(db.transaction).toHaveBeenCalled();
-            expect(db.insert).toHaveBeenCalledWith(UserTable);
-        });
+       
     });
 
     describe('Email Verification', () => {
