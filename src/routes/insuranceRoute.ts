@@ -1,60 +1,63 @@
-import { Express } from "express"
+import { Express, Request, Response, NextFunction } from "express";
 import {
     createInsuranceController,
     deleteInsuranceController,
     getAllInsurancesController,
     getInsuranceController,
     updateInsuranceController
-} from "../controller/insuranceController"
+} from "../controller/insuranceController";
+import { adminOnly, isAuthenticated } from "../middleware/roleMiddleware";
 
-export const insurance = (app: Express) => {
-    app.route("/insurance").post(
-        async (req, res, next) => {
-            try {
-                await createInsuranceController(req, res)
-            } catch (error) {
-                next(error)
+export const insurance = (app: Express): void => {
+    // Create insurance - Admin only
+    app.post("/insurance",
+        isAuthenticated,
+        adminOnly,
+        (req: Request, res: Response, next: NextFunction) => {
+            if (!req.body.provider || !req.body.policy_number || !req.body.car_id || 
+                !req.body.start_date || !req.body.end_date) {
+                res.status(400).json({ 
+                    message: 'Invalid insurance data',
+                    details: 'Missing required fields'
+                });
+                return;
             }
+            createInsuranceController(req, res).catch(next);
         }
-    )
+    );
 
-    app.route("/insurance").get(
-        async (req, res, next) => {
-            try {
-                await getAllInsurancesController(req, res)
-            } catch (error) {
-                next(error)
-            }
+    // Get all insurance policies - Admin only
+    app.get("/insurance",
+        isAuthenticated,
+        adminOnly,
+        (req: Request, res: Response, next: NextFunction) => {
+            getAllInsurancesController(req, res).catch(next);
         }
-    )
+    );
 
-    app.route("/insurance/:id").get(
-        async (req, res, next) => {
-            try {
-                await getInsuranceController(req, res)
-            } catch (error) {
-                next(error)
-            }
+    // Get specific insurance policy - Admin or related customer
+    app.get("/insurance/:id",
+        isAuthenticated,
+        (req: Request, res: Response, next: NextFunction) => {
+            getInsuranceController(req, res).catch(next);
         }
-    )
+    );
 
-    app.route("/insurance/:id").put(
-        async (req, res, next) => {
-            try {
-                await updateInsuranceController(req, res)
-            } catch (error) {
-                next(error)
-            }
+    // Update insurance - Admin only
+    app.put("/insurance/:id",
+        isAuthenticated,
+        adminOnly,
+        (req: Request, res: Response, next: NextFunction) => {
+            updateInsuranceController(req, res).catch(next);
         }
-    )
+    );
 
-    app.route("/insurance/:id").delete(
-        async (req, res, next) => {
-            try {
-                await deleteInsuranceController(req, res)
-            } catch (error) {
-                next(error)
-            }
+    // Delete insurance - Admin only
+    app.delete("/insurance/:id",
+        isAuthenticated,
+        adminOnly,
+        (req: Request, res: Response, next: NextFunction) => {
+            deleteInsuranceController(req, res).catch(next);
         }
-    )
-}
+    );
+};

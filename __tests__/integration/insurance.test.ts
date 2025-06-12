@@ -1,8 +1,8 @@
 import request from 'supertest';
-import  app  from '../../src/index';
+import app from '../../src/index';
 import { createTestUtils } from './utils';
-import db from '@/drizzle/db';
-import { CarTable, LocationTable } from '@/drizzle/schema';
+import db from '../../src/drizzle/db';
+import { CarTable, LocationTable } from '../../src/drizzle/schema';
 
 describe('Insurance Integration Tests', () => {
   let insuranceId: number;
@@ -29,6 +29,10 @@ describe('Insurance Integration Tests', () => {
 
   beforeAll(async () => {
     try {
+      // Clean up any existing test data
+      await adminTestUtils.cleanup();
+      await userTestUtils.cleanup();
+
       // Create and verify test users
       await adminTestUtils.createTestUser({ role: 'admin', isVerified: true });
       await userTestUtils.createTestUser({ role: 'customer', isVerified: true });
@@ -107,6 +111,7 @@ describe('Insurance Integration Tests', () => {
 
       expect(response.status).toBe(400);
       expect(response.body.message).toBe('Invalid insurance data');
+      expect(response.body.details).toBe('Missing required fields');
     });
 
     it('should not allow non-admin to create insurance', async () => {
@@ -124,7 +129,7 @@ describe('Insurance Integration Tests', () => {
         .send(insuranceData);
 
       expect(response.status).toBe(403);
-      expect(response.body.message).toContain('Access denied');
+      expect(response.body.message).toBe('Access denied. Admin role required.');
     });
   });
 
@@ -157,8 +162,8 @@ describe('Insurance Integration Tests', () => {
         .set('Authorization', `Bearer ${adminToken}`);
 
       expect(response.status).toBe(200);
-      expect(Array.isArray(response.body.insurance)).toBe(true);
-      expect(response.body.insurance.length).toBeGreaterThan(0);
+      expect(Array.isArray(response.body.insurances)).toBe(true);
+      expect(response.body.insurances.length).toBeGreaterThan(0);
     });
 
     it('should not allow regular users to get all insurance policies', async () => {
@@ -167,7 +172,7 @@ describe('Insurance Integration Tests', () => {
         .set('Authorization', `Bearer ${userToken}`);
 
       expect(response.status).toBe(403);
-      expect(response.body.message).toContain('Access denied');
+      expect(response.body.message).toBe('Access denied. Admin role required.');
     });
   });
 
@@ -189,6 +194,17 @@ describe('Insurance Integration Tests', () => {
       expect(response.body.insurance.end_date).toBe(updatedData.end_date);
     });
 
+    it('should validate update data', async () => {
+      const response = await request(app)
+        .put(`/insurance/${insuranceId}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({});
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe('Invalid insurance data');
+      expect(response.body.details).toBe('No update data provided');
+    });
+
     it('should not allow non-admin to update insurance', async () => {
       const response = await request(app)
         .put(`/insurance/${insuranceId}`)
@@ -196,7 +212,7 @@ describe('Insurance Integration Tests', () => {
         .send({ end_date: '2027-01-01' });
 
       expect(response.status).toBe(403);
-      expect(response.body.message).toContain('Access denied');
+      expect(response.body.message).toBe('Access denied. Admin role required.');
     });
   });
 
@@ -207,7 +223,7 @@ describe('Insurance Integration Tests', () => {
         .set('Authorization', `Bearer ${userToken}`);
 
       expect(response.status).toBe(403);
-      expect(response.body.message).toContain('Access denied');
+      expect(response.body.message).toBe('Access denied. Admin role required.');
     });
 
     it('should allow admin to delete insurance', async () => {

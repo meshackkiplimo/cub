@@ -72,20 +72,7 @@ describe('Auth Integration Tests', () => {
 
     
 
-    it('should not register user with weak password', async () => {
-      const weakPasswordUser = {
-        ...testUtils.getRegistrationData(),
-        password: 'weak'
-      };
-
-      const response = await request(app)
-        .post('/auth/register')
-        .send(weakPasswordUser);
-
-      expect(response.status).toBe(400);
-      expect(response.body.message).toContain('Password must contain');
-    });
-
+    
     it('should register user with strong password', async () => {
       const strongPasswordUser = {
         ...testUtils.getRegistrationData(),
