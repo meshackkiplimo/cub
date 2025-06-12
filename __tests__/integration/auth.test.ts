@@ -88,10 +88,14 @@ describe('Auth Integration Tests', () => {
     });
 
     it('should not register user with existing email', async () => {
+      const uniqueTestUtils = createTestUtils({
+        email: `duplicate_test_${Date.now()}@example.com`,
+      });
+
       // First registration
       const firstResponse = await request(app)
         .post('/auth/register')
-        .send(testUtils.getRegistrationData());
+        .send(uniqueTestUtils.getRegistrationData());
 
       expect(firstResponse.status).toBe(201);
 
@@ -99,13 +103,16 @@ describe('Auth Integration Tests', () => {
       const response = await request(app)
         .post('/auth/register')
         .send({
-          ...testUtils.getRegistrationData(),
+          ...uniqueTestUtils.getRegistrationData(),
           phone_number: '0987654321',  // Different phone number
           address: '456 Test Ave'      // Different address
         });
 
       expect(response.status).toBe(500);
       expect(response.body.message).toBe('Internal server error');
+
+      // Clean up
+      await uniqueTestUtils.cleanup();
     });
   });
 
