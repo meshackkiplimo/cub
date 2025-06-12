@@ -7,12 +7,19 @@ export const createReservationService = async (reservation: TIReservation) => {
     // Check if car is available
     const car = await db.query.CarTable.findFirst({
         columns: {
-            availability: true
+            availability: true,
+            car_id: true
         },
         where: sql`${CarTable.car_id}=${reservation.car_id}`
     });
 
-    if (!car || !car.availability) {
+    console.log('Found car:', car);
+    
+    if (!car) {
+        throw new Error("Car not found");
+    }
+    
+    if (!car.availability) {
         throw new Error("Car is not available for reservation");
     }
 

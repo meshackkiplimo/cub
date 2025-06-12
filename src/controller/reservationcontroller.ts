@@ -11,12 +11,16 @@ import {
 
 export const createReservationController = async (req: Request, res: Response) => {
     try {
+        console.log('Received reservation request:', req.body);
+        
         const reservationData = {
             customer_id: req.body.customer_id,
             car_id: req.body.car_id,
             reservation_date: req.body.reservation_date,
             pickup_date: req.body.pickup_date
         };
+        
+        console.log('Processed reservation data:', reservationData);
 
         // Validate required fields
         if (!reservationData.customer_id || !reservationData.car_id || 
