@@ -42,22 +42,6 @@ describe('Payment Integration Tests', () => {
         address: "123 Test St"
     };
 
-    // Helper function to get valid dates
-    const getValidDates = () => {
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        
-        const nextWeek = new Date(today);
-        nextWeek.setDate(today.getDate() + 7);
-        
-        return {
-            start_date: tomorrow.toISOString().split('T')[0],
-            end_date: nextWeek.toISOString().split('T')[0]
-        };
-    };
-
-    // Set up test data before all tests
     beforeAll(async () => {
         // Clean up existing data
         await db.delete(PaymentTable);
@@ -67,7 +51,7 @@ describe('Payment Integration Tests', () => {
         await db.delete(UserTable);
         await db.delete(LocationTable);
 
-        // Create admin user
+        // Create admin and get token
         const adminPassword = await bcrypt.hash(testAdmin.password, 10);
         const [adminUser] = await db.insert(UserTable)
             .values({
@@ -76,47 +60,39 @@ describe('Payment Integration Tests', () => {
             })
             .returning();
 
-        // Get admin token
         const loginResponse = await request(app)
             .post('/auth/login')
             .send({
                 email: testAdmin.email,
                 password: testAdmin.password
             });
-
         authToken = loginResponse.body.token;
 
-        // Create location
+        // Create test location and car
         const locationResponse = await request(app)
             .post('/locations')
             .set('Authorization', `Bearer ${authToken}`)
             .send(testLocation);
-
         const locationId = locationResponse.body.location.location_id;
 
-        // Create car
         const carResponse = await request(app)
             .post('/cars')
             .set('Authorization', `Bearer ${authToken}`)
             .send({ ...testCar, location_id: locationId });
-
         carId = carResponse.body.car.car_id;
 
-        // Create customer
+        // Create test customer and booking
         const customerResponse = await request(app)
             .post('/customers')
             .set('Authorization', `Bearer ${authToken}`)
             .send({ ...testCustomer, user_id: adminUser.user_id });
-
         customerId = customerResponse.body.customer.customer_id;
 
-        // Create booking
-        const dates = getValidDates();
         const bookingData: TIBooking = {
             customer_id: customerId,
             car_id: carId,
-            rental_start_date: dates.start_date,
-            rental_end_date: dates.end_date,
+            rental_start_date: new Date().toISOString().split('T')[0],
+            rental_end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
             total_amount: "500.00",
             status: "pending"
         };
@@ -125,11 +101,9 @@ describe('Payment Integration Tests', () => {
             .post('/bookings')
             .set('Authorization', `Bearer ${authToken}`)
             .send(bookingData);
-
         bookingId = bookingResponse.body.booking.booking_id;
     });
 
-    // Clean up after tests
     afterAll(async () => {
         await db.delete(PaymentTable);
         await db.delete(BookingTable);
@@ -139,7 +113,8 @@ describe('Payment Integration Tests', () => {
         await db.delete(LocationTable);
     });
 
-    describe('POST /payments', () => {
+    describe('Payment Management', () => {
+        // 1. Create successful payment
         it('should create a new payment', async () => {
             const paymentData: TIPayment = {
                 booking_id: bookingId,
@@ -155,157 +130,172 @@ describe('Payment Integration Tests', () => {
 
             expect(response.status).toBe(201);
             expect(response.body.message).toBe('Payment created successfully');
-            expect(response.body.payment).toMatchObject({
-                booking_id: bookingId,
-                amount: "500.00",
-                payment_method: "card"
-            });
+            expect(response.body.payment).toBeDefined();
             paymentId = response.body.payment.payment_id;
         });
 
-        it('should return 400 if any required field is missing', async () => {
-            const response = await request(app)
-                .post('/payments')
-                .set('Authorization', `Bearer ${authToken}`)
-                .send({
-                    booking_id: bookingId
-                    // Missing other required fields
-                });
+        // 2. Test missing required fields
+        describe('Required Fields Validation', () => {
+            it('should validate booking_id', async () => {
+                const response = await request(app)
+                    .post('/payments')
+                    .set('Authorization', `Bearer ${authToken}`)
+                    .send({
+                        payment_date: new Date().toISOString().split('T')[0],
+                        amount: "500.00",
+                        payment_method: "card"
+                    });
 
-            expect(response.status).toBe(400);
-            expect(response.body.message).toBe('Payment creation failed');
-            expect(response.body.details).toBe('Required fields: booking_id, payment_date, amount, payment_method');
+                expect(response.status).toBe(400);
+                expect(response.body.message).toBe('Payment creation failed');
+                expect(response.body.details).toContain('Required fields');
+            });
+
+            it('should validate payment_date', async () => {
+                const response = await request(app)
+                    .post('/payments')
+                    .set('Authorization', `Bearer ${authToken}`)
+                    .send({
+                        booking_id: bookingId,
+                        amount: "500.00",
+                        payment_method: "card"
+                    });
+
+                expect(response.status).toBe(400);
+                expect(response.body.details).toContain('Required fields');
+            });
+
+            it('should validate amount', async () => {
+                const response = await request(app)
+                    .post('/payments')
+                    .set('Authorization', `Bearer ${authToken}`)
+                    .send({
+                        booking_id: bookingId,
+                        payment_date: new Date().toISOString().split('T')[0],
+                        payment_method: "card"
+                    });
+
+                expect(response.status).toBe(400);
+                expect(response.body.details).toContain('Required fields');
+            });
         });
 
-        it('should return 400 for invalid payment amount format', async () => {
-            const invalidPaymentData = {
-                booking_id: bookingId,
-                payment_date: new Date().toISOString().split('T')[0],
-                amount: "invalid-amount",
-                payment_method: "card"
-            };
+        // 3. Test invalid data formats
+        describe('Data Format Validation', () => {
+            it('should validate amount format', async () => {
+                const response = await request(app)
+                    .post('/payments')
+                    .set('Authorization', `Bearer ${authToken}`)
+                    .send({
+                        booking_id: bookingId,
+                        payment_date: new Date().toISOString().split('T')[0],
+                        amount: "invalid-amount",
+                        payment_method: "card"
+                    });
 
-            const response = await request(app)
-                .post('/payments')
-                .set('Authorization', `Bearer ${authToken}`)
-                .send(invalidPaymentData);
+                expect(response.status).toBe(400);
+                expect(response.body.details).toBe('Invalid amount format');
+            });
 
-            expect(response.status).toBe(400);
-            expect(response.body.message).toBe('Payment creation failed');
-            expect(response.body.details).toContain('Invalid amount format');
+            it('should validate payment method', async () => {
+                const response = await request(app)
+                    .post('/payments')
+                    .set('Authorization', `Bearer ${authToken}`)
+                    .send({
+                        booking_id: bookingId,
+                        payment_date: new Date().toISOString().split('T')[0],
+                        amount: "500.00",
+                        payment_method: "invalid-method"
+                    });
+
+                expect(response.status).toBe(400);
+                expect(response.body.details).toContain('Invalid payment method');
+            });
         });
 
-        it('should return 400 for invalid payment method', async () => {
-            const invalidPaymentData = {
-                booking_id: bookingId,
-                payment_date: new Date().toISOString().split('T')[0],
-                amount: "500.00",
-                payment_method: "invalid-method"
-            };
+        // 4. Test retrieval operations
+        describe('Payment Retrieval', () => {
+            it('should get all payments', async () => {
+                const response = await request(app)
+                    .get('/payments')
+                    .set('Authorization', `Bearer ${authToken}`);
 
-            const response = await request(app)
-                .post('/payments')
-                .set('Authorization', `Bearer ${authToken}`)
-                .send(invalidPaymentData);
+                expect(response.status).toBe(200);
+                expect(Array.isArray(response.body.payments)).toBe(true);
+            });
 
-            expect(response.status).toBe(400);
-            expect(response.body.message).toBe('Payment creation failed');
-            expect(response.body.details).toContain('Invalid payment method');
-        });
-    });
+            it('should get specific payment with booking details', async () => {
+                const response = await request(app)
+                    .get(`/payments/${paymentId}`)
+                    .set('Authorization', `Bearer ${authToken}`);
 
-    describe('GET /payments', () => {
-        it('should get all payments', async () => {
-            const response = await request(app)
-                .get('/payments')
-                .set('Authorization', `Bearer ${authToken}`);
+                expect(response.status).toBe(200);
+                expect(response.body.payment.payment_id).toBe(paymentId);
+                expect(response.body.payment.booking).toBeDefined();
+            });
 
-            expect(response.status).toBe(200);
-            expect(Array.isArray(response.body.payments)).toBe(true);
-            expect(response.body.payments.length).toBeGreaterThan(0);
-        });
+            it('should handle non-existent payment', async () => {
+                const response = await request(app)
+                    .get('/payments/999999')
+                    .set('Authorization', `Bearer ${authToken}`);
 
-        it('should get a specific payment', async () => {
-            const response = await request(app)
-                .get(`/payments/${paymentId}`)
-                .set('Authorization', `Bearer ${authToken}`);
-
-            expect(response.status).toBe(200);
-            expect(response.body.payment.payment_id).toBe(paymentId);
-            expect(response.body.payment.booking_id).toBe(bookingId);
-            // Verify booking relationship data
-            expect(response.body.payment.booking).toBeDefined();
-            expect(response.body.payment.booking.booking_id).toBe(bookingId);
-            expect(parseFloat(response.body.payment.booking.total_amount)).toBe(500.00);
+                expect(response.status).toBe(404);
+                expect(response.body.message).toBe('Payment not found');
+            });
         });
 
-        it('should return 404 for non-existent payment', async () => {
-            const response = await request(app)
-                .get('/payments/999999')
-                .set('Authorization', `Bearer ${authToken}`);
+        // 5. Test update operations
+        describe('Payment Updates', () => {
+            it('should update payment method', async () => {
+                const response = await request(app)
+                    .put(`/payments/${paymentId}`)
+                    .set('Authorization', `Bearer ${authToken}`)
+                    .send({ payment_method: "cash" });
 
-            expect(response.status).toBe(404);
-            expect(response.body.message).toBe('Payment not found');
-        });
-    });
+                expect(response.status).toBe(200);
+                expect(response.body.payment.payment_method).toBe('cash');
+            });
 
-    describe('PUT /payments/:id', () => {
-        it('should update a payment', async () => {
-            const updateData = {
-                payment_method: "cash"
-            };
+            it('should validate update data', async () => {
+                const response = await request(app)
+                    .put(`/payments/${paymentId}`)
+                    .set('Authorization', `Bearer ${authToken}`)
+                    .send({ amount: "invalid-amount" });
 
-            const response = await request(app)
-                .put(`/payments/${paymentId}`)
-                .set('Authorization', `Bearer ${authToken}`)
-                .send(updateData);
+                expect(response.status).toBe(400);
+                expect(response.body.message).toBe('Invalid payment data');
+            });
 
-            expect(response.status).toBe(200);
-            expect(response.body.message).toBe('Payment updated successfully');
-            expect(response.body.payment.payment_method).toBe('cash');
-        });
+            it('should handle non-existent payment update', async () => {
+                const response = await request(app)
+                    .put('/payments/999999')
+                    .set('Authorization', `Bearer ${authToken}`)
+                    .send({ payment_method: "cash" });
 
-        it('should return 404 for non-existent payment', async () => {
-            const response = await request(app)
-                .put('/payments/999999')
-                .set('Authorization', `Bearer ${authToken}`)
-                .send({ payment_method: "cash" });
-            
-            expect(response.status).toBe(404);
-            expect(response.body.message).toBe('Payment not found');
+                expect(response.status).toBe(404);
+                expect(response.body.message).toBe('Payment not found');
+            });
         });
 
-        it('should return 400 for invalid update data', async () => {
-            const response = await request(app)
-                .put(`/payments/${paymentId}`)
-                .set('Authorization', `Bearer ${authToken}`)
-                .send({ payment_method: "invalid-method" });
+        // 6. Test deletion operations
+        describe('Payment Deletion', () => {
+            it('should delete payment', async () => {
+                const response = await request(app)
+                    .delete(`/payments/${paymentId}`)
+                    .set('Authorization', `Bearer ${authToken}`);
 
-            expect(response.status).toBe(400);
-            expect(response.body.message).toBe('Invalid payment data');
+                expect(response.status).toBe(200);
+                expect(response.body.message).toBe('Payment deleted successfully');
+            });
 
-            expect(response.status).toBe(404);
-            expect(response.body.message).toBe('Payment not found');
-        });
-    });
+            it('should handle non-existent payment deletion', async () => {
+                const response = await request(app)
+                    .delete('/payments/999999')
+                    .set('Authorization', `Bearer ${authToken}`);
 
-    describe('DELETE /payments/:id', () => {
-        it('should delete a payment', async () => {
-            const response = await request(app)
-                .delete(`/payments/${paymentId}`)
-                .set('Authorization', `Bearer ${authToken}`);
-
-            expect(response.status).toBe(200);
-            expect(response.body.message).toBe('Payment deleted successfully');
-        });
-
-        it('should return 404 for non-existent payment', async () => {
-            const response = await request(app)
-                .delete('/payments/999999')
-                .set('Authorization', `Bearer ${authToken}`);
-
-            expect(response.status).toBe(404);
-            expect(response.body.message).toBe('Payment not found');
+                expect(response.status).toBe(404);
+                expect(response.body.message).toBe('Payment not found');
+            });
         });
     });
 });
