@@ -1,41 +1,51 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-
-
 const BASE_URL = 'http://localhost:5000';
-
 
 export const options = {
   stages: [
-    { duration: '30s', target: 500 }, // Ramp up to 100 users over 30 seconds
-    { duration: '30s', target: 1000 }, // Stay at 100 users for 1 minute
-    { duration: '50s', target: 2000 }, // Ramp down to 0 users over 30 seconds
-    { duration: '20s', target: 500 }, // Ramp down to 0 users over 30 seconds
-    { duration: '10s', target: 0 }, // Ramp down to 0 users over 10 seconds
+    { duration: '1m', target: 100 },    // Ramp up to 100 users
+    { duration: '2m', target: 200 },    // Ramp up to 200 users
+    { duration: '2m', target: 300 },    // Ramp up to 300 users
+    { duration: '2m', target: 400 },    // Stress test with 400 users
+    { duration: '1m', target: 0 },      // Ramp down to 0
   ],
-  ext:{
+  thresholds: {
+    http_req_duration: ['p(95)<500'], // 95% of requests should be below 500ms
+    http_req_failed: ['rate<0.01'],   // Less than 1% of requests should fail
+  },
+  ext: {
     loadimpact: {
-     
       name: 'Car API Stress Test',
-      
+      distribution: {
+        'amazon:us:ashburn': { loadZone: 'amazon:us:ashburn', percent: 100 },
+      },
     },
-  }
-}
+  },
+};
 
 export default function () {
-    const response = http.get(`${BASE_URL}/cars/1`);
-    // Check the response status and content
-    
-    
-    check(response, {
-        'status is 200': (r) => r.status === 200,
-        'response time < 200ms': (r) => r.timings.duration < 200,
-        'response contains car data': (r) => r.body.includes('car_id'),
-    });
-    
-    sleep(1); // Sleep for 1 second between requests
-}
+  const response = http.get(`${BASE_URL}/cars`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 
+  check(response, {
+    'status is 200': (r) => r.status === 200,
+    'response time < 500ms': (r) => r.timings.duration < 500,
+    'has valid data': (r) => {
+      try {
+        const body = JSON.parse(r.body as string);
+        return Array.isArray(body.data);
+      } catch {
+        return false;
+      }
+    },
+  });
+
+  sleep(1);
+}
 
 

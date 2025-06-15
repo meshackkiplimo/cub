@@ -34,7 +34,7 @@ export const getCarController = async (req: Request, res: Response) => {
 export const getAllCarsController = async (req: Request, res: Response) => {
     try {
         const cars = await getAllCarsService();
-        res.status(200).json({ cars });
+        res.status(200).json({ data: cars });
     } catch (error) {
         console.error("Error in getAllCarsController:", error);
         res.status(500).json({ message: "Internal server error" });

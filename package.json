@@ -11,10 +11,11 @@
     "generate": "drizzle-kit generate",
     "migrate": "tsx src/drizzle/migrate.ts",
     "seed": "tsx src/drizzle/seed.ts",
-    "stress:cars":"",
+    "stress:cars":"k6 run loadtest/stress/car.get.stress.ts",
     "soak:cars": "k6 run loadtest/soak/car.get.soak.ts",
     "breakpoint:cars": "k6 run loadtest/breakpoint/car.get.breakpoint.ts",
-    "smoke:login": "k6 run loadtest/smoke/login.test.ts"
+    "smoke:login": "k6 run loadtest/smoke/login.test.ts",
+    "spike:book": "k6 run loadtest/spike/car.test.ts"
   },
   "keywords": [],
   "author": "",
