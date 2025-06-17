@@ -15,17 +15,26 @@ import { insurance } from "./routes/insuranceRoute";
 import { maintenance } from "./routes/maintenanceRoute";
 import { payment } from "./routes/paymentRoute";
 import { logger } from "./middleware/logger";
+import cors from "cors";
 
-const initializeApp = ()=>{
-
-  const app = express();
-
+  
 
 
 
-  dotenv.config();
+dotenv.config();
 
 const port = process.env.PORT || 5000;
+const app = express();
+
+// cors for all origins
+app.use(cors({
+  origin: 'http://localhost:5173', // Allow all origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific methods
+
+}));
+
+
+
 
 app.use(express.json())
 app.use(logger)
@@ -57,18 +66,21 @@ reservation(app)
 insurance(app)
 maintenance(app)
 payment(app)
+app.listen(port, async () => {
+    try {
+      await checkConnection();
+      console.log("Database connection is healthy.");
+      console.log(`Server is running on http://localhost:${port}`);
+    } catch (error) {
+      console.error("Database connection error:", error);
+      process.exit(1);
+    }
+  });
 
 
 
 
-return app;
 
-// Only start server if this file is run directly (not imported as a module)
-
-  
-}
-const app =initializeApp();
-export default app;
 
 
 

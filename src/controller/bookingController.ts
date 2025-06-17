@@ -71,19 +71,14 @@ export const getBookingController = async (req: Request, res: Response) => {
 
 export const getAllBookingsController = async (req: Request, res: Response) => {
     try {
-        if (!req.user) {
-            return res.status(401).json({ message: "Unauthorized" });
-        }
+     
+       const getAllBookings = await getAllBookingsService();
+         if (!getAllBookings || getAllBookings.length === 0) {
+              return res.status(404).json({ message: "No bookings found" });
+         }
+         res.status(200).json({ bookings: getAllBookings });
 
-        const isAdmin = req.user.role === 'admin';
-        const allBookings = await getAllBookingsService();
-
-        const bookings = isAdmin ? allBookings : 
-            allBookings.filter(booking => 
-                booking.customer.user.user_id === parseInt(req.user!.user_id)
-            );
-
-        res.status(200).json({ bookings });
+        
     } catch (error) {
         console.error("Error in getAllBookingsController:", error);
         res.status(500).json({ message: "Internal server error" });

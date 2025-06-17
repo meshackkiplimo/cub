@@ -5,7 +5,7 @@ import { adminOnly, isAuthenticated } from "../middleware/roleMiddleware";
 export const booking = (app: Express) => {
     // Create new booking
     app.route("/bookings").post(
-        isAuthenticated,
+        // isAuthenticated,
         async (req, res, next) => {
             try {
                 await createBookingController(req, res);
@@ -17,7 +17,7 @@ export const booking = (app: Express) => {
 
     // Get all bookings (admin) or user's bookings (customer)
     app.route("/bookings").get(
-        isAuthenticated,
+        // isAuthenticated,
         async (req, res, next) => {
             try {
                 await getAllBookingsController(req, res);
@@ -29,7 +29,7 @@ export const booking = (app: Express) => {
 
     // Get specific booking
     app.route("/bookings/:id").get(
-        isAuthenticated,
+        // isAuthenticated,
         async (req, res, next) => {
             try {
                 await getBookingController(req, res);
