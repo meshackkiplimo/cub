@@ -12,11 +12,11 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["backend/src/*"]
     }
   },
   "include": [
-    "src/**/*",
+    "backend/src/**/*",
     "__tests__/**/*"
   ],
   "exclude": [
