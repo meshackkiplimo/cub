@@ -51,16 +51,16 @@ export const getBookingController = async (req: Request, res: Response) => {
         }
 
         // Check if user has access to this booking
-        if (!req.user) {
-            return res.status(401).json({ message: "Unauthorized" });
-        }
+        // if (!req.user) {
+        //     return res.status(401).json({ message: "Unauthorized" });
+        // }
 
-        const isAdmin = req.user.role === 'admin';
+        // const isAdmin = req.user.role === 'admin';
 
         // Check user access
-        if (!isAdmin && booking.customer.user.user_id !== parseInt(req.user.user_id)) {
-            return res.status(403).json({ message: "Access denied" });
-        }
+        // if (!isAdmin && booking.customer.user.user_id !== parseInt(req.user.user_id)) {
+        //     return res.status(403).json({ message: "Access denied" });
+        // }
 
         res.status(200).json({ booking });
     } catch (error) {
