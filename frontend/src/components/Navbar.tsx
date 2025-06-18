@@ -43,7 +43,7 @@ const Navbar = () => {
           </ul>
         </div>
         <NavLink to="/" className="flex items-center gap-2">
-          <img src="/car-logo.svg" alt="Kokya Yard Logo" className="w-8 h-8" />
+        
           <span className="text-xl font-bold text-primary">Kokya Yard</span>
         </NavLink>
       </div>
@@ -82,7 +82,7 @@ const Navbar = () => {
         <button className="btn btn-ghost btn-sm hidden sm:flex">
           Log In
         </button>
-        <button className="btn btn-primary btn-sm">
+        <button  className="btn btn-primary btn-sm">
           Sign Up
         </button>
       </div>
