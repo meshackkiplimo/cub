@@ -4,97 +4,121 @@ import type { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 
 type UserInputs = {
-    // user_id: number;
-     first_name: string
-     last_name: string;
-     email: string;
-     password: string;
-     role: string;
-     is_verified: boolean;
-};
-const schema = {
-    first_name:yup.string().required("First name is required"),
-    last_name:yup.string().required("Last name is required"),
-    email:yup.string().email("Invalid email").required("Email is required"),
-    password:yup.string().min(6,"Password must be at least 6 characters").required("Password is required"),
-    role:yup.string().oneOf(["admin", "customer"], "Role must be either admin or customer").required("Role is required"),
-    is_verified:yup.boolean().default(false)
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  role: string;
+  is_verified: boolean;
 };
 
+const schema = {
+  first_name: yup.string().required("First name is required"),
+  last_name: yup.string().required("Last name is required"),
+  email: yup.string().email("Invalid email").required("Email is required"),
+  password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+  role: yup.string().oneOf(["admin", "customer"], "Role must be either admin or customer").required("Role is required"),
+  is_verified: yup.boolean().default(false)
+};
 
 const Register = () => {
-    const { 
-        register, 
-        handleSubmit, 
-        watch, 
-        formState: { errors } } = useForm<UserInputs>();
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors } 
+  } = useForm<UserInputs>();
+
   const onSubmit: SubmitHandler<UserInputs> = data => console.log(data);
 
   return (
-    <div>
-    
-    <form onSubmit={handleSubmit(onSubmit)}>
-      
-     
-        <input
-          type="text"
-          {...register('first_name')}
-          placeholder="First Name"
-          className='input border border-gray-300 rounded w-full p-2 focus:ring-2 focus:ring-blue-500 text-lg '
-        />
-
-        {errors.first_name && (
-        <span className=" text-red-700 text-sm">{errors.first_name.message}</span>
-        )}
-    
-      <input 
-      type='text'
-      
-      {...register("last_name", { required: true})}
-        placeholder='Last Name'
-        className='input border border-gray-300 rounded w-full p-2 focus:ring-2 focus:ring-blue-500 text-lg '
-
-      
-      />
-     
-        {errors.last_name && (
-            <span className=" text-red-700 text-sm">{errors.last_name.message}</span>
-        )}
-        <input
-            type="email"
-            {...register('email')}
-            placeholder="Email"
-            className='input border border-gray-300 rounded w-full p-2 focus:ring-2 focus:ring-blue-500 text-lg '
-        />
-        {errors.email && (
-            <span className=" text-red-700 text-sm">{errors.email.message}</span>
-        )}
-        <input
-            type="password"
-            {...register('password')}
-            placeholder="Password"
-            className='input border border-gray-300 rounded w-full p-2 focus:ring-2 focus:ring-blue-500 text-lg '
-        />
-        {errors.password && (
-            <span className=" text-red-700 text-sm">{errors.password.message}</span>
-        )}
-        <select
-            {...register('role')}
-            className='select border border-gray-300 rounded w-full p-2 focus:ring-2 focus:ring-blue-500 text-lg '
-        >
-            <option value="admin">Admin</option>
-            <option value="customer">Customer</option>
-        </select>
-        {errors.role && (
-            <span className=" text-red-700 text-sm">{errors.role.message}</span>
-        )}
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Create your account
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Join us and start your journey
+          </p>
+        </div>
         
-      
-      <input type="submit" />
-    </form>
-      
-    </div>
-  )
-}
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <div className="rounded-md shadow-sm space-y-4">
+            <div>
+              <input
+                type="text"
+                {...register('first_name')}
+                placeholder="First Name"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+              />
+              {errors.first_name && (
+                <p className="mt-1 text-sm text-red-600">{errors.first_name.message}</p>
+              )}
+            </div>
 
-export default Register
+            <div>
+              <input 
+                type="text"
+                {...register("last_name")}
+                placeholder="Last Name"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+              />
+              {errors.last_name && (
+                <p className="mt-1 text-sm text-red-600">{errors.last_name.message}</p>
+              )}
+            </div>
+
+            <div>
+              <input
+                type="email"
+                {...register('email')}
+                placeholder="Email address"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+              />
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+              )}
+            </div>
+
+            <div>
+              <input
+                type="password"
+                {...register('password')}
+                placeholder="Password"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+              />
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+              )}
+            </div>
+
+            <div>
+              <select
+                {...register('role')}
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+              >
+                <option value="">Select Role</option>
+                <option value="customer">Customer</option>
+                <option value="admin">Admin</option>
+              </select>
+              {errors.role && (
+                <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-gray-950  hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary bg-blue-800"
+            >
+              Sign up
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default Register;

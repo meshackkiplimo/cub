@@ -1,6 +1,6 @@
 import React from 'react'
 
-const contactpage = () => {
+const contactPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
@@ -26,4 +26,4 @@ const contactpage = () => {
   )
 }
 
-export default contactpage
+export default contactPage
