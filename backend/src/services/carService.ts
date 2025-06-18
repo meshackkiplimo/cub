@@ -18,7 +18,10 @@ export const getCarService = async (carId: number) => {
             color: true,
             availability: true,
             rental_rate: true,
-            location_id: true
+            location_id: true,
+            image_url: true,
+            description: true
+
         },
         where: sql`${CarTable.car_id}=${carId}`
     });
@@ -34,7 +37,9 @@ export const getAllCarsService = async () => {
             color: true,
             availability: true,
             rental_rate: true,
-            location_id: true
+            location_id: true,
+            image_url: true,
+            description: true
         }
     });
 }

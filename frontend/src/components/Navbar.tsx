@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 const Navbar = () => {
   const activeClassname = "text-primary font-medium";
@@ -79,12 +79,18 @@ const Navbar = () => {
       </div>
 
       <div className="navbar-end gap-2">
+        <Link to="/login">
         <button className="btn btn-ghost btn-sm hidden sm:flex">
           Log In
         </button>
-        <button  className="btn btn-primary btn-sm">
+        </Link>
+        <Link to='/signup' >
+         <button  className="btn btn-primary btn-sm">
           Sign Up
         </button>
+        
+        </Link>
+       
       </div>
     </nav>
   );
