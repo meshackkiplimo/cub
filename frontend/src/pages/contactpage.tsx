@@ -8,17 +8,21 @@ const contactPage = () => {
         <form>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">Your Name</label>
-            <input type="text" className="input input-bordered w-full" placeholder="Enter your name" />
+            <input type="text" className="input input-bordered w-full border-2 border-gray-950" placeholder="Enter your name" />
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-            <input type="email" className="input input-bordered w-full" placeholder="Enter your email" />
+            <input type="email" className="input input-bordered w-full border-2 border-gray-950" placeholder="Enter your email" />
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
-            <textarea className="textarea textarea-bordered w-full" rows={4} placeholder="Your message"></textarea>
+            <fieldset className="fieldset">
+ 
+  <textarea className="textarea h-24 border-gray-950 border-4" placeholder="message us"></textarea>
+ 
+</fieldset>
           </div>
-          <button type="submit" className="btn btn-primary w-full">Send Message</button>
+          <button type="submit" className="btn btn-primary w-full bg-blue-700">Send Message</button>
         </form>
       </div>
     </div>

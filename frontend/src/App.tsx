@@ -4,7 +4,7 @@ import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import RegisterPage from './pages/registerPage'
 import LoginPage from './pages/loginPage'
-import ContactPage from './pages/contactpage'
+import ContactPage from './pages/contactPage'
 
 function App() {
   return (

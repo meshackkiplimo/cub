@@ -106,6 +106,9 @@ const Register = () => {
               )}
             </div>
           </div>
+          <div>
+            <h1><a  className='text-blue-800' href="/login">Have an account ? Login</a></h1>
+          </div>
 
           <div>
             <button
