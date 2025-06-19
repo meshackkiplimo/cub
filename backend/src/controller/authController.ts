@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { createAuthService, loginAuthService, updateVerificationStatus } from '../services/authService';
-import { TIUserWithCustomer } from '../types';
+import { TIUser, TIUserWithCustomer } from '../types';
 import jwt from 'jsonwebtoken';
 import { emailService } from '../services/emailService';
 
@@ -15,7 +15,7 @@ const generateVerificationCode = (): string => {
 
 export const creatUserController = async (req: Request, res: Response) => {
     try {
-        const userData: TIUserWithCustomer = req.body;
+        const userData: TIUser = req.body;
         const password = userData.password;
         userData.password = await bcrypt.hashSync(password, 10);
         userData.role = userData.role || 'customer'; // Default role is customer

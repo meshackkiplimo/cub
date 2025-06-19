@@ -2,14 +2,16 @@ import React from 'react'
 import { useForm } from 'react-hook-form';
 import type { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
+import { UserApi } from '../../Features/users/userApi';
+import { toast } from 'sonner';
 
 type UserInputs = {
+  id: number;
   first_name: string;
   last_name: string;
   email: string;
   password: string;
-  role: string;
-  is_verified: boolean;
+  
 };
 
 const schema = {
@@ -17,18 +19,36 @@ const schema = {
   last_name: yup.string().required("Last name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
   password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
-  role: yup.string().oneOf(["admin", "customer"], "Role must be either admin or customer").required("Role is required"),
-  is_verified: yup.boolean().default(false)
+  
 };
 
 const Register = () => {
+  const [createUser] = UserApi.useCreateUsersMutation();
   const { 
     register, 
     handleSubmit, 
     formState: { errors } 
   } = useForm<UserInputs>();
 
-  const onSubmit: SubmitHandler<UserInputs> = data => console.log(data);
+  const onSubmit: SubmitHandler<UserInputs> =async  (data) => {
+    console.log(data);
+  try {
+    const response = await createUser(data).unwrap();
+    console.log("User registered successfully:", response);
+    toast.success("Registration successful! Please check your email to verify your account.");
+
+    
+  } catch (error) {
+    console.error("Error during registration:", error);
+    if (error.status === 400) {
+      toast.error("Registration failed. Please check your input and try again.");
+    } else {
+      toast.error("An unexpected error occurred. Please try again later.");
+    }
+    
+  }
+  }
+
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
@@ -92,19 +112,7 @@ const Register = () => {
               )}
             </div>
 
-            <div>
-              <select
-                {...register('role')}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-              >
-                <option value="">Select Role</option>
-                <option value="customer">Customer</option>
-                <option value="admin">Admin</option>
-              </select>
-              {errors.role && (
-                <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>
-              )}
-            </div>
+           
           </div>
           <div>
             <h1><a  className='text-blue-800' href="/login">Have an account ? Login</a></h1>

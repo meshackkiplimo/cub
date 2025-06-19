@@ -3,9 +3,15 @@ import db from "../drizzle/db";
 import { CustomerTable, UserTable } from "../drizzle/schema";
 import { TIUser, TIUserWithCustomer } from "../types";
 
-export const createAuthService = async (userData: TIUserWithCustomer) => {
+export const createAuthService = async (userData: TIUser) => {
     try {
-        const { phone_number, address, ...userFields } = userData;
+        const userFields: TIUser = {
+            first_name: userData.first_name,
+            last_name: userData.last_name,
+            email: userData.email,
+            password: userData.password,
+           
+        };
 
         // Basic field validation
         if (!userFields.first_name || !userFields.last_name || !userFields.email || !userFields.password) {
@@ -18,33 +24,14 @@ export const createAuthService = async (userData: TIUserWithCustomer) => {
             throw new Error('Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character');
         }
 
-        // Validate customer fields if role is customer
-        if (userFields.role === 'customer' && (!phone_number || !address)) {
-            throw new Error('Missing required customer fields');
-        }
+      
 
         // Create user first
         const newUser = await db.transaction(async (tx) => {
             const [createdUser] = await tx.insert(UserTable).values(userFields).returning();
 
         // If user role is customer, create customer record
-        if (createdUser.role === "customer") {
-            await tx.insert(CustomerTable).values({
-                user_id: createdUser.user_id,
-                phone_number: phone_number || '0000000000', // Provide a default if missing
-                address: address || 'No address provided'    // Provide a default if missing
-            }).returning();
-
-            return createdUser;
-        }
-
-            if (createdUser.role === "customer") {
-                await tx.insert(CustomerTable).values({
-                    user_id: createdUser.user_id,
-                    phone_number: phone_number || '0000000000',
-                    address: address || 'No address provided'
-                }).returning();
-            }
+        
 
             return createdUser;
         });

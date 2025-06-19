@@ -100,7 +100,8 @@ async function seed() {
             color: "Silver",
             availability: true,
             rental_rate: "50.00",
-            location_id: 1
+            location_id: 1,
+            image_url: "https://example.com/toyota_camry_2022.jpg"
         },
         {
             make: "Honda",

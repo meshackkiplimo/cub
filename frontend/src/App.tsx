@@ -5,13 +5,19 @@ import Hero from './components/Hero'
 import RegisterPage from './pages/registerPage'
 import LoginPage from './pages/loginPage'
 import ContactPage from './pages/contactPage'
+import { Toaster } from 'sonner'
 
 function App() {
   return (
+
+    
+     
     <Router>
       <div className="min-h-screen bg-gray-50">
         <Navbar />
         <Routes>
+
+         
           <Route path="/" element={<Hero />} />
           <Route path="/cars" element={<div>Cars Page</div>} />
           <Route path="/locations" element={<div>Locations Page</div>} />
