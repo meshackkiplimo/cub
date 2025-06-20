@@ -7,6 +7,7 @@ import LoginPage from './pages/loginPage'
 import ContactPage from './pages/contactPage'
 import { Toaster } from 'sonner'
 import AboutPage from './pages/AboutPage'
+import CarPage from './pages/CarPage'
 
 function App() {
   return (
@@ -20,7 +21,7 @@ function App() {
 
          
           <Route path="/" element={<Hero />} />
-          <Route path="/cars" element={<div>Cars Page</div>} />
+          <Route path="/cars" element={<CarPage/>} />
           <Route path="/locations" element={<div>Locations Page</div>} />
           <Route path="/about" element={<AboutPage/>} />
           <Route path="/contact" element={<ContactPage/>} />
