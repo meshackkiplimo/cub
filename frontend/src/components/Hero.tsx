@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import Landing from '../assets/img/landing.jpg'
+import Landing from '../assets/img/h2.avif'
 
 const Hero = () => {
   return (
@@ -21,14 +21,14 @@ const Hero = () => {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <NavLink to="/cars" 
-                className="btn btn-primary group bg-gray-300">
+                className="btn btn-primary group bg-amber-400 hover:bg-green-800">
                 Browse Cars
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
               </NavLink>
               <NavLink to="/contact" 
-                className="btn btn-outline text-white hover:text-primary">
+                className="btn btn-outline text-gray-950 hover:text-primary bg-amber-400 hover:bg-green-800 border-gray-950">
                 Contact Us
               </NavLink>
             </div>
@@ -56,7 +56,7 @@ const Hero = () => {
               <img 
                 src={Landing}
                 alt="Luxury Car"
-                className="w-full h-auto max-w-md mx-auto object-contain transform hover:scale-105 transition-transform duration-500"
+                className="w-full h-auto max-w-md mx-auto object-contain transform hover:scale-105 transition-transform duration-500 border-amber-400 border-4 rounded-lg shadow-lg hover:shadow-2xl hover:border-amber-500"
               />
             </div>
             

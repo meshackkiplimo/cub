@@ -62,7 +62,7 @@ const Navbar = () => {
           </li>
           <li>
             <NavLink to="/locations" className={({ isActive }) => isActive ? activeClassname : inactiveClassname}>
-              Locations
+              Bookings
             </NavLink>
           </li>
           <li>
@@ -79,14 +79,10 @@ const Navbar = () => {
       </div>
 
       <div className="navbar-end gap-2">
-        <Link to="/login">
-        <button className="btn btn-ghost btn-sm hidden sm:flex">
-          Log In
-        </button>
-        </Link>
+        
         <Link to='/signup' >
-         <button  className="btn btn-primary btn-sm">
-          Sign Up
+         <button  className="btn btn-primary rounded-full btn-outline bg-amber-400">
+          Get Started
         </button>
         
         </Link>

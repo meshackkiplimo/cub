@@ -114,17 +114,22 @@ const Register = () => {
 
            
           </div>
-          <div>
-            <h1><a  className='text-blue-800' href="/login">Have an account ? Login</a></h1>
-          </div>
-
+         
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-gray-950  hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary bg-blue-800"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-gray-950  hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary bg-amber-400"
             >
               Sign up
             </button>
+            <div>
+              <p className="mt-2 text-center text-sm text-gray-600">
+                Already have an account? 
+                <a href="/login" className="text-indigo-600 hover:text-indigo-500">
+                  Sign in
+                </a>
+              </p>
+            </div>
           </div>
         </form>
       </div>
