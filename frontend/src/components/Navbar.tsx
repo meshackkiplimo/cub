@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Link, NavLink } from 'react-router-dom';
 
 const Navbar = () => {
@@ -44,33 +44,33 @@ const Navbar = () => {
         </div>
         <NavLink to="/" className="flex items-center gap-2">
         
-          <span className="text-xl font-bold text-primary">Kokya Yard</span>
+          <span className="text-xl font-bold text-primary hover:text-amber-400">Kokya Yard</span>
         </NavLink>
       </div>
 
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1 space-x-2">
-          <li>
+        <ul className="menu menu-horizontal px-1 space-x-2 ">
+          <li className='hover:text-amber-400  transition duration-200'>
             <NavLink to="/" className={({ isActive }) => isActive ? activeClassname : inactiveClassname}>
               Home
             </NavLink>
           </li>
-          <li>
+          <li className='hover:text-amber-400  transition duration-200'>
             <NavLink to="/cars" className={({ isActive }) => isActive ? activeClassname : inactiveClassname}>
               Cars
             </NavLink>
           </li>
-          <li>
+          <li className='hover:text-amber-400  transition duration-200'>
             <NavLink to="/locations" className={({ isActive }) => isActive ? activeClassname : inactiveClassname}>
               Bookings
             </NavLink>
           </li>
-          <li>
+          <li className='hover:text-amber-400  transition duration-200'>
             <NavLink to="/about" className={({ isActive }) => isActive ? activeClassname : inactiveClassname}>
               About
             </NavLink>
           </li>
-          <li>
+          <li className='hover:text-amber-400  transition duration-200'>
             <NavLink to="/contact" className={({ isActive }) => isActive ? activeClassname : inactiveClassname}>
               Contact
             </NavLink>
@@ -81,7 +81,7 @@ const Navbar = () => {
       <div className="navbar-end gap-2">
         
         <Link to='/signup' >
-         <button  className="btn btn-primary rounded-full btn-outline bg-amber-400">
+         <button  className="btn btn-primary rounded-full btn-outline bg-amber-400 hover:bg-green-600">
           Get Started
         </button>
         

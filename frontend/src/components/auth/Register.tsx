@@ -4,6 +4,7 @@ import type { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { UserApi } from '../../Features/users/userApi';
 import { toast } from 'sonner';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 type UserInputs = {
   id: number;
@@ -14,21 +15,22 @@ type UserInputs = {
   
 };
 
-const schema = {
-  first_name: yup.string().required("First name is required"),
+const schema = yup.object({
+   first_name: yup.string().required("First name is required"),
   last_name: yup.string().required("Last name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
   password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
-  
-};
-
+})
 const Register = () => {
   const [createUser] = UserApi.useCreateUsersMutation();
-  const { 
-    register, 
-    handleSubmit, 
-    formState: { errors } 
-  } = useForm<UserInputs>();
+ 
+  const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<UserInputs>({
+        resolver: yupResolver(schema),
+    });
 
   const onSubmit: SubmitHandler<UserInputs> =async  (data) => {
     console.log(data);

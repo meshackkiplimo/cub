@@ -8,6 +8,7 @@ import ContactPage from './pages/contactPage'
 import { Toaster } from 'sonner'
 import AboutPage from './pages/AboutPage'
 import CarPage from './pages/CarPage'
+import Verify from './components/auth/Verify'
 
 function App() {
   return (
@@ -22,11 +23,13 @@ function App() {
          
           <Route path="/" element={<Hero />} />
           <Route path="/cars" element={<CarPage/>} />
-          <Route path="/locations" element={<div>Locations Page</div>} />
+       
           <Route path="/about" element={<AboutPage/>} />
           <Route path="/contact" element={<ContactPage/>} />
           <Route path="/signup" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage/>} />
+          <Route path="/verify" element={<Verify/>} />
+
         </Routes>
       </div>
     </Router>
