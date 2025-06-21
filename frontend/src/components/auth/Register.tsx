@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
 import type { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
@@ -6,6 +6,7 @@ import { UserApi } from '../../Features/users/userApi';
 import { toast } from 'sonner';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
+import Spinner from '../spinner/spinner';
 
 type UserInputs = {
   first_name: string;
@@ -22,6 +23,7 @@ const schema = yup.object({
 })
 const Register = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   
   const [createUser] = UserApi.useCreateUsersMutation();
  
@@ -34,6 +36,7 @@ const Register = () => {
     });
 
   const onSubmit: SubmitHandler<UserInputs> =async  (data) => {
+  setIsLoading(true);
     console.log(data);
   try {
     const response = await createUser(data).unwrap();
@@ -43,6 +46,7 @@ const Register = () => {
       navigate('/verify', { state: { email: data.email } });
 
     }, 2000);
+   
 
     
   } catch (error: any) {
@@ -53,6 +57,9 @@ const Register = () => {
       toast.error("An unexpected error occurred. Please try again later.");
     }
     
+  }
+  finally{
+    setIsLoading(false);
   }
   }
 
@@ -68,6 +75,7 @@ const Register = () => {
             Join us and start your journey
           </p>
         </div>
+       
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-md shadow-sm space-y-4">
@@ -123,12 +131,22 @@ const Register = () => {
           </div>
          
           <div>
+            {isLoading ? (
+          <Spinner 
+         
+          
+          />
+        ) : (
+           
             <button
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-gray-950  hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary bg-amber-400"
             >
               Sign up
             </button>
+             )
+
+        }
             <div>
               <p className="mt-2 text-center text-sm text-gray-600">
                 Already have an account? 
@@ -139,6 +157,7 @@ const Register = () => {
             </div>
           </div>
         </form>
+        
       </div>
     </div>
   );

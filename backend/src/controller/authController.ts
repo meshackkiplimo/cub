@@ -166,6 +166,7 @@ export const verifyEmailController = async (req: Request, res: Response) => {
 
         // Check if verification code exists and is valid
         const storedVerification = verificationCodes.get(email);
+        console.log("Stored Verification:", storedVerification);
         if (!storedVerification) {
             return res.status(400).json({ 
                 message: "Verification code not found or expired. Please try to login to receive a new verification code."
