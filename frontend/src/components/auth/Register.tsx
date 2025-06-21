@@ -5,14 +5,13 @@ import * as yup from 'yup';
 import { UserApi } from '../../Features/users/userApi';
 import { toast } from 'sonner';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useNavigate } from 'react-router-dom';
 
 type UserInputs = {
-  id: number;
   first_name: string;
   last_name: string;
   email: string;
   password: string;
-  
 };
 
 const schema = yup.object({
@@ -22,6 +21,8 @@ const schema = yup.object({
   password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
 })
 const Register = () => {
+  const navigate = useNavigate();
+  
   const [createUser] = UserApi.useCreateUsersMutation();
  
   const {
@@ -38,9 +39,13 @@ const Register = () => {
     const response = await createUser(data).unwrap();
     console.log("User registered successfully:", response);
     toast.success("Registration successful! Please check your email to verify your account.");
+    setTimeout(()=>{
+      navigate('/verify', { state: { email: data.email } });
+
+    }, 2000);
 
     
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error during registration:", error);
     if (error.status === 400) {
       toast.error("Registration failed. Please check your input and try again.");

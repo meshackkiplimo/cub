@@ -1,5 +1,5 @@
 {
-  "id": "2b146eab-4758-44e9-9a5c-ae635b868e48",
+  "id": "fc873e85-1975-44d1-81af-22434f894efa",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -140,6 +140,18 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
@@ -154,7 +166,7 @@
           "columnsTo": [
             "location_id"
           ],
-          "onDelete": "set null",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },

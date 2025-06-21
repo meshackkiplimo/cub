@@ -101,7 +101,8 @@ async function seed() {
             availability: true,
             rental_rate: "50.00",
             location_id: 1,
-            image_url: "https://example.com/toyota_camry_2022.jpg"
+            image_url: "https://example.com/toyota_camry_2022.jpg",
+            description: "A reliable and fuel-efficient sedan perfect for city driving."
         },
         {
             make: "Honda",
@@ -110,7 +111,9 @@ async function seed() {
             color: "Blue",
             availability: true,
             rental_rate: "45.00",
-            location_id: 2
+            location_id: 2,
+            image_url: "https://example.com/honda_civic_2021.jpg",
+            description: "A compact car with sporty handling and advanced safety features.",
         },
         {
             make: "BMW",
@@ -119,7 +122,9 @@ async function seed() {
             color: "Black",
             availability: true,
             rental_rate: "75.00",
-            location_id: 3
+            location_id: 3,
+            image_url: "https://example.com/bmw_3_series_2023.jpg",
+            description: "A luxury sedan with a powerful engine and premium interior."
         },
         {
             make: "Mercedes",
@@ -128,7 +133,9 @@ async function seed() {
             color: "White",
             availability: true,
             rental_rate: "80.00",
-            location_id: 4
+            location_id: 4,
+            image_url: "https://example.com/mercedes_c_class_2022.jpg",
+            description: "A sophisticated sedan with cutting-edge technology and comfort."
         },
         {
             make: "Tesla",
@@ -137,7 +144,9 @@ async function seed() {
             color: "Red",
             availability: true,
             rental_rate: "90.00",
-            location_id: 5
+            location_id: 5,
+            image_url: "https://example.com/tesla_model_3_2023.jpg",
+            description: "An all-electric sedan with impressive range and performance."
         },
         {
             make: "Audi",
@@ -146,7 +155,9 @@ async function seed() {
             color: "Gray",
             availability: true,
             rental_rate: "85.00",
-            location_id: 6
+            location_id: 6,
+            image_url: "https://example.com/audi_a4_2023.jpg",
+            description: "A premium compact sedan with a refined interior and advanced tech."
         },
         {
             make: "Lexus",
@@ -155,7 +166,9 @@ async function seed() {
             color: "Black",
             availability: true,
             rental_rate: "82.00",
-            location_id: 7
+            location_id: 7,
+            image_url: "https://example.com/lexus_es_2022.jpg",
+            description: "A luxury sedan known for its comfort, reliability, and smooth ride."
         },
         {
             make: "Volkswagen",
@@ -164,7 +177,9 @@ async function seed() {
             color: "Blue",
             availability: true,
             rental_rate: "55.00",
-            location_id: 8
+            location_id: 8,
+            image_url: "https://example.com/volkswagen_golf_2023.jpg",
+            description: "A versatile hatchback with a spacious interior and fun driving dynamics."
         },
         {
             make: "Hyundai",
@@ -173,7 +188,9 @@ async function seed() {
             color: "Silver",
             availability: true,
             rental_rate: "48.00",
-            location_id: 9
+            location_id: 9,
+            image_url: "https://example.com/hyundai_sonata_2022.jpg",
+            description: "A stylish sedan with a comfortable ride and modern features."
         },
         {
             make: "Ford",
@@ -182,7 +199,9 @@ async function seed() {
             color: "Yellow",
             availability: true,
             rental_rate: "95.00",
-            location_id: 10
+            location_id: 10,
+            image_url: "https://example.com/ford_mustang_2023.jpg",
+            description: "An iconic sports car with a powerful engine and thrilling performance."
         }
     ]);
 

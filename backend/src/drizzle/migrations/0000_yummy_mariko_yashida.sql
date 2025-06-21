@@ -17,7 +17,9 @@ CREATE TABLE "car" (
 	"color" varchar(20) NOT NULL,
 	"availability" boolean DEFAULT true NOT NULL,
 	"rental_rate" numeric(10, 2) NOT NULL,
-	"location_id" integer NOT NULL
+	"location_id" integer NOT NULL,
+	"image_url" varchar(255) NOT NULL,
+	"description" varchar(255) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "customer" (
@@ -81,7 +83,7 @@ CREATE TABLE "user" (
 --> statement-breakpoint
 ALTER TABLE "booking" ADD CONSTRAINT "booking_customer_id_customer_customer_id_fk" FOREIGN KEY ("customer_id") REFERENCES "public"."customer"("customer_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "booking" ADD CONSTRAINT "booking_car_id_car_car_id_fk" FOREIGN KEY ("car_id") REFERENCES "public"."car"("car_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "car" ADD CONSTRAINT "car_location_id_location_location_id_fk" FOREIGN KEY ("location_id") REFERENCES "public"."location"("location_id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "car" ADD CONSTRAINT "car_location_id_location_location_id_fk" FOREIGN KEY ("location_id") REFERENCES "public"."location"("location_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "customer" ADD CONSTRAINT "customer_user_id_user_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("user_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "insurance" ADD CONSTRAINT "insurance_car_id_car_car_id_fk" FOREIGN KEY ("car_id") REFERENCES "public"."car"("car_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "maintenance" ADD CONSTRAINT "maintenance_car_id_car_car_id_fk" FOREIGN KEY ("car_id") REFERENCES "public"."car"("car_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
