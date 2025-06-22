@@ -3,10 +3,11 @@ import { useForm } from 'react-hook-form';
 import type { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { UserApi } from '../../Features/users/userApi';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
 import Spinner from '../spinner/Spinner';
+import { useToast } from '../toaster/ToasterContext';
 
 type UserInputs = {
   first_name: string;
@@ -24,6 +25,7 @@ const schema = yup.object({
 const Register = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const {showToast} = useToast()
   
   const [createUser] = UserApi.useCreateUsersMutation();
  
@@ -40,8 +42,9 @@ const Register = () => {
     console.log(data);
   try {
     const response = await createUser(data).unwrap();
+    showToast("Registration successful! Please check your email to verify your account.", "success");
     console.log("User registered successfully:", response);
-    toast.success("Registration successful! Please check your email to verify your account.");
+    
     setTimeout(()=>{
       navigate('/verify', { state: { email: data.email } });
 

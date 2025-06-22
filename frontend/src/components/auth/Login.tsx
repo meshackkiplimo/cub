@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../../Features/login/userSlice';
 import Spinner from '../spinner/Spinner';
+import { toast } from 'sonner';
 
 
 type UserInputs = {
@@ -42,7 +43,9 @@ const Login = () => {
     try {
 
         const response = await loginUser(data).unwrap();
+
         dispatch(loginSuccess(response))
+         toast.success("Registration successful! Please check your email to verify your account.");
         console.log("Login successful:", response);
 
         // if user is not verified give and error
