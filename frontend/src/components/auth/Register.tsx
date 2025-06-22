@@ -54,9 +54,12 @@ const Register = () => {
     
   } catch (error: any) {
     console.error("Error during registration:", error);
+
     if (error.status === 400) {
-      toast.error("Registration failed. Please check your input and try again.");
-    } else {
+    
+      const errorMessage = error.data?.message || "Invalid input. Please check your data.";
+      toast.error(errorMessage);
+    } else { 
       toast.error("An unexpected error occurred. Please try again later.");
     }
     

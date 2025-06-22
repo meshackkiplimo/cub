@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../../Features/login/userSlice';
 import Spinner from '../spinner/Spinner';
 import { toast } from 'sonner';
+import { useToast } from '../toaster/ToasterContext';
 
 
 type UserInputs = {
@@ -27,6 +28,7 @@ const Login = () => {
     const location = useLocation();
     const [isLoading, setIsLoading] =useState(false);
     const emailFromState = location.state?.email || '';
+    const {showToast} = useToast()
     const dispatch = useDispatch() // Assuming you have a dispatch function in state
     const {
         register,
@@ -45,7 +47,8 @@ const Login = () => {
         const response = await loginUser(data).unwrap();
 
         dispatch(loginSuccess(response))
-         toast.success("Registration successful! Please check your email to verify your account.");
+
+        showToast("Login successful! Redirecting...", "success");
         console.log("Login successful:", response);
 
         // if user is not verified give and error
@@ -56,8 +59,13 @@ const Login = () => {
         }, 2000);
 
         
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error during login:", error);
+        if (error.status === 401) {
+            showToast("Login failed. Please check your credentials and try again.", "error");
+        } else {
+            showToast("An unexpected error occurred. Please try again later.", "error");
+        }
         // Handle error appropriately, e.g., show a toast notification
         // toast.error("Login failed. Please check your credentials and try again.");
         
