@@ -6,7 +6,7 @@ import { loginAPI } from '../../Features/users/logiApi';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../../Features/login/userSlice';
-import Spinner from '../spinner/spinner';
+import Spinner from '../spinner/Spinner';
 
 
 type UserInputs = {

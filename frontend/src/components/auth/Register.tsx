@@ -6,7 +6,7 @@ import { UserApi } from '../../Features/users/userApi';
 import { toast } from 'sonner';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
-import Spinner from '../spinner/spinner';
+import Spinner from '../spinner/Spinner';
 
 type UserInputs = {
   first_name: string;

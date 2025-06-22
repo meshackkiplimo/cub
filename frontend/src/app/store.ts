@@ -35,5 +35,8 @@ export const store = configureStore({
           .concat(loginAPI.middleware),
 
 })
-export const persistedStore = persistStore(store)
+
+export const persistor = persistStore(store);
+
+
 export type RootState = ReturnType<typeof store.getState>;

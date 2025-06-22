@@ -29,6 +29,17 @@ export const loginAPI = createApi({
                 body: loginData
             }),
             invalidatesTags: ['Login']
-        })
+        }),
+        logoutUser: builder.mutation<void, void>({
+      query: () => ({
+        url: '/auth/logout',
+        method: 'POST',
+      }),
+      invalidatesTags: ['Login'],
+    }),
     })
+
+     
 });
+
+
