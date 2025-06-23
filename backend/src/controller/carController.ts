@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { createCarService, deleteCarService, getAllCarsService, getCarService, updateCarService } from '../services/carService';
 import cloudinary from '../config/cloudinaryConfig'; // Adjust the import path as necessary
+import { TICar } from 'src/types';
 
 // Import Multer types and extend Express Request interface to include 'file' property
 
@@ -24,11 +25,11 @@ interface CloudinaryUploadResponse {
 
 export const createCarController = async (req: Request, res: Response) => {
   try {
-    const carData = req.body;
+    const carData:TICar = req.body;
 
     // Handle image upload to Cloudinary if a file is provided
-    let image_url: string | undefined;
-    let imagePublicId: string | undefined;
+    let image_url: string = '';
+    let imagePublicId: string = '';
 
 
     //console if cloudinary is configured correctly

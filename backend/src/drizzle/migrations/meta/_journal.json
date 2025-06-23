@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1750708533874,
-      "tag": "0000_third_diamondback",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1750710170724,
-      "tag": "0001_young_madripoor",
+      "when": 1750711585390,
+      "tag": "0000_glossy_young_avengers",
       "breakpoints": true
     }
   ]
