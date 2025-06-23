@@ -27,15 +27,24 @@ export const createCarController = async (req: Request, res: Response) => {
     const carData = req.body;
 
     // Handle image upload to Cloudinary if a file is provided
-    let imageUrl: string | undefined;
+    let image_url: string | undefined;
     let imagePublicId: string | undefined;
+
+
+    //console if cloudinary is configured correctly
+    if (!cloudinary.config().cloud_name || !cloudinary.config().api_key || !cloudinary.config().api_secret) {
+      console.error('Cloudinary is not configured correctly');
+      return res.status(500).json({ message: 'Cloudinary configuration error' });
+    }
+
+
+
 
     if (req.file) {
       const result: CloudinaryUploadResponse = await new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
           {
-            folder: 'car_management',
-            resource_type: 'image',
+            
             transformation: [
               { width: 800, height: 600, crop: 'fill', gravity: 'auto' }, // Optional: resize on upload
               { quality: 'auto' },
@@ -50,16 +59,17 @@ export const createCarController = async (req: Request, res: Response) => {
         ).end(req.file!.buffer);
       });
 
-      imageUrl = result.secure_url;
+      image_url = result.secure_url;
       imagePublicId = result.public_id;
     }
 
     // Add image data to carData
     const carWithImage = {
       ...carData,
-      imageUrl,
+      image_url,
       imagePublicId,
     };
+    console.log('Car data with image:', carWithImage);
 
     const createCar = await createCarService(carWithImage);
     if (!createCar) {
@@ -71,6 +81,7 @@ export const createCarController = async (req: Request, res: Response) => {
     console.error('Error in createCarController:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
+  
 };
 
 export const getCarController = async (req: Request, res: Response) => {

@@ -1,6 +1,6 @@
 {
-  "id": "49ac212a-d895-47d5-b6c4-6fcc4844ec40",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "3db57f31-db2c-4fce-b79e-fbb20d983c42",
+  "prevId": "49ac212a-d895-47d5-b6c4-6fcc4844ec40",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -145,7 +145,7 @@
           "name": "image_url",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "description": {
           "name": "description",

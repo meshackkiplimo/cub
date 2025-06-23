@@ -6,6 +6,7 @@ import { TICar } from "../types";
 export const createCarService = async (car: TICar) => {
     const newCar = await db.insert(CarTable).values(car).returning();
     return newCar[0];
+    
 }
 
 export const getCarService = async (carId: number) => {

@@ -7,7 +7,7 @@ const upload = multer({storage: multer.memoryStorage()})
 
 export const car = (app: Express) => {
     app.route("/cars").post(
-        adminOnly,
+        // adminOnly,
         upload.single("image"), // Handle single file upload with field name 'image'
     
         async (req, res, next) => {

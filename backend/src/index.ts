@@ -16,6 +16,7 @@ import { maintenance } from "./routes/maintenanceRoute";
 import { payment } from "./routes/paymentRoute";
 import { logger } from "./middleware/logger";
 import cors from "cors";
+import cloudinary from "./config/cloudinaryConfig";
 
   
 
@@ -23,12 +24,27 @@ import cors from "cors";
 
 dotenv.config();
 
+
+
+
 const port = process.env.PORT || 5000;
 const app = express();
 
+// test cloudinary connection
+cloudinary.api.ping()
+  .then(() => {
+    console.log('Cloudinary connection is healthy.');
+  })
+  .catch((error) => {
+    console.error('Cloudinary connection error:', error);
+  });
+
+
+
+
 // cors for all origins
 app.use(cors({
-  origin: 'http://localhost:517993', // Allow all origins
+  origin: 'http://localhost:5173', // Allow all origins
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific methods
 
 }));

@@ -37,7 +37,7 @@ export const CarTable = pgTable("car", {
     availability: boolean("availability").notNull().default(true),
     rental_rate: decimal("rental_rate", { precision: 10, scale: 2 }).notNull(),
     location_id: integer("location_id").notNull().references(() => LocationTable.location_id, { onDelete: 'cascade' }),
-    image_url: varchar("image_url", { length: 255 }).notNull(),
+    image_url: varchar("image_url", { length: 255 }),
     description: varchar("description", { length: 255 }).notNull(),
 })
 
