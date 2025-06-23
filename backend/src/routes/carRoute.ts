@@ -1,12 +1,20 @@
 import { Express } from "express"
 import { createCarController, deleteCarController, getAllCarsController, getCarController, updateCarController } from "../controller/carController"
 import { adminOnly } from "../middleware/roleMiddleware"
+import multer from "multer"
+
+const upload = multer({storage: multer.memoryStorage()})
 
 export const car = (app: Express) => {
     app.route("/cars").post(
         adminOnly,
+        upload.single("image"), // Handle single file upload with field name 'image'
+    
         async (req, res, next) => {
             try {
+                // Use multer to handle file uploads
+
+
                 await createCarController(req, res)
             } catch (error) {
                 next(error)

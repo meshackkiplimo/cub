@@ -105,6 +105,18 @@ const Navbar = () => {
             <NavLink to="/contact" className={({ isActive }) => (isActive ? activeClassname : inactiveClassname)}>
               Contact
             </NavLink>
+
+          </li>
+          <li>
+            {/* create car */}
+            {/* {user && user.role === 'admin' && ( */}
+              <NavLink
+                to="/create-car"
+                className={({ isActive }) => (isActive ? activeClassname : inactiveClassname)}
+              >
+                Create Car
+              </NavLink>
+            {/* )} */}
           </li>
         </ul>
       </div>
@@ -117,6 +129,7 @@ const Navbar = () => {
               className="btn bg-amber-400 btn-circle avatar flex items-center justify-center"
               onClick={toggleDropdown}
             >
+              profile
               
             </button>
             {isDropdownOpen && (

@@ -10,6 +10,7 @@ import CarPage from './pages/CarPage';
 import Verify from './components/auth/Verify';
 import Profile from './components/Profile';
 import { ToastProvider } from './components/toaster/ToasterContext';
+import CreateCarPage from './pages/CreateCarPage';
 
 
 function App() {
@@ -27,6 +28,8 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/verify" element={<Verify />} />
             <Route path="/profile" element={<Profile />} />
+             <Route path="/create-car" element={<CreateCarPage />} />
+
           </Routes>
         </div>
       </ToastProvider>

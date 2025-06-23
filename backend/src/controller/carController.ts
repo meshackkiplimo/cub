@@ -1,20 +1,77 @@
 import { Request, Response } from 'express';
 import { createCarService, deleteCarService, getAllCarsService, getCarService, updateCarService } from '../services/carService';
+import cloudinary from '../config/cloudinaryConfig'; // Adjust the import path as necessary
+
+// Import Multer types and extend Express Request interface to include 'file' property
+
+
+declare global {
+  namespace Express {
+    interface Request {
+      file?: Express.Multer.File; // Optional file property for Multer
+    }
+  }
+}
+
+interface CloudinaryUploadResponse {
+  secure_url: string;
+  public_id: string;
+  [key: string]: any;
+  
+}
+
+
 
 export const createCarController = async (req: Request, res: Response) => {
-    try {
-        const car = req.body;
-        const createCar = await createCarService(car);
-        if (!createCar) {
-            res.status(400).json({ message: "Car creation failed" });
-            return;
-        }
-        res.status(201).json({ message: "Car created successfully", car: createCar });
-    } catch (error) {
-        console.error("Error in createCarController:", error);
-        res.status(500).json({ message: "Internal server error" });
+  try {
+    const carData = req.body;
+
+    // Handle image upload to Cloudinary if a file is provided
+    let imageUrl: string | undefined;
+    let imagePublicId: string | undefined;
+
+    if (req.file) {
+      const result: CloudinaryUploadResponse = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          {
+            folder: 'car_management',
+            resource_type: 'image',
+            transformation: [
+              { width: 800, height: 600, crop: 'fill', gravity: 'auto' }, // Optional: resize on upload
+              { quality: 'auto' },
+            ],
+          },
+          (error, result) => {
+            if (error || !result) {
+              return reject(error || new Error('Upload failed'));
+            }
+            resolve(result);
+          }
+        ).end(req.file!.buffer);
+      });
+
+      imageUrl = result.secure_url;
+      imagePublicId = result.public_id;
     }
-}
+
+    // Add image data to carData
+    const carWithImage = {
+      ...carData,
+      imageUrl,
+      imagePublicId,
+    };
+
+    const createCar = await createCarService(carWithImage);
+    if (!createCar) {
+      return res.status(400).json({ message: 'Car creation failed' });
+    }
+
+    res.status(201).json({ message: 'Car created successfully', car: createCar });
+  } catch (error) {
+    console.error('Error in createCarController:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
 export const getCarController = async (req: Request, res: Response) => {
     try {
