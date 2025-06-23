@@ -57,7 +57,7 @@ const CarForm = () => {
     formData.append('image', image); // important: backend must expect 'image'
 
     try {
-      const response = await createCar(data).unwrap();
+      const response = await createCar(formData).unwrap();
       console.log('Car created successfully:', response);
       reset();
       setImage(null);

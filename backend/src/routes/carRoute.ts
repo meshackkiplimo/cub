@@ -3,7 +3,15 @@ import { createCarController, deleteCarController, getAllCarsController, getCarC
 import { adminOnly } from "../middleware/roleMiddleware"
 import multer from "multer"
 
-const upload = multer({storage: multer.memoryStorage()})
+
+const storage = multer.memoryStorage()
+const upload = multer({ 
+    storage: storage,
+    limits:{
+        fileSize: 5 * 1024 * 1024
+    }
+
+})
 
 export const car = (app: Express) => {
     app.route("/cars").post(

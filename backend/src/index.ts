@@ -16,7 +16,8 @@ import { maintenance } from "./routes/maintenanceRoute";
 import { payment } from "./routes/paymentRoute";
 import { logger } from "./middleware/logger";
 import cors from "cors";
-import cloudinary from "./config/cloudinaryConfig";
+import { v2 as cloudinary} from "cloudinary";
+
 
   
 
@@ -28,16 +29,21 @@ dotenv.config();
 
 
 const port = process.env.PORT || 5000;
-const app = express();
 
-// test cloudinary connection
-cloudinary.api.ping()
-  .then(() => {
-    console.log('Cloudinary connection is healthy.');
-  })
-  .catch((error) => {
-    console.error('Cloudinary connection error:', error);
-  });
+
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+console.log('Cloudinary configuration:', {
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+const app = express();
 
 
 

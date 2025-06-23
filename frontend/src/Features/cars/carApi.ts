@@ -42,14 +42,15 @@ export const carAPI = createApi({
       query: (id) => `/cars/${id}`,
       providesTags: (result, error, id) => [{ type: 'Car', id }],
     }),
-    createCar: builder.mutation<TICar, Partial<TICar>>({
-      query: (newCar) => ({
-        url: '/cars',
-        method: 'POST',
-        body: newCar,
-      }),
-      invalidatesTags: ['Car'],
-    }),
+    createCar: builder.mutation<TICar, FormData>({
+  query: (formData) => ({
+    url: '/cars',
+    method: 'POST',
+    body: formData, // ✅ sends multipart/form-data correctly
+  }),
+  invalidatesTags: ['Car'],
+}),
+
     updateCar: builder.mutation<TICar, Partial<TICar> & { id: string }>({
       query: ({ id, ...patch }) => ({
         url: `/cars/${id}`,
