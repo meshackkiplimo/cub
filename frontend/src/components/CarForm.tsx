@@ -75,7 +75,7 @@ const CarForm = () => {
           type="text"
           {...register('make')}
           placeholder="Car Manufacturer"
-          className="input rounded w-full p-2"
+          className="input rounded w-full p-2 border-4"
         />
         {errors.make && <span className="text-sm text-red-700">{errors.make.message}</span>}
 
@@ -83,7 +83,7 @@ const CarForm = () => {
           type="text"
           {...register('year')}
           placeholder="Year"
-          className="input rounded w-full p-2"
+          className="input rounded w-full p-2 border-4"
         />
         {errors.year && <span className="text-sm text-red-700">{errors.year.message}</span>}
 
@@ -91,7 +91,7 @@ const CarForm = () => {
           type="text"
           {...register('model')}
           placeholder="Model"
-          className="input rounded w-full p-2"
+          className="input rounded w-full p-2 border-4"
         />
         {errors.model && <span className="text-sm text-red-700">{errors.model.message}</span>}
 
@@ -99,13 +99,13 @@ const CarForm = () => {
           type="text"
           {...register('color')}
           placeholder="Color"
-          className="input rounded w-full p-2"
+          className="input rounded w-full p-2 border-4"
         />
         {errors.color && <span className="text-sm text-red-700">{errors.color.message}</span>}
 
         <select
           {...register('availability')}
-          className="input rounded w-full p-2"
+          className="input rounded w-full p-2 border-4"
         >
           <option value="">Select Availability</option>
           <option value="true">Available</option>
@@ -117,7 +117,7 @@ const CarForm = () => {
           type="number"
           {...register('rental_rate')}
           placeholder="Rental Rate"
-          className="input rounded w-full p-2"
+          className="input rounded w-full p-2 border-4"
         />
         {errors.rental_rate && <span className="text-sm text-red-700">{errors.rental_rate.message}</span>}
 
@@ -125,31 +125,32 @@ const CarForm = () => {
           type="number"
           {...register('location_id')}
           placeholder="Location ID"
-          className="input rounded w-full p-2"
+          className="input rounded w-full p-2 border-4"
         />
         {errors.location_id && <span className="text-sm text-red-700">{errors.location_id.message}</span>}
 
-        <input
+       
+
+        <textarea
+          {...register('description')}
+          placeholder="Description"
+          className="input rounded w-full p-2 border-4"
+        ></textarea>
+        {errors.description && <span className="text-sm text-red-700">{errors.description.message}</span>}
+         <input
           type="file"
           accept="image/*"
           onChange={(e) => {
             const file = e.target.files?.[0] || null;
             setImage(file);
           }}
-          className="input rounded w-full p-2"
+          className="input rounded w-full p-2 border-4"
         />
 
-        <textarea
-          {...register('description')}
-          placeholder="Description"
-          className="input rounded w-full p-2"
-        ></textarea>
-        {errors.description && <span className="text-sm text-red-700">{errors.description.message}</span>}
-
-        <button type="submit" className="btn btn-primary" disabled={isLoading}>
+        <button type="submit" className="btn btn-primary bg-amber-400" disabled={isLoading}>
           {isLoading ? (
             <>
-              <span className="loading loading-spinner text-primary" /> Creating...
+              <span className="loading loading-spinner text-white" /> Creating...
             </>
           ) : (
             'Create'
