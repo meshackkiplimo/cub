@@ -118,6 +118,12 @@ const Navbar = () => {
               </NavLink>
             {/* )} */}
           </li>
+          <li className="hover:text-amber-400 transition duration-200">
+            <NavLink to="/users" className={({ isActive }) => (isActive ? activeClassname : inactiveClassname)}>
+              Users
+            </NavLink>
+
+          </li>
         </ul>
       </div>
 

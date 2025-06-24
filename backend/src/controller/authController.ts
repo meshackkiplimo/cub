@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import { createAuthService, loginAuthService, updateVerificationStatus } from '../services/authService';
+import { createAuthService, getAllUsersService, loginAuthService, updateVerificationStatus } from '../services/authService';
 import { TIUser, TIUserWithCustomer } from '../types';
 import jwt from 'jsonwebtoken';
 import { emailService } from '../services/emailService';
@@ -196,3 +196,33 @@ export const verifyEmailController = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+export const getAllUsersController = async (req: Request, res: Response) => {
+  try {
+    const users = await getAllUsersService()
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "No users found", users: [] });
+    }
+    const formattedUsers = users.map((user: {
+      user_id: number;
+      first_name: string;
+      last_name: string;
+      email: string;
+      role: string;
+      is_verified: boolean;
+    }) => ({
+      id: user.user_id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      role: user.role,
+      is_verified: user.is_verified
+    }));
+    res.status(200).json({ users: formattedUsers });
+    
+  } catch (error) {
+    console.error("Error in getAllUsersController:", error);
+    res.status(500).json({ message: "Internal server error" });
+    
+  }
+}

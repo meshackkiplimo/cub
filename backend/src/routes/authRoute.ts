@@ -1,5 +1,5 @@
 import { Express } from "express"
-import { creatUserController, loginUserController, verifyEmailController } from "../controller/authController"
+import { creatUserController, getAllUsersController, loginUserController, verifyEmailController } from "../controller/authController"
 
 export const user = (app: Express) => {
     app.route("/auth/register").post(
@@ -26,6 +26,16 @@ export const user = (app: Express) => {
         async (req, res, next) => {
             try {
                 await verifyEmailController(req, res)
+            } catch (error) {
+                next(error)
+            }
+        }
+    )
+
+    app.route('/users').get(
+        async (req, res, next) => {
+            try {
+                await getAllUsersController(req, res)
             } catch (error) {
                 next(error)
             }

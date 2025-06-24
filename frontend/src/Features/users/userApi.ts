@@ -45,8 +45,31 @@ export const UserApi = createApi({
             body: { email,code }
         }),
         invalidatesTags: ['Users']
-    })
-})
+    }),
+       getUsers: builder.query<TUser[], void>({
+    query: () => '/users',
+    transformResponse: (response: { users: TUser[] }) => response.users,
+    providesTags: ['Users']
+}),
+
+        updateUserRole:builder.mutation<TUser, { id: number; role: string }>({
+            query:({ id, role })=>({
+                url:`/users/${id}`,
+                method:'PATCH',
+                body:{ role }
+            }),
+            invalidatesTags:['Users']
+        }),
+        deleteUser:builder.mutation<{ message: string }, number>({
+            query:(id)=>({
+                url:`/users/${id}`,
+                method:'DELETE'
+            }),
+            invalidatesTags:['Users']
+        })
+}),
+
+
 
 
 })

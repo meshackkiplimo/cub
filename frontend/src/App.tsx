@@ -11,6 +11,7 @@ import Verify from './components/auth/Verify';
 import Profile from './components/Profile';
 import { ToastProvider } from './components/toaster/ToasterContext';
 import CreateCarPage from './pages/CreateCarPage';
+import UserFetch from './components/UserFetch';
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
             <Route path="/verify" element={<Verify />} />
             <Route path="/profile" element={<Profile />} />
              <Route path="/create-car" element={<CreateCarPage />} />
+             <Route path="/users" element={<UserFetch />} />
 
           </Routes>
         </div>

@@ -83,3 +83,22 @@ export const updateVerificationStatus = async (email: string, isVerified: boolea
         .returning();
     return updatedUser;
 }
+
+// get all users  from db
+
+export const getAllUsersService = async () => {
+    const users = await db.query.UserTable.findMany({
+        columns: {
+            user_id: true,
+            first_name: true,
+            last_name: true,
+            email: true,
+            role: true,
+            is_verified: true
+        }
+       
+    });
+
+    return users;
+    
+}
