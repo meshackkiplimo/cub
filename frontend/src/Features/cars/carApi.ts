@@ -36,6 +36,7 @@ export const carAPI = createApi({
   endpoints:(builder) => ({
     getCars: builder.query<TICar[], void>({
       query: () => '/cars',
+       transformResponse: (response: { car: TICar[] }) => response.car,
       providesTags: ['Car'],
     }),
     getCarById: builder.query<TICar, string>({
