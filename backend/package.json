@@ -54,6 +54,7 @@
     "multer": "^2.0.1",
     "nodemailer": "^7.0.3",
     "pg": "^8.16.0",
+    "react-icons": "^5.5.0",
     "sonner": "^2.0.5"
   }
 }
