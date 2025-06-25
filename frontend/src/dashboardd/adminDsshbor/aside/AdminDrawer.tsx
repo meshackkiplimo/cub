@@ -5,7 +5,7 @@ const AdminDrawer = () => {
     return (
         <div>
 
-            <h2 className="text-xl font-bold text-white p-4 border-b-2 border-gray-700 ">
+            <h2 className="text-xl font-bold text-white p-4 border-b-2 border-amber-400 ">
                 Dashboard Menu
             </h2>
             <ul>

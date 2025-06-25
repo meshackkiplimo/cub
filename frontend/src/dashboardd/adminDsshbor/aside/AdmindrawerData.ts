@@ -14,10 +14,10 @@ export type DrawerData = {
 export const adminDrawerData: DrawerData[] = [
 
     {
-        id: "todos",
-        name: "Todos",
+        id: "cars",
+        name: "Cars",
         icon: FaTasks,
-        link: "todos"
+        link: "cars"
     },
     {
         id: "users",

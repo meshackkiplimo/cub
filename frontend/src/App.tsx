@@ -13,6 +13,7 @@ import { ToastProvider } from './components/toaster/ToasterContext';
 import CreateCarPage from './pages/CreateCarPage';
 import UserFetch from './components/UserFetch';
 import AdminDashboard from './dashboardd/adminDsshbor/AdminDashboard';
+import Login from './components/auth/Login';
 
 
 function App() {
@@ -33,22 +34,20 @@ function App() {
              <Route path="/create-car" element={<CreateCarPage />} />
              <Route path="/users" element={<UserFetch />} />
               {/* User Dashboard Route (from your example) */}
-            {/* <Route
-              path="/user/dashboard"
-              element={isUser ? <UserDashboard /> : <Login />}
-            > */}
-              {/* <Route path="analytics" element={<h1>Analytics</h1>} />
-              <Route path="todos" element={<UserTodos />} />
-              <Route path="profile" element={<UserProfile />} />
-            </Route> */}
+           
+              <Route path="analytics" element={<h1>Analytics</h1>} />
+            <Route path="cars" element={<CarPage/>} />
+               <Route path="profile" element={<Profile />} />
+             {/* </Route> */}
             {/* Admin Dashboard Route */}
             <Route
               path="/admin/dashboard"
               element={<AdminDashboard />  }
             >
-              {/* <Route path="analytics" element={<AdminAnalytics />} />
-              <Route path="users" element={<AdminUsers />} />
-              <Route path="settings" element={<AdminSettings />} /> */}
+                 <Route path="cars" element={<CarPage/>} />
+              {/* <Route path="analytics" element={<AdminAnalytics />} /> */}
+              <Route path="users" element={<UserFetch />} />
+              {/* <Route path="settings" element={<AdminSettings />} /> */}
             </Route>
 
           </Routes>
