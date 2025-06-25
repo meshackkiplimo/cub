@@ -6,15 +6,25 @@ import type { RootState } from "../../app/store";
 
 
 export type TIReservation = {
+  reservation_id: number;
+  user_id: number;
+  car_id: number;
+  reservation_date: string;
+  pickup_date: string;
+  return_date: string;
+  user: {
+    user_id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+  };
+  car: {
+    make: string;
+    model: string;
+    year: string;
+  };
+};
 
-    reservation_id: number;
-        user_id: number;
-        car_id: number;
-        reservation_date: string
-        pickup_date: string
-        return_date: string;
-
-}
 
 export const reservationAPI  = createApi({
     reducerPath: 'reservationApi',
@@ -32,7 +42,7 @@ export const reservationAPI  = createApi({
     endpoints: (builder) => ({
         getReservations: builder.query<TIReservation[], void>({
         query: () => '/reservations',
-        transformResponse: (response: { reservation: TIReservation[] }) => response.reservation,
+        transformResponse: (response: { reservations: TIReservation[] }) => response.reservations,
         providesTags: ['Reservation'],
         }),
         getReservationById: builder.query<TIReservation, number>({

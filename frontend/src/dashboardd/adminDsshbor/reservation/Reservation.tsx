@@ -44,12 +44,12 @@ const Reservation = () => {
                 >
                   <td className='px-4 py-2'>{reservation.reservation_id}</td>
                   <td className='px-4 py-2'>
-                    {reservation.user_id} {reservation.user_id}
+                    {reservation.user.first_name} {reservation.user.last_name}
                   </td>
-                  {/* <td className='px-4 py-2'>{reservation.user.email}</td>
+                  <td className='px-4 py-2'>{reservation.user.email}</td>
                   <td className='px-4 py-2'>
                     {reservation.car.make} {reservation.car.model} ({reservation.car.year})
-                  </td> */}
+                  </td>
                   <td className='px-4 py-2'>{reservation.reservation_date}</td>
                   <td className='px-4 py-2'>{reservation.pickup_date}</td>
                   <td className='px-4 py-2'>{reservation.return_date}</td>
