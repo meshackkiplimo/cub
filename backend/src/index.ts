@@ -6,7 +6,7 @@ import db, { checkConnection } from "./drizzle/db";
 
 
 import { user } from "./routes/authRoute";
-import { customer } from "./routes/customerRoute";
+
 import { car } from "./routes/carRoute";
 import { booking } from "./routes/bookingRoute";
 import { location } from "./routes/locationRoute";
@@ -80,7 +80,7 @@ app.get('/health', async (req, res) => {
 
 // Initialize routes
 user(app)
-customer(app)
+
 car(app)
 booking(app)
 location(app)

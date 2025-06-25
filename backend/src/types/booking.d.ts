@@ -6,12 +6,7 @@ export interface DbUser {
     role: string;
 }
 
-export interface DbCustomer {
-    customer_id: number;
-    phone_number: string;
-    address: string;
-    user: DbUser;
-}
+
 
 export interface DbCar {
     car_id: number;
@@ -26,7 +21,7 @@ export interface DbCar {
 
 export interface DbBooking {
     booking_id: number;
-    customer_id: number;
+    user_id: number;
     car_id: number;
     rental_start_date: string;
     rental_end_date: string;
@@ -34,7 +29,7 @@ export interface DbBooking {
 }
 
 export interface DbBookingWithRelations extends DbBooking {
-    customer: DbCustomer;
+    user: DbUser;
     car: DbCar;
     status?: 'pending' | 'completed' | 'cancelled';
 }

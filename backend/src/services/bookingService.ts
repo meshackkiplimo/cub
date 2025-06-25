@@ -14,7 +14,7 @@ export const getBookingService = async (bookingId: number) => {
     return await db.query.BookingTable.findFirst({
         columns: {
             booking_id: true,
-            customer_id: true,
+            user_id: true,
             car_id: true,
             rental_start_date: true,
             rental_end_date: true,
@@ -22,22 +22,16 @@ export const getBookingService = async (bookingId: number) => {
             status: true
         },
         with: {
-            customer: {
+            user: {
                 columns: {
-                    customer_id: true,
-                    phone_number: true,
-                    address: true
-                },
-                with: {
-                    user: {
-                        columns: {
-                            user_id: true,
-                            first_name: true,
-                            last_name: true,
-                            email: true,
-                            role: true
-                        }
-                    }
+                    user_id: true,
+                    first_name: true,
+                    last_name: true,
+                    email: true,
+                    role: true,
+                 
+                
+
                 }
             },
             car: {
@@ -61,7 +55,7 @@ export const getAllBookingsService = async () => {
     return await db.query.BookingTable.findMany({
         columns: {
             booking_id: true,
-            customer_id: true,
+            user_id: true,
             car_id: true,
             rental_start_date: true,
             rental_end_date: true,
@@ -69,22 +63,15 @@ export const getAllBookingsService = async () => {
             status: true
         },
         with: {
-            customer: {
+            user: {
                 columns: {
-                    customer_id: true,
-                    phone_number: true,
-                    address: true
-                },
-                with: {
-                    user: {
-                        columns: {
-                            user_id: true,
-                            first_name: true,
-                            last_name: true,
-                            email: true,
-                            role: true
-                        }
-                    }
+                    user_id: true,
+                    first_name: true,
+                    last_name: true,
+                    
+                  
+                    
+                
                 }
             },
             car: {

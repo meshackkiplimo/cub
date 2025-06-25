@@ -9,26 +9,31 @@ import {
     updateReservationService 
 } from '../services/reservationService';
 
+
 export const createReservationController = async (req: Request, res: Response) => {
     try {
         console.log('Received reservation request:', req.body);
         
-        const reservationData = {
-            customer_id: req.body.customer_id,
-            car_id: req.body.car_id,
-            reservation_date: req.body.reservation_date,
-            pickup_date: req.body.pickup_date
-        };
-        
-        console.log('Processed reservation data:', reservationData);
-
         // Validate required fields
-        if (!reservationData.customer_id || !reservationData.car_id || 
-            !reservationData.reservation_date || !reservationData.pickup_date) {
+        if (
+            !req.user?.user_id ||
+            !req.body.car_id ||
+            !req.body.reservation_date ||
+            !req.body.pickup_date
+        ) {
             return res.status(400).json({ 
                 message: "Missing required fields: customer_id, car_id, reservation_date, pickup_date" 
             });
         }
+
+        const reservationData = {
+            user_id: Number(req.user.user_id),
+            car_id: Number(req.body.car_id),
+            reservation_date: String(req.body.reservation_date),
+            pickup_date: String(req.body.pickup_date)
+        };
+        
+        console.log('Processed reservation data:', reservationData);
 
         // Validate dates
         const reservationDate = new Date(reservationData.reservation_date);

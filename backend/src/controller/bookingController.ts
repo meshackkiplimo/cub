@@ -10,7 +10,7 @@ export const createBookingController = async (req: Request, res: Response) => {
         const booking: CreateBookingDto = req.body;
         
         // Validate required fields
-        if (!booking.customer_id || !booking.car_id || !booking.rental_start_date || 
+        if (!booking.user_id || !booking.car_id || !booking.rental_start_date || 
             !booking.rental_end_date || !booking.total_amount) {
             return res.status(400).json({ message: "Invalid booking data" });
         }
@@ -102,7 +102,7 @@ export const updateBookingController = async (req: Request, res: Response) => {
         const isAdmin = req.user.role === 'admin';
 
         // Check user access
-        if (!isAdmin && booking.customer.user.user_id !== parseInt(req.user.user_id)) {
+        if (!isAdmin && booking.user_id !== parseInt(req.user.user_id)) {
             return res.status(403).json({ message: "Access denied" });
         }
 

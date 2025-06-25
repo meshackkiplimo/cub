@@ -14,12 +14,12 @@ export const UserTable = pgTable("user", {
 });
 
 
-export const CustomerTable = pgTable("customer", {
-    customer_id: serial("customer_id").primaryKey(),
-    user_id: integer("user_id").notNull().references(() => UserTable.user_id, { onDelete: 'cascade' }),
-    phone_number: varchar("phone", { length: 15 }).notNull(),
-    address: varchar("address", { length: 255 }).notNull(),
-});
+// export const CustomerTable = pgTable("customer", {
+//     customer_id: serial("customer_id").primaryKey(),
+//     user_id: integer("user_id").notNull().references(() => UserTable.user_id, { onDelete: 'cascade' }),
+//     phone_number: varchar("phone", { length: 15 }).notNull(),
+//     address: varchar("address", { length: 255 }).notNull(),
+// });
 
 export const LocationTable = pgTable("location", {
     location_id: serial("location_id").primaryKey(),
@@ -43,7 +43,7 @@ export const CarTable = pgTable("car", {
 
 export const ReservationTable = pgTable("reservation", {
     reservation_id: serial("reservation_id").primaryKey(),
-    customer_id: integer("customer_id").notNull().references(() => CustomerTable.customer_id, { onDelete: 'cascade' }),
+    user_id: integer("customer_id").notNull().references(() => UserTable.user_id, { onDelete: 'cascade' }),
     car_id: integer("car_id").notNull().references(() => CarTable.car_id, { onDelete: 'cascade' }),
     reservation_date: varchar("start_date", { length: 10 }).notNull(),
     pickup_date: varchar("end_date", { length: 10 }).notNull(),
@@ -52,7 +52,7 @@ export const ReservationTable = pgTable("reservation", {
 
 export const BookingTable = pgTable("booking", {
     booking_id: serial("booking_id").primaryKey(),
-    customer_id: integer("customer_id").notNull().references(() => CustomerTable.customer_id, { onDelete: 'cascade' }),
+    user_id: integer("customer_id").notNull().references(() => UserTable.user_id, { onDelete: 'cascade' }),
     car_id: integer("car_id").notNull().references(() => CarTable.car_id, { onDelete: 'cascade' }),
     rental_start_date: varchar("rental_start_date", { length: 10 }).notNull(),
     rental_end_date: varchar("rental_end_date", { length: 10 }).notNull(),
@@ -86,21 +86,21 @@ export const InsuranceTable = pgTable("insurance", {
 });
 
 // Define relations
-export const UserRelations = relations(UserTable, ({ one }) => ({
-    customer: one(CustomerTable, {
-        fields: [UserTable.user_id],
-        references: [CustomerTable.user_id],
-    }),
-}));
+// export const UserRelations = relations(UserTable, ({ one }) => ({
+//     customer: one(CustomerTable, {
+//         fields: [UserTable.user_id],
+//         references: [CustomerTable.user_id],
+//     }),
+// }));
 
-export const CustomerRelations = relations(CustomerTable, ({ many, one }) => ({
-    user: one(UserTable, {
-        fields: [CustomerTable.user_id],
-        references: [UserTable.user_id],
-    }),
-    bookings: many(BookingTable),
-    reservations: many(ReservationTable)
-}));
+// export const CustomerRelations = relations(CustomerTable, ({ many, one }) => ({
+//     user: one(UserTable, {
+//         fields: [CustomerTable.user_id],
+//         references: [UserTable.user_id],
+//     }),
+//     bookings: many(BookingTable),
+//     reservations: many(ReservationTable)
+// }));
 
 export const LocationRelations = relations(LocationTable, ({ many }) => ({
     cars: many(CarTable)
@@ -119,9 +119,9 @@ export const CarRelations = relations(CarTable, ({ many, one }) => ({
 }));
 
 export const ReservationRelations = relations(ReservationTable, ({ one }) => ({
-    customer: one(CustomerTable, {
-        fields: [ReservationTable.customer_id],
-        references: [CustomerTable.customer_id],
+    user: one(UserTable, {
+        fields: [ReservationTable.user_id],
+        references: [UserTable.user_id],
     }),
     car: one(CarTable, {
         fields: [ReservationTable.car_id],
@@ -130,9 +130,9 @@ export const ReservationRelations = relations(ReservationTable, ({ one }) => ({
 }));
 
 export const BookingRelations = relations(BookingTable, ({ one }) => ({
-    customer: one(CustomerTable, {
-        fields: [BookingTable.customer_id],
-        references: [CustomerTable.customer_id],
+    user: one(UserTable, {
+        fields: [BookingTable.user_id],
+        references: [UserTable.user_id],
     }),
     car: one(CarTable, {
         fields: [BookingTable.car_id],

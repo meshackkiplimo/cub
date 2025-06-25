@@ -26,19 +26,12 @@ export const getPaymentService = async (paymentId: number) => {
                     total_amount: true
                 },
                 with: {
-                    customer: {
+                    user: {
                         columns: {
-                            customer_id: true,
-                            phone_number: true
-                        },
-                        with: {
-                            user: {
-                                columns: {
-                                    first_name: true,
-                                    last_name: true,
-                                    email: true
-                                }
-                            }
+                            user_id: true,
+                            first_name: true,
+                            last_name: true,
+                            email: true
                         }
                     },
                     car: {
@@ -73,20 +66,13 @@ export const getAllPaymentsService = async () => {
                     total_amount: true
                 },
                 with: {
-                    customer: {
+                    user: {
                         columns: {
-                            customer_id: true,
-                            phone_number: true
+                            user_id: true,
+                            first_name: true,
+                            last_name: true,
+                            email: true
                         },
-                        with: {
-                            user: {
-                                columns: {
-                                    first_name: true,
-                                    last_name: true,
-                                    email: true
-                                }
-                            }
-                        }
                     },
                     car: {
                         columns: {

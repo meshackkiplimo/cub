@@ -1,7 +1,7 @@
 import { Column, sql } from "drizzle-orm";
 import db from "../drizzle/db";
-import { CustomerTable, UserTable } from "../drizzle/schema";
-import { TIUser, TIUserWithCustomer } from "../types";
+import {  UserTable } from "../drizzle/schema";
+import { TIUser } from "../types";
 
 export const createAuthService = async (userData: TIUser) => {
     try {
@@ -61,15 +61,7 @@ export const loginAuthService = async (user: TIUser) => {
             role: true,
             is_verified: true
         },
-        with: {
-            customer: {
-                columns: {
-                    customer_id: true,
-                    phone_number: true,
-                    address: true
-                }
-            }
-        },
+       
         where: sql`${UserTable.email}=${email}`
     });
 

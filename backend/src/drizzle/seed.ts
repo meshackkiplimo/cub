@@ -1,5 +1,5 @@
 import db from "./db"
-import { CarTable, LocationTable, CustomerTable, ReservationTable, BookingTable, PaymentTable, MaintenanceTable, InsuranceTable, UserTable } from "./schema";
+import { CarTable, LocationTable, ReservationTable, BookingTable, PaymentTable, MaintenanceTable, InsuranceTable, UserTable } from "./schema";
 
 async function seed() {
 
@@ -207,121 +207,121 @@ async function seed() {
 
 
     // Seed Customers (references UserTable)
-    await db.insert(CustomerTable).values([
-        {
-            user_id: 1,
-            phone_number: "111-222-3333",
-            address: "101 Oak Street, Cityville, ST 12345"
-        },
-        {
-            user_id: 2,
-            phone_number: "444-555-6666",
-            address: "202 Pine Avenue, Cityville, ST 12345"
-        },
-        {
-            user_id: 3,
-            phone_number: "777-888-9999",
-            address: "303 Maple Road, Cityville, ST 12345"
-        },
-        {
-            user_id: 4,
-            phone_number: "123-456-7890",
-            address: "404 Elm Street, Cityville, ST 12345"
-        },
-        {
-            user_id: 6,
-            phone_number: "234-567-8901",
-            address: "505 Cedar Lane, Cityville, ST 12345"
-        },
-        {
-            user_id: 7,
-            phone_number: "345-678-9012",
-            address: "606 Birch Road, Cityville, ST 12345"
-        },
-        {
-            user_id: 8,
-            phone_number: "456-789-0123",
-            address: "707 Willow Way, Cityville, ST 12345"
-        },
-        {
-            user_id: 9,
-            phone_number: "567-890-1234",
-            address: "808 Maple Court, Cityville, ST 12345"
-        },
-        {
-            user_id: 10,
-            phone_number: "678-901-2345",
-            address: "909 Pine Street, Cityville, ST 12345"
-        }
-    ]);
+    // await db.insert(CustomerTable).values([
+    //     {
+    //         user_id: 1,
+    //         phone_number: "111-222-3333",
+    //         address: "101 Oak Street, Cityville, ST 12345"
+    //     },
+    //     {
+    //         user_id: 2,
+    //         phone_number: "444-555-6666",
+    //         address: "202 Pine Avenue, Cityville, ST 12345"
+    //     },
+    //     {
+    //         user_id: 3,
+    //         phone_number: "777-888-9999",
+    //         address: "303 Maple Road, Cityville, ST 12345"
+    //     },
+    //     {
+    //         user_id: 4,
+    //         phone_number: "123-456-7890",
+    //         address: "404 Elm Street, Cityville, ST 12345"
+    //     },
+    //     {
+    //         user_id: 6,
+    //         phone_number: "234-567-8901",
+    //         address: "505 Cedar Lane, Cityville, ST 12345"
+    //     },
+    //     {
+    //         user_id: 7,
+    //         phone_number: "345-678-9012",
+    //         address: "606 Birch Road, Cityville, ST 12345"
+    //     },
+    //     {
+    //         user_id: 8,
+    //         phone_number: "456-789-0123",
+    //         address: "707 Willow Way, Cityville, ST 12345"
+    //     },
+    //     {
+    //         user_id: 9,
+    //         phone_number: "567-890-1234",
+    //         address: "808 Maple Court, Cityville, ST 12345"
+    //     },
+    //     {
+    //         user_id: 10,
+    //         phone_number: "678-901-2345",
+    //         address: "909 Pine Street, Cityville, ST 12345"
+    //     }
+    // ]);
 
     // Seed Reservations
     await db.insert(ReservationTable).values([
         {
-            customer_id: 1,
+            user_id: 1,
             car_id: 1,
             reservation_date: "2024-05-26",
             pickup_date: "2024-06-01",
             return_date: "2024-06-05"
         },
         {
-            customer_id: 2,
+            user_id: 2,
             car_id: 3,
             reservation_date: "2024-05-26",
             pickup_date: "2024-06-10",
             return_date: "2024-06-15"
         },
         {
-            customer_id: 3,
+            user_id: 3,
             car_id: 5,
             reservation_date: "2024-05-27",
             pickup_date: "2024-06-15",
             return_date: "2024-06-20"
         },
         {
-            customer_id: 4,
+            user_id: 4,
             car_id: 7,
             reservation_date: "2024-05-28",
             pickup_date: "2024-06-20",
             return_date: "2024-06-25"
         },
         {
-            customer_id: 5,
+            user_id: 5,
             car_id: 2,
             reservation_date: "2024-05-29",
             pickup_date: "2024-06-05",
             return_date: "2024-06-10"
         },
         {
-            customer_id: 6,
+            user_id: 6,
             car_id: 4,
             reservation_date: "2024-05-30",
             pickup_date: "2024-06-12",
             return_date: "2024-06-18"
         },
         {
-            customer_id: 7,
+            user_id: 7,
             car_id: 6,
             reservation_date: "2024-05-31",
             pickup_date: "2024-06-25",
             return_date: "2024-06-30"
         },
         {
-            customer_id: 8,
+            user_id: 8,
             car_id: 8,
             reservation_date: "2024-06-01",
             pickup_date: "2024-07-01",
             return_date: "2024-07-05"
         },
         {
-            customer_id: 9,
+            user_id: 9,
             car_id: 9,
             reservation_date: "2024-06-02",
             pickup_date: "2024-07-10",
             return_date: "2024-07-15"
         },
         {
-            customer_id: 1,
+            user_id: 1,
             car_id: 10,
             reservation_date: "2024-06-03",
             pickup_date: "2024-07-20",
@@ -332,70 +332,70 @@ async function seed() {
     // Seed Bookings
     await db.insert(BookingTable).values([
         {
-            customer_id: 1,
+            user_id: 1,
             car_id: 2,
             rental_start_date: "2024-05-27",
             rental_end_date: "2024-05-30",
             total_amount: "150.00"
         },
         {
-            customer_id: 3,
+            user_id: 3,
             car_id: 4,
             rental_start_date: "2024-05-28",
             rental_end_date: "2024-06-02",
             total_amount: "400.00"
         },
         {
-            customer_id: 2,
+            user_id: 2,
             car_id: 6,
             rental_start_date: "2024-05-29",
             rental_end_date: "2024-06-03",
             total_amount: "425.00"
         },
         {
-            customer_id: 4,
+            user_id: 4,
             car_id: 8,
             rental_start_date: "2024-05-30",
             rental_end_date: "2024-06-04",
             total_amount: "275.00"
         },
         {
-            customer_id: 5,
+            user_id: 5,
             car_id: 1,
             rental_start_date: "2024-05-31",
             rental_end_date: "2024-06-05",
             total_amount: "250.00"
         },
         {
-            customer_id: 6,
+            user_id: 6,
             car_id: 3,
             rental_start_date: "2024-06-01",
             rental_end_date: "2024-06-06",
             total_amount: "375.00"
         },
         {
-            customer_id: 7,
+            user_id: 7,
             car_id: 5,
             rental_start_date: "2024-06-02",
             rental_end_date: "2024-06-07",
             total_amount: "450.00"
         },
         {
-            customer_id: 8,
+            user_id: 8,
             car_id: 7,
             rental_start_date: "2024-06-03",
             rental_end_date: "2024-06-08",
             total_amount: "410.00"
         },
         {
-            customer_id: 9,
+            user_id: 9,
             car_id: 9,
             rental_start_date: "2024-06-04",
             rental_end_date: "2024-06-09",
             total_amount: "240.00"
         },
         {
-            customer_id: 1,
+            user_id: 1,
             car_id: 10,
             rental_start_date: "2024-06-05",
             rental_end_date: "2024-06-10",
