@@ -3,6 +3,7 @@ import { FaTasks } from "react-icons/fa";
 import { FiUsers } from "react-icons/fi";
 import { FaUserCheck } from "react-icons/fa6";
 import { MdOutlineBookmark } from "react-icons/md";
+import { RiReservedFill } from "react-icons/ri";
 
 
 export type DrawerData = {
@@ -37,6 +38,12 @@ export const adminDrawerData: DrawerData[] = [
         name: "Bookings",
         icon: MdOutlineBookmark,
         link: "bookings"
+    },
+      {
+        id: "reservations",
+        name: "Reservations",
+        icon: RiReservedFill,
+        link: "reservations"
     },
     {
         id: "analytics",
