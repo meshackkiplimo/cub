@@ -8,6 +8,7 @@ import { persistStore } from "redux-persist";
 import { loginAPI } from "../Features/users/logiApi";
 import userSlice from "../Features/login/userSlice";
 import { carAPI } from "../Features/cars/carApi";
+import { bookingAPI } from "../Features/bookings/bookingAPI";
 
 
 const persistConfig = {
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
     [UserApi.reducerPath]:UserApi.reducer,
     [loginAPI.reducerPath]:loginAPI.reducer,
     [carAPI.reducerPath]:carAPI.reducer,
+    [bookingAPI.reducerPath]:bookingAPI.reducer,
     user:userSlice
 
 
@@ -35,7 +37,10 @@ export const store = configureStore({
             serializableCheck: false,
         }).concat(UserApi.middleware)
           .concat(loginAPI.middleware)
-          .concat(carAPI.middleware),
+          .concat(carAPI.middleware)
+            .concat(bookingAPI.middleware),
+            
+
 
 
 })

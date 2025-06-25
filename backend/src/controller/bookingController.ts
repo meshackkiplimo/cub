@@ -73,9 +73,10 @@ export const getAllBookingsController = async (req: Request, res: Response) => {
     try {
      
        const getAllBookings = await getAllBookingsService();
-         if (!getAllBookings || getAllBookings.length === 0) {
-              return res.status(404).json({ message: "No bookings found" });
-         }
+        if (!getAllBookings || getAllBookings.length === 0) {
+            return res.status(404).json({ message: "No bookings found" });
+        }
+         
          res.status(200).json({ bookings: getAllBookings });
 
         

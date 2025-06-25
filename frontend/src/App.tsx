@@ -14,6 +14,7 @@ import CreateCarPage from './pages/CreateCarPage';
 import UserFetch from './components/UserFetch';
 import AdminDashboard from './dashboardd/adminDsshbor/AdminDashboard';
 import Login from './components/auth/Login';
+import GetBookings from './dashboardd/adminDsshbor/bookings/GetBookings';
 
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
               path="/admin/dashboard"
               element={<AdminDashboard />  }
             >
+                 <Route path="bookings" element={<GetBookings/>} />
                  <Route path="cars" element={<CarPage/>} />
               {/* <Route path="analytics" element={<AdminAnalytics />} /> */}
               <Route path="users" element={<UserFetch />} />
