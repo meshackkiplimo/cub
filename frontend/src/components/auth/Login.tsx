@@ -66,7 +66,7 @@ const Login = () => {
         else {
             navigate('/'); // Redirect to home if no specific role
         }
-    }, 2000);
+    }, 3000);
         
     } catch (error: any) {
         console.error("Error during login:", error);
