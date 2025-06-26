@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import { createAuthService, getAllUsersService, loginAuthService, updateVerificationStatus } from '../services/authService';
+import { createAuthService, getAllUsersService, loginAuthService, updateUserRoleService, updateVerificationStatus } from '../services/authService';
 import { TIUser, TIUserWithCustomer } from '../types';
 import jwt from 'jsonwebtoken';
 import { emailService } from '../services/emailService';
@@ -150,7 +150,8 @@ export const loginUserController = async (req: Request, res: Response) => {
                 first_name: existingUser.first_name,
                 last_name: existingUser.last_name,
                 email: existingUser.email,
-                isVerified: existingUser.is_verified
+                isVerified: existingUser.is_verified,
+                role: existingUser.role
             }, 
             token 
         });
@@ -226,3 +227,34 @@ export const getAllUsersController = async (req: Request, res: Response) => {
     
   }
 }
+
+// update user role to either admin or user
+export const updateUserRoleController = async (req: Request, res: Response) => {
+    try {
+        const { role } = req.body;
+        const { id } = req.params;
+
+        if (!id || !role) {
+            return res.status(400).json({ message: "User ID and role are required" });
+        }
+        
+        const updatedUser = await updateUserRoleService(Number(id), role);
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        
+        res.status(200).json({ 
+            message: "User role updated successfully", 
+            user: {
+                id: updatedUser.user_id,
+                first_name: updatedUser.first_name,
+                last_name: updatedUser.last_name,
+                email: updatedUser.email,
+                role: updatedUser.role
+            } 
+        });
+    } catch (error) {
+        console.error("Error in updateUserRoleController:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};

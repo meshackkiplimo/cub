@@ -1,5 +1,5 @@
 import { Express } from "express"
-import { creatUserController, getAllUsersController, loginUserController, verifyEmailController } from "../controller/authController"
+import { creatUserController, getAllUsersController, loginUserController, updateUserRoleController, verifyEmailController } from "../controller/authController"
 
 export const user = (app: Express) => {
     app.route("/auth/register").post(
@@ -36,6 +36,16 @@ export const user = (app: Express) => {
         async (req, res, next) => {
             try {
                 await getAllUsersController(req, res)
+            } catch (error) {
+                next(error)
+            }
+        }
+    )
+
+    app.route('/users/:id').patch(
+        async (req, res, next) => {
+            try {
+                await updateUserRoleController(req, res)
             } catch (error) {
                 next(error)
             }

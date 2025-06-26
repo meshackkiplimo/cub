@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { UserApi, type TUser } from "../Features/users/userApi";
+import ChangeRole from "../dashboardd/adminDsshbor/manageusers/ChangeRole";
 
 const UserFetch = () => {
   const { data: usersData, isLoading, error } = UserApi.useGetUsersQuery(
@@ -15,6 +16,8 @@ const UserFetch = () => {
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">User List</h2>
+
+       <ChangeRole user={selectedUser} />
 
       {isLoading && <p>Loading users...</p>}
       {error && <p className="text-red-500">Error fetching users</p>}

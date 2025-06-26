@@ -91,6 +91,18 @@ export const getAllUsersService = async () => {
        
     });
 
+    
+
     return users;
     
+}
+
+// update role to either admin or user
+export const updateUserRoleService = async (userId: number, role: string) =>
+{
+    const [updatedUser] = await db.update(UserTable)
+        .set({ role })
+        .where(sql`${UserTable.user_id}=${userId}`)
+        .returning();
+    return updatedUser;
 }

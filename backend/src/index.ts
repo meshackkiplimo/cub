@@ -51,7 +51,7 @@ const app = express();
 // cors for all origins
 app.use(cors({
   origin: 'http://localhost:5173', // Allow all origins
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific methods
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS','PATCH'], // Allow specific methods
 
 }));
 
