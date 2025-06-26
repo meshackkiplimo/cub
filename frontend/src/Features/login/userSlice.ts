@@ -4,16 +4,17 @@ import { createSlice } from '@reduxjs/toolkit';
 
 
 export type TLoginResponse ={
-    accessToken: string;
+    token: string | null;
     user: {
-        id: string;
+        user_id: number;
+        first_name: string;
+        last_name: string;
         email: string;
-        name: string;
         role: string;
     } | null;
 }
 
-const initialState = {
+const initialState:TLoginResponse = {
     token :null,
     user: null
 
@@ -24,7 +25,7 @@ const userSlice = createSlice({
     initialState,
     reducers: {
         loginSuccess: (state, action) => {
-            state.token = action.payload.accessToken;
+            state.token = action.payload.token;
             state.user = action.payload.user;
             
         },

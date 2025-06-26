@@ -4,11 +4,12 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { loginAPI } from '../../Features/users/logiApi';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { loginSuccess } from '../../Features/login/userSlice';
 import Spinner from '../spinner/Spinner';
 import { toast } from 'sonner';
 import { useToast } from '../toaster/ToasterContext';
+import type { RootState } from '../../app/store';
 
 
 type UserInputs = {
@@ -22,6 +23,9 @@ const schema = {
 
 
 const Login = () => {
+    const userRole = useSelector((state: RootState) => state.user.user?.role);
+  const userToken = useSelector((state: RootState) => state.user.token);
+
 
 
     const navigate = useNavigate();
@@ -53,11 +57,16 @@ const Login = () => {
 
         // if user is not verified give and error
 
-        setTimeout(()=>{
-            navigate('/')
-
-        }, 2000);
-
+       setTimeout(() => {
+      if (response?.user?.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else if (response?.user?.role === 'user') {
+        navigate('/user/dashboard');
+      } 
+        else {
+            navigate('/'); // Redirect to home if no specific role
+        }
+    }, 2000);
         
     } catch (error: any) {
         console.error("Error during login:", error);

@@ -16,6 +16,7 @@ const persistConfig = {
     key: 'root',
     version: 1,
     storage,
+    whitelist: ['user'] // Specify which reducers to persist
 };
 
 const rootReducer = combineReducers({
@@ -24,7 +25,7 @@ const rootReducer = combineReducers({
     [carAPI.reducerPath]:carAPI.reducer,
     [bookingAPI.reducerPath]:bookingAPI.reducer,
     [reservationAPI.reducerPath]:reservationAPI.reducer,
-    user:userSlice
+    user: userSlice
 
 
 
@@ -48,7 +49,7 @@ export const store = configureStore({
 
 })
 
-export const persistor = persistStore(store);
+export const persistedStore = persistStore(store);
 
 
 export type RootState = ReturnType<typeof store.getState>;

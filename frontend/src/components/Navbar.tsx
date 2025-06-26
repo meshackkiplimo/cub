@@ -1,18 +1,21 @@
 import React from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { persistor, type RootState } from '../app/store';
+import { persistedStore, type RootState } from '../app/store';
 import { logout } from '../Features/login/userSlice';
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state: RootState) => state.user.user);
+  const userrole = useSelector((state: RootState) => state.user.user?.role);
+    const userToken = useSelector((state: RootState) => state.user.token);
+    const isAdmin = userrole === 'admin';
+    const isUser = userrole === 'user';
 
   const handleLogout = async () => {
     try {
       dispatch(logout());
-      await persistor.purge();
+      await persistedStore.purge();
       navigate('/login');
     } catch (error) {
       console.error('Logout failed:', error);
@@ -67,7 +70,7 @@ const Navbar = () => {
       </div>
 
       <div className="navbar-end gap-2">
-        {user ? (
+        {userrole ? (
           <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button" className=" btn btn-primary rounded-full btn-outline bg-amber-400   flex items-center justify-center">
               Profile
