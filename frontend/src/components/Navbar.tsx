@@ -8,6 +8,8 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userrole = useSelector((state: RootState) => state.user.user?.role);
+  const user = useSelector((state: RootState) => state.user.user);
+
     const userToken = useSelector((state: RootState) => state.user.token);
     const isAdmin = userrole === 'admin';
     const isUser = userrole === 'user';
@@ -16,7 +18,7 @@ const Navbar = () => {
     try {
       dispatch(logout());
       await persistedStore.purge();
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -70,7 +72,7 @@ const Navbar = () => {
       </div>
 
       <div className="navbar-end gap-2">
-        {userrole ? (
+        {user ? (
           <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button" className=" btn btn-primary rounded-full btn-outline bg-amber-400   flex items-center justify-center">
               Profile
