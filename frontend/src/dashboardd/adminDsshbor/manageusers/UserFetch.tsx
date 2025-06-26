@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { UserApi, type TUser } from "../Features/users/userApi";
-import ChangeRole from "../dashboardd/adminDsshbor/manageusers/ChangeRole";
+import { UserApi, type TUser } from "../../../Features/users/userApi";
+import ChangeRole from "./ChangeRole";
 
 const UserFetch = () => {
   const { data: usersData, isLoading, error } = UserApi.useGetUsersQuery(

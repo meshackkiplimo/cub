@@ -15,7 +15,7 @@ export type TLoginResponse ={
 }
 
 const initialState:TLoginResponse = {
-    token :null,
+    token : null,
     user: null
 
 }
