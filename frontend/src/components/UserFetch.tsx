@@ -52,7 +52,7 @@ const UserFetch = () => {
                   </td>
                   <td className="px-4 py-2">
                     <button
-                      className="btn btn-sm btn-primary"
+                      className="btn btn-sm btn-primary bg-amber-400  text-shadow-green-700"
                       onClick={() => {
                         setSelectedUser(user);
                         (document.getElementById("role_modal") as HTMLDialogElement)?.showModal();
