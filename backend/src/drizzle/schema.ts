@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm";
 import { boolean, pgTable, serial, varchar, decimal, integer, pgEnum } from "drizzle-orm/pg-core";
+import { user } from "src/routes/authRoute";
 
 export const BookingStatusEnum = pgEnum('booking_status', ['pending', 'completed', 'cancelled']);
 
@@ -62,10 +63,12 @@ export const BookingTable = pgTable("booking", {
 
 export const PaymentTable = pgTable("payment", {
     payment_id: serial("payment_id").primaryKey(),
+    user_id: integer("user_id").notNull().references(() => UserTable.user_id, { onDelete: 'cascade' }),
     booking_id: integer("booking_id").notNull().references(() => BookingTable.booking_id, { onDelete: 'cascade' }),
     payment_date: varchar("payment_date", { length: 10 }).notNull(),
     amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
     payment_method: varchar("payment_method", { length: 50 }).notNull(),
+    status: BookingStatusEnum("status").notNull().default('completed'),
 });
 
 export const MaintenanceTable = pgTable("maintenance", {
@@ -141,6 +144,10 @@ export const BookingRelations = relations(BookingTable, ({ one }) => ({
 }));
 
 export const PaymentRelations = relations(PaymentTable, ({ one }) => ({
+    user: one(UserTable, {
+        fields: [PaymentTable.user_id],
+        references: [UserTable.user_id],
+    }),
     booking: one(BookingTable, {
         fields: [PaymentTable.booking_id],
         references: [BookingTable.booking_id],

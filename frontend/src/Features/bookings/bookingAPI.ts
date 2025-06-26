@@ -9,7 +9,7 @@ import type { RootState } from "../../app/store";
 
 export type TIBooking = {
     booking_id: number;
-    customer_id: number;
+    user_id: number;
     car_id: number
     rental_start_date: string;
     rental_end_date: string

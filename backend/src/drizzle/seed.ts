@@ -407,63 +407,84 @@ async function seed() {
     await db.insert(PaymentTable).values([
         {
             booking_id: 1,
+            user_id: 1,
             payment_date: "2024-05-27",
             amount: "150.00",
-            payment_method: "Credit Card"
+            payment_method: "Credit Card",
+            status: "completed"
         },
         {
             booking_id: 2,
+            user_id: 3,
             payment_date: "2024-05-28",
             amount: "400.00",
-            payment_method: "Debit Card"
+            payment_method: "Debit Card",
+            status: "completed"
         },
         {
             booking_id: 3,
+            user_id: 2,
             payment_date: "2024-05-29",
             amount: "425.00",
-            payment_method: "Credit Card"
+            payment_method: "Credit Card",
+            status: "completed"
         },
         {
             booking_id: 4,
+            user_id: 4,
             payment_date: "2024-05-30",
             amount: "275.00",
-            payment_method: "PayPal"
+            payment_method: "PayPal",
+            status: "pending"
         },
         {
             booking_id: 5,
+            user_id: 5,
             payment_date: "2024-05-31",
             amount: "250.00",
-            payment_method: "Credit Card"
+            payment_method: "Credit Card",
+            status: "completed"
         },
         {
             booking_id: 6,
+            user_id: 6,
             payment_date: "2024-06-01",
             amount: "375.00",
-            payment_method: "Debit Card"
+            payment_method: "Debit Card",
+            status: "completed"
         },
         {
             booking_id: 7,
+            user_id: 7,
             payment_date: "2024-06-02",
             amount: "450.00",
-            payment_method: "PayPal"
+            payment_method: "PayPal",
+            status: "completed"
+
         },
         {
             booking_id: 8,
+            user_id: 8,
             payment_date: "2024-06-03",
             amount: "410.00",
-            payment_method: "Credit Card"
+            payment_method: "Credit Card",
+            status: "completed"
         },
         {
             booking_id: 9,
+            user_id: 9,
             payment_date: "2024-06-04",
             amount: "240.00",
-            payment_method: "Debit Card"
+            payment_method: "Debit Card",
+            status: "completed"
         },
         {
             booking_id: 10,
+            user_id: 1,
             payment_date: "2024-06-05",
             amount: "475.00",
-            payment_method: "Credit Card"
+            payment_method: "Credit Card",
+            status: "completed"
         }
     ]);
 

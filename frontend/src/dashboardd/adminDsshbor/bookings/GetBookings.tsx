@@ -24,7 +24,7 @@ const GetBookings = () => {
             <thead>
               <tr className='bg-gray-600 text-white text-md lg:text-lg'>
                 <th className='px-4 py-2'>Booking ID</th>
-                <th className='px-4 py-2'>Customer ID</th>
+                <th className='px-4 py-2'>USER ID</th>
                 <th className='px-4 py-2'>Car ID</th>
                 <th className='px-4 py-2'>Rental Start Date</th>
                 <th className='px-4 py-2'>Rental End Date</th>
@@ -36,7 +36,7 @@ const GetBookings = () => {
               {bookingsData.map((booking: TIBooking) => (
                 <tr key={booking.booking_id} className='hover:bg-gray-300 border-b border-gray-400'>
                   <td className='px-4 py-2 border-r border-gray-400'>{booking.booking_id}</td>
-                  <td className='px-4 py-2 border-r border-gray-400'>{booking.customer_id}</td>
+                  <td className='px-4 py-2 border-r border-gray-400'>{booking.user_id}</td>
                   <td className='px-4 py-2 border-r border-gray-400'>{booking.car_id}</td>
                   <td className='px-4 py-2 border-r border-gray-400'>{booking.rental_start_date}</td>
                   <td className='px-4 py-2 border-r border-gray-400'>{booking.rental_end_date}</td>

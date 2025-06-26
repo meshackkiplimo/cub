@@ -4,6 +4,7 @@ import { FiUsers } from "react-icons/fi";
 import { FaUserCheck } from "react-icons/fa6";
 import { MdOutlineBookmark } from "react-icons/md";
 import { RiReservedFill } from "react-icons/ri";
+import { MdPayments } from "react-icons/md";
 
 
 export type DrawerData = {
@@ -45,6 +46,14 @@ export const adminDrawerData: DrawerData[] = [
         icon: RiReservedFill,
         link: "reservations"
     },
+    {
+        id: "payments",
+        name: "Payments",
+        icon: MdPayments,
+        link: "payments"
+    },
+
+
     {
         id: "analytics",
         name: "Analytics",

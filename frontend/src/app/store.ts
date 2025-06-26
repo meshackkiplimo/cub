@@ -10,6 +10,7 @@ import userSlice from "../Features/login/userSlice";
 import { carAPI } from "../Features/cars/carApi";
 import { bookingAPI } from "../Features/bookings/bookingAPI";
 import { reservationAPI } from "../Features/reservations/reservationAPI";
+import { paymentAPI } from "../Features/payments/paymentApi";
 
 
 const persistConfig = {
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
     [carAPI.reducerPath]:carAPI.reducer,
     [bookingAPI.reducerPath]:bookingAPI.reducer,
     [reservationAPI.reducerPath]:reservationAPI.reducer,
+    [paymentAPI.reducerPath]:paymentAPI.reducer,
     user: userSlice
 
 
@@ -42,7 +44,9 @@ export const store = configureStore({
           .concat(loginAPI.middleware)
           .concat(carAPI.middleware)
             .concat(bookingAPI.middleware)
-            .concat(reservationAPI.middleware),
+            .concat(reservationAPI.middleware)
+            .concat(paymentAPI.middleware),
+
             
 
 

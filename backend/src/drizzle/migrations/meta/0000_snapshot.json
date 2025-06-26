@@ -1,5 +1,5 @@
 {
-  "id": "3526eaac-11f8-44aa-bc8d-47649260f3cc",
+  "id": "55dc9938-2c9f-40c1-b4fc-1bb47b086e8f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -343,6 +343,12 @@
           "primaryKey": true,
           "notNull": true
         },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
         "booking_id": {
           "name": "booking_id",
           "type": "integer",
@@ -370,6 +376,19 @@
       },
       "indexes": {},
       "foreignKeys": {
+        "payment_user_id_user_user_id_fk": {
+          "name": "payment_user_id_user_user_id_fk",
+          "tableFrom": "payment",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "user_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
         "payment_booking_id_booking_booking_id_fk": {
           "name": "payment_booking_id_booking_booking_id_fk",
           "tableFrom": "payment",
