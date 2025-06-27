@@ -17,6 +17,7 @@ import Login from './components/auth/Login';
 import GetBookings from './dashboardd/adminDsshbor/bookings/GetBookings';
 import Reservation from './dashboardd/adminDsshbor/reservation/Reservation';
 import Payments from './dashboardd/adminDsshbor/payments/Payments';
+import Analytics from './dashboardd/adminDsshbor/analytics/Analytics';
 
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
                   <Route path="reservations" element={<Reservation/>} />
                  <Route path="cars" element={<CarPage/>} />
                   <Route path="payments" element={<Payments/>} />
+                  <Route path="analytics" element={<Analytics/>} />
               {/* <Route path="analytics" element={<AdminAnalytics />} /> */}
               <Route path="users" element={<UserFetch />} />
               {/* <Route path="settings" element={<AdminSettings />} /> */}
