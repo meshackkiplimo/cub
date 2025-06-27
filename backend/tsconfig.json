@@ -21,6 +21,12 @@
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    
+    "backend/src/__tests__",
+    "backend/src/__mocks__",
+    "backend/src/__fixtures__",
+    "backend/src/__generated__",
+    "backend/src/__playwright__",
+    "backend/src/__scripts__"
   ]
 }
