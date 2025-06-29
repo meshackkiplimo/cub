@@ -106,3 +106,27 @@ export const updateUserRoleService = async (userId: number, role: string) =>
         .returning();
     return updatedUser;
 }
+
+// delete user
+export const deleteUserService = async (userId: number) => {
+    const [deletedUser] = await db.delete(UserTable)
+        .where(sql`${UserTable.user_id}=${userId}`)
+        .returning();
+    return deletedUser;
+}
+
+export const getUserByIdService = async (userId: number) => {
+    const user = await db.query.UserTable.findFirst({
+        columns: {
+            user_id: true,
+            first_name: true,
+            last_name: true,
+            email: true,
+            role: true,
+            is_verified: true
+        },
+        where: sql`${UserTable.user_id}=${userId}`
+    });
+
+    return user;
+}

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { UserApi, type TUser } from "../../../Features/users/userApi";
 import ChangeRole from "./ChangeRole";
+import DeleteUser from "./DeleteUser";
 
 const UserFetch = () => {
+  
   const { data: usersData, isLoading, error } = UserApi.useGetUsersQuery(
     undefined,
     {
@@ -18,6 +20,8 @@ const UserFetch = () => {
       <h2 className="text-xl font-bold mb-4">User List</h2>
 
        <ChangeRole user={selectedUser} />
+       
+
 
       {isLoading && <p>Loading users...</p>}
       {error && <p className="text-red-500">Error fetching users</p>}
@@ -60,6 +64,7 @@ const UserFetch = () => {
                     >
                       Change Role
                     </button>
+                    <DeleteUser userId={user.id} />
                   </td>
                 </tr>
               ))}

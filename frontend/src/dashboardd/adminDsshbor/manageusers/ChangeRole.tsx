@@ -5,6 +5,7 @@ import * as yup from "yup";
 import { toast } from "sonner";
 import { useEffect } from "react";
 import { UserApi, type TUser } from "../../../Features/users/userApi";
+import { useToast } from "../../../components/toaster/ToasterContext";
 
 type ChangeRoleProps = {
     user: TUser | null;
@@ -22,6 +23,7 @@ const ChangeRole = ({ user }: ChangeRoleProps) => {
     const [updateUser, { isLoading }] = UserApi.useUpdateUserRoleMutation(
         { fixedCacheKey: "updateUser" }
     );
+    const {showToast}= useToast()
 
     const {
         register,
@@ -53,7 +55,8 @@ const ChangeRole = ({ user }: ChangeRoleProps) => {
                 return;
             }
             await updateUser({ id: user.id, role: data.role })
-            toast.success("Role updated successfully!");
+            showToast("Role updated successfully", "success");
+          
             reset();
             (document.getElementById('role_modal') as HTMLDialogElement)?.close();
         } catch (error) {

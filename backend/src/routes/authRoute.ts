@@ -1,5 +1,6 @@
 import { Express } from "express"
-import { creatUserController, getAllUsersController, loginUserController, updateUserRoleController, verifyEmailController } from "../controller/authController"
+import { creatUserController, deleteUserController, getAllUsersController, getUserByIdController, loginUserController, updateUserRoleController, verifyEmailController } from "../controller/authController"
+import { bothRoleAuth, isAuthenticated } from "../middleware/roleMiddleware"
 
 export const user = (app: Express) => {
     app.route("/auth/register").post(
@@ -46,6 +47,27 @@ export const user = (app: Express) => {
         async (req, res, next) => {
             try {
                 await updateUserRoleController(req, res)
+            } catch (error) {
+                next(error)
+            }
+        }
+    )
+    app.route('/users/:id').delete(
+        async (req, res, next) => {
+            try {
+                await deleteUserController(req, res)
+            } catch (error) {
+                next(error)
+            }
+        }
+    )
+    app.route('/users/:id').get(
+        // bothRoleAuth,
+        // isAuthenticated,
+        
+        async (req, res, next) => {
+            try {
+                await getUserByIdController(req, res)
             } catch (error) {
                 next(error)
             }

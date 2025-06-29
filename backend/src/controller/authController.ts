@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import { createAuthService, getAllUsersService, loginAuthService, updateUserRoleService, updateVerificationStatus } from '../services/authService';
+import { createAuthService, deleteUserService, getAllUsersService, getUserByIdService, loginAuthService, updateUserRoleService, updateVerificationStatus } from '../services/authService';
 import { TIUser, TIUserWithCustomer } from '../types';
 import jwt from 'jsonwebtoken';
 import { emailService } from '../services/emailService';
@@ -258,3 +258,63 @@ export const updateUserRoleController = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+// delete user
+export const deleteUserController = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({ message: "User ID is required" });
+        }
+
+        const deletedUser = await deleteUserService(Number(id));
+        if (!deletedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json({ 
+            message: "User deleted successfully", 
+            user: {
+                id: deletedUser.user_id,
+                first_name: deletedUser.first_name,
+                last_name: deletedUser.last_name,
+                email: deletedUser.email
+            } 
+        });
+    } catch (error) {
+        console.error("Error in deleteUserController:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+export const getUserByIdController = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({ message: "User ID is required" });
+        }
+       
+
+        const user = await getUserByIdService(Number(id));
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+         console.log("User Data:", user)
+
+        res.status(200).json({ 
+            user: {
+                id: user.user_id,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                email: user.email,
+                role: user.role,
+                is_verified: user.is_verified
+            } 
+           
+        });
+    } catch (error) {
+        console.error("Error in getUserByIdController:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
