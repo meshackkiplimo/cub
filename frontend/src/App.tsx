@@ -20,6 +20,7 @@ import Payments from './dashboardd/adminDsshbor/payments/Payments';
 import Analytics from './dashboardd/adminDsshbor/analytics/Analytics';
 import UserProfile from './dashboardd/adminDsshbor/profile/UserProfile';
 import Cars from './dashboardd/adminDsshbor/cars/Cars';
+import UserDashboard from './dashboardd/userDashboard/userDashboard';
 
 
 function App() {
@@ -49,6 +50,20 @@ function App() {
             <Route
               path="/admin/dashboard"
               element={<AdminDashboard />  }
+            >
+                 <Route path="bookings" element={<GetBookings/>} />
+                  <Route path="reservations" element={<Reservation/>} />
+                 <Route path="cars" element={<Cars/>} />
+                  <Route path="payments" element={<Payments/>} />
+                  <Route path="analytics" element={<Analytics/>} />
+                      <Route path="profile" element={<UserProfile/>} />
+              {/* <Route path="analytics" element={<AdminAnalytics />} /> */}
+              <Route path="users" element={<UserFetch />} />
+              {/* <Route path="settings" element={<AdminSettings />} /> */}
+            </Route>
+             <Route
+              path="/user/dashboard"
+              element={<UserDashboard />  }
             >
                  <Route path="bookings" element={<GetBookings/>} />
                   <Route path="reservations" element={<Reservation/>} />

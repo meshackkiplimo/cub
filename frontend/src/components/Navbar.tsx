@@ -68,7 +68,11 @@ const Navbar = () => {
           <li><NavLink to="/create-car" className={({ isActive }) => (isActive ? activeClassname : inactiveClassname)}>Create Car</NavLink></li>
           <li><NavLink to="/users" className={({ isActive }) => (isActive ? activeClassname : inactiveClassname)}>Users</NavLink></li>
            { isAdmin && (
-             <li><NavLink to="/admin/dashboard" className={({ isActive }) => (isActive ? activeClassname : inactiveClassname)}>Dashboard</NavLink></li>
+             <li><NavLink to="/admin/dashboard" className={({ isActive }) => (isActive ? activeClassname : inactiveClassname)}>AdminDashboard</NavLink></li>
+
+           )}
+            { isUser && (
+             <li><NavLink to="/user/dashboard" className={({ isActive }) => (isActive ? activeClassname : inactiveClassname)}>UserDashboard</NavLink></li>
 
            )}
         </ul>

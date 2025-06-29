@@ -62,7 +62,7 @@ export const car = (app: Express) => {
     )
 
     app.route("/cars/:id").delete(
-        adminOnly,
+       
         async (req, res, next) => {
             try {
                 await deleteCarController(req, res)

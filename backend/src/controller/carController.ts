@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { createCarService, deleteCarService, getAllCarsService, getCarService, updateCarService } from '../services/carService';
 import cloudinary from 'cloudinary';
-import { TICar } from 'src/types';
+import { TICar } from '../types';
+
 
 // Import Multer types and extend Express Request interface to include 'file' property
 

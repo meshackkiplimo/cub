@@ -36,7 +36,7 @@ const UserDashboard = () => {
                 {/* Drawer */}
                 <aside
                     className={`
-                        fixed top-0 z-40 w-64 bg-gray-600
+                        fixed top-0 z-40 w-64 bg-amber-400
                         ${drawerOpen ? "" : "hidden"} 
                         lg:static lg:block lg:w-64
                         `}
