@@ -1,5 +1,5 @@
 import React from 'react'
-import CarForm from '../components/CarForm'
+import CarForm from '../dashboardd/adminDsshbor/cars/CarForm'
 
 const CreateCarPage = () => {
   return (

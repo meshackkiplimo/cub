@@ -19,6 +19,7 @@ import Reservation from './dashboardd/adminDsshbor/reservation/Reservation';
 import Payments from './dashboardd/adminDsshbor/payments/Payments';
 import Analytics from './dashboardd/adminDsshbor/analytics/Analytics';
 import UserProfile from './dashboardd/adminDsshbor/profile/UserProfile';
+import Cars from './dashboardd/adminDsshbor/cars/Cars';
 
 
 function App() {
@@ -51,7 +52,7 @@ function App() {
             >
                  <Route path="bookings" element={<GetBookings/>} />
                   <Route path="reservations" element={<Reservation/>} />
-                 <Route path="cars" element={<CarPage/>} />
+                 <Route path="cars" element={<Cars/>} />
                   <Route path="payments" element={<Payments/>} />
                   <Route path="analytics" element={<Analytics/>} />
                       <Route path="profile" element={<UserProfile/>} />
