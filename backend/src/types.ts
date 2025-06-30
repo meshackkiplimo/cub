@@ -1,4 +1,4 @@
-import { BookingTable, CarTable, CustomerTable, InsuranceTable, LocationTable, MaintenanceTable, PaymentTable, ReservationTable, UserTable } from "./drizzle/schema";
+import { BookingTable, CarTable, InsuranceTable, LocationTable, MaintenanceTable, PaymentTable, ReservationTable, UserTable } from "./drizzle/schema";
 
 export type TIUser = typeof UserTable.$inferInsert
 export type TSUser = typeof UserTable.$inferSelect
@@ -10,8 +10,7 @@ export interface TIUserWithCustomer extends TIUser {
 }
 
 
-export type TICustomer = typeof CustomerTable.$inferInsert
-export type TSCustomer = typeof CustomerTable.$inferSelect
+
 export type TILocation= typeof LocationTable.$inferInsert
 export type TSLocation = typeof LocationTable.$inferSelect
 export type TICar = typeof CarTable.$inferInsert
