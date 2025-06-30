@@ -18,7 +18,7 @@ const UserProfile = () => {
 
 
 
-    const { data, isLoading, error, refetch } = UserApi.useGetUserByIdQuery(user_id ?? 0, {
+    const { data, isLoading, error } = UserApi.useGetUserByIdQuery(user_id ?? 0, {
         skip: !user_id, // Skip the query if user_id is not available
     });
     console.log("User Data:", data);

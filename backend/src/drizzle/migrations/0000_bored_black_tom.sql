@@ -52,7 +52,8 @@ CREATE TABLE "payment" (
 	"booking_id" integer NOT NULL,
 	"payment_date" varchar(10) NOT NULL,
 	"amount" numeric(10, 2) NOT NULL,
-	"payment_method" varchar(50) NOT NULL
+	"payment_method" varchar(50) NOT NULL,
+	"status" "booking_status" DEFAULT 'completed' NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "reservation" (

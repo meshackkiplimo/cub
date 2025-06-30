@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,  PieChart, Pie, Cell } from 'recharts';
 import { UserApi } from '../../../Features/users/userApi';
 import { bookingAPI } from '../../../Features/bookings/bookingAPI';
 import { carAPI } from '../../../Features/cars/carApi';
@@ -20,14 +20,14 @@ const Analytics = () => {
     { label: 'Payments', value: payments?.length || 0 },
   ];
 
-  // Sample time-series data for line chart (you can modify this based on your actual data)
-  const timeSeriesData = [
-    { month: 'Jan', users: users?.length * 0.8 || 0, bookings: bookings?.length * 0.7 || 0 },
-    { month: 'Feb', users: users?.length * 0.85 || 0, bookings: bookings?.length * 0.75 || 0 },
-    { month: 'Mar', users: users?.length * 0.9 || 0, bookings: bookings?.length * 0.8 || 0 },
-    { month: 'Apr', users: users?.length * 0.95 || 0, bookings: bookings?.length * 0.85 || 0 },
-    { month: 'May', users: users?.length || 0, bookings: bookings?.length || 0 },
-  ];
+  // // Sample time-series data for line chart (you can modify this based on your actual data)
+  // const timeSeriesData = [
+  //   { month: 'Jan', users: (users?.length ?? 0) * 0.8, bookings: (bookings?.length ?? 0) * 0.7 },
+  //   { month: 'Feb', users: (users?.length ?? 0) * 0.85, bookings: (bookings?.length ?? 0) * 0.75 },
+  //   { month: 'Mar', users: (users?.length ?? 0) * 0.9, bookings: (bookings?.length ?? 0) * 0.8 },
+  //   { month: 'Apr', users: (users?.length ?? 0) * 0.95, bookings: (bookings?.length ?? 0) * 0.85 },
+  //   { month: 'May', users: users?.length ?? 0, bookings: bookings?.length ?? 0 },
+  // ];
 
   return (
     <div className="p-6">
@@ -57,7 +57,7 @@ const Analytics = () => {
       </div>
 
       {/* Line Chart */}
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+      {/* <div className="bg-white p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-xl font-semibold mb-4">Users & Bookings Trend</h2>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={timeSeriesData}>
@@ -68,7 +68,7 @@ const Analytics = () => {
             <Line type="monotone" dataKey="bookings" stroke="#10B981" name="Bookings" />
           </LineChart>
         </ResponsiveContainer>
-      </div>
+      </div> */}
 
       {/* Pie Chart */}
       <div className="bg-white p-6 rounded-lg shadow-md">
@@ -84,7 +84,7 @@ const Analytics = () => {
               outerRadius={100}
               label
             >
-              {summaryData.map((entry, index) => (
+              {summaryData.map((_, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>

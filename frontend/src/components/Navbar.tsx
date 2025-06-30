@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { persistedStore, type RootState } from '../app/store';
@@ -10,7 +10,6 @@ const Navbar = () => {
   const userrole = useSelector((state: RootState) => state.user.user?.role);
   const user = useSelector((state: RootState) => state.user.user);
 
-    const userToken = useSelector((state: RootState) => state.user.token);
     const isAdmin = userrole === 'admin';
     const isUser = userrole === 'user';
 

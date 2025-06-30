@@ -1,5 +1,5 @@
 {
-  "id": "55dc9938-2c9f-40c1-b4fc-1bb47b086e8f",
+  "id": "a7157120-0a5d-4dda-ba35-920910430eb6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -372,6 +372,14 @@
           "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "booking_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'completed'"
         }
       },
       "indexes": {},

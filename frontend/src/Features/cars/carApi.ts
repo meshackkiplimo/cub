@@ -41,7 +41,7 @@ export const carAPI = createApi({
     }),
     getCarById: builder.query<TICar, string>({
       query: (id) => `/cars/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Car', id }],
+      providesTags: ( id) => [{ type: 'Car', id }],
     }),
     createCar: builder.mutation<TICar, FormData>({
   query: (formData) => ({
@@ -58,7 +58,7 @@ export const carAPI = createApi({
         method: 'PUT',
         body: patch,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Car', id }],
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Car', id }],
     }),
     deleteCar: builder.mutation<{ success: boolean }, string>({
       query: (id) => ({
