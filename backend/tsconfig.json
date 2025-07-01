@@ -15,8 +15,7 @@
     },
     "types": [
       "node",
-      "express",
-      "@neondatabase/serverless"
+      "express"
     ],
     "resolveJsonModule": true,
     "allowJs": true,
