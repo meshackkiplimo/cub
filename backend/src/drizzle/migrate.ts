@@ -1,16 +1,15 @@
 import "dotenv/config";
-import { migrate } from "drizzle-orm/node-postgres/migrator";
-import db, { pool } from "./db"
+import { migrate } from "drizzle-orm/neon-http/migrator"; // ✅ Use neon-http
+import db from "./db"; // ✅ Only default export
 
 async function migration() {
-    console.log("......Migrations Started......");
-    await migrate(db, { migrationsFolder: __dirname + "/migrations" });
-    await pool.end();
-    console.log("......Migrations Completed......");
-    process.exit(0); // 0 means success
+  console.log("......Migrations Started......");
+  await migrate(db, { migrationsFolder: __dirname + "/migrations" });
+  console.log("......Migrations Completed......");
+  process.exit(0); // success
 }
 
 migration().catch((error) => {
-    console.error("Migration failed:", error);
-    process.exit(1); // 1 means an error occurred
+  console.error("Migration failed:", error);
+  process.exit(1); // error
 });
