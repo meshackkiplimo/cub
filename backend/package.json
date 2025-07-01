@@ -3,43 +3,28 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "preinstall": "npm install -g typescript && npm install",
     "dev": "nodemon",
-    "prebuild": "npm ci --legacy-peer-deps",
-    "build": "tsc --project tsconfig.json",
-    "start": "node dist/index.js",
-    "generate": "drizzle-kit generate",
-    "migrate": "tsx src/drizzle/migrate.ts",
-    "seed": "tsx src/drizzle/seed.ts",
-   
-    "test:cov": "jest --coverage",
-    "stress:cars": "k6 run loadtest/stress/car.get.stress.ts",
-    "soak:cars": "k6 run loadtest/soak/car.get.soak.ts",
-    "breakpoint:cars": "k6 run loadtest/breakpoint/car.get.breakpoint.ts",
-    "smoke:login": "k6 run loadtest/smoke/login.test.ts",
-    "spike:book": "k6 run loadtest/spike/car.test.ts"
+    "build": "npm install --legacy-peer-deps && npx tsc",
+    "postinstall": "tsc",
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.5",
     "@types/bcryptjs": "^3.0.0",
     "@types/cloudinary": "^1.41.3",
     "@types/cors": "^2.8.19",
-    "@types/dotenv": "^8.2.0",
     "@types/express": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/multer": "^1.4.13",
     "@types/node": "^24.0.7",
     "@types/nodemailer": "^6.4.17",
     "@types/pg": "^8.15.2",
-    "@types/rate-limiter-flexible": "^2.0.0",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "drizzle-kit": "^0.31.1",
     "drizzle-orm": "^0.43.1",
-    "drizzle-orm-pg": "^0.43.1",
-    "@types/drizzle-orm": "^0.28.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
@@ -61,7 +46,6 @@
     "supertest": "^7.1.1",
     "ts-jest": "^29.3.4",
     "ts-node": "^10.9.2"
-   
   },
   "packageManager": "pnpm@10.11.0"
 }
