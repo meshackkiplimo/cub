@@ -4,10 +4,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon",
-    "build": "tsc",
+    "build": "npm install --legacy-peer-deps && npx tsc",
     "start": "node dist/index.js"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^0.7.2",
+    "drizzle-orm": "^0.29.3",
     "@sendgrid/mail": "^8.1.5",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.2",
@@ -20,13 +22,11 @@
     "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
-    "drizzle-kit": "^0.31.1",
-    "drizzle-orm": "^0.43.1",
+    "drizzle-kit": "^0.20.14",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.0",
     "nodemailer": "^7.0.3",
-    "pg": "^8.16.0",
     "rate-limiter-flexible": "^7.1.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.4",

@@ -4,12 +4,13 @@ import { defineConfig } from 'drizzle-kit';
 export default defineConfig({
   out: './src/drizzle/migrations',
   schema: './src/drizzle/schema.ts',
-  dialect: 'postgresql',
+  driver: 'pg',
   dbCredentials: {
-    url: process.env.DATABASE_URL!,
+    connectionString: process.env.DATABASE_URL!,
+    ssl: true
   },
-    verbose: true,
-    strict: true,
-
-
+  verbose: true,
+  strict: true,
+  // Explicitly set dialect for Neon
+  dialect: 'pg',
 });

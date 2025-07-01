@@ -1,6 +1,5 @@
 import { relations } from "drizzle-orm";
 import { boolean, pgTable, serial, varchar, decimal, integer, pgEnum } from "drizzle-orm/pg-core";
-import { user } from "src/routes/authRoute";
 
 export const BookingStatusEnum = pgEnum('booking_status', ['pending', 'completed', 'cancelled']);
 
@@ -13,14 +12,6 @@ export const UserTable = pgTable("user", {
     role: varchar("role", { length: 20 }).notNull().default("customer"),
     is_verified: boolean("is_verified").notNull().default(false),
 });
-
-
-// export const CustomerTable = pgTable("customer", {
-//     customer_id: serial("customer_id").primaryKey(),
-//     user_id: integer("user_id").notNull().references(() => UserTable.user_id, { onDelete: 'cascade' }),
-//     phone_number: varchar("phone", { length: 15 }).notNull(),
-//     address: varchar("address", { length: 255 }).notNull(),
-// });
 
 export const LocationTable = pgTable("location", {
     location_id: serial("location_id").primaryKey(),
@@ -88,27 +79,9 @@ export const InsuranceTable = pgTable("insurance", {
     end_date: varchar("end_date", { length: 10 }).notNull(),
 });
 
-// Define relations
-// export const UserRelations = relations(UserTable, ({ one }) => ({
-//     customer: one(CustomerTable, {
-//         fields: [UserTable.user_id],
-//         references: [CustomerTable.user_id],
-//     }),
-// }));
-
-// export const CustomerRelations = relations(CustomerTable, ({ many, one }) => ({
-//     user: one(UserTable, {
-//         fields: [CustomerTable.user_id],
-//         references: [UserTable.user_id],
-//     }),
-//     bookings: many(BookingTable),
-//     reservations: many(ReservationTable)
-// }));
-
 export const LocationRelations = relations(LocationTable, ({ many }) => ({
     cars: many(CarTable)
 }));
-
 
 export const CarRelations = relations(CarTable, ({ many, one }) => ({
     reservations: many(ReservationTable),

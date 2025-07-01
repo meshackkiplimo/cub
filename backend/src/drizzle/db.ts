@@ -1,15 +1,13 @@
 import "dotenv/config"
-import { drizzle } from 'drizzle-orm/node-postgres'; 
-import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/neon-http';
+import { neon } from '@neondatabase/serverless';
 import * as schema from './schema';
 
-// Create a pool instead of a single client
-export const pool = new Pool({
-    connectionString: process.env.DATABASE_URL as string,
-});
+// Create neon connection
+const sql = neon(process.env.DATABASE_URL!);
 
-// Export drizzle instance with pool
-const db = drizzle(pool, {
+// Create drizzle instance
+const db = drizzle(sql, {
     schema: schema,
     logger: false, // Disable logging for production
 });
@@ -18,18 +16,17 @@ export default db;
 
 // Helper to check connection
 export const checkConnection = async () => {
-    const client = await pool.connect();
     try {
-        await client.query('SELECT 1');
+        await sql`SELECT 1`;
         return true;
     } catch (error) {
+        console.error('Database connection error:', error);
         throw error;
-    } finally {
-        client.release();
     }
 };
 
 // Cleanup function for tests
 export const closeConnection = async () => {
-    await pool.end();
+    // Neon HTTP doesn't require explicit cleanup
+    return Promise.resolve();
 };
