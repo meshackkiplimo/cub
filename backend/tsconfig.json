@@ -15,19 +15,7 @@
       "@/*": ["./*"],
       "drizzle-orm/*": ["../node_modules/drizzle-orm/*"]
     },
-    "types": [
-      "node",
-      "express",
-      "multer",
-      "bcryptjs",
-      "cloudinary",
-      "jsonwebtoken",
-      "pg",
-      "nodemailer",
-      "dotenv",
-      "cors",
-      "drizzle-orm"
-    ],
+    
     "resolveJsonModule": true,
     "allowJs": true,
     "typeRoots": [
