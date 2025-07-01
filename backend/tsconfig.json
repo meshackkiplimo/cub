@@ -3,7 +3,7 @@
     "target": "ES2022",
     "module": "CommonJS",
     "rootDir": "./src",
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -12,8 +12,28 @@
     "skipLibCheck": true,
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"]
-    }
+      "@/*": ["./*"],
+      "drizzle-orm/*": ["../node_modules/drizzle-orm/*"]
+    },
+    "types": [
+      "node",
+      "express",
+      "multer",
+      "bcryptjs",
+      "cloudinary",
+      "jsonwebtoken",
+      "pg",
+      "nodemailer",
+      "dotenv",
+      "cors",
+      "drizzle-orm"
+    ],
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
